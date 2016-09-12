@@ -5,7 +5,7 @@ The irvine-01-sw project is the main entry point for irvine cubesat development
 
 To get started:
 
-1. git checkout https://github.com/irvinecubesat/irvine-01-sw
+1. git clone https://github.com/irvinecubesat/irvine-01-sw
 2. cd irvine-01-sw
 3. make all-arm
 
