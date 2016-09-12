@@ -15,3 +15,6 @@ You can type "make all" to build x86 binaries under "build"
 
 The first time you run the all-arm build, it will download and install the
 toolchain.
+
+CalPoly Documentation is available at https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki
+
