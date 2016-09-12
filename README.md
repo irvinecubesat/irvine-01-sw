@@ -18,3 +18,4 @@ toolchain.
 
 CalPoly Documentation is available at https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki
 
+*Note:  Do not follow the CalPoly buildroot instructions*
