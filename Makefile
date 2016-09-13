@@ -34,7 +34,7 @@ install:
 install-arm:
 	$(MAKE) -C build-arm install DESTDIR=$(DESTDIR)
 
-clean:
+clean: clean-auth
 	rm -rf build build-arm
 
 #
@@ -52,11 +52,14 @@ genKeys:
 
 
 $(KEYINFO_FILE):
-	scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -g $$USER-irvine-01-sw
+	@scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -g $$USER-irvine-01-sw
 
 $(AUTH_FILE):
-	wget -o $(HOME)/.polysat_fsw.auth.enc https://github.com/irvinecubesat/irvine-01-sw/auth/access.enc
-	scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(HOME)/.polysat_fsw.auth.enc
+	@cp auth/access.enc $(AUTH_FILE).enc
+	@scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(AUTH_FILE).enc
+
+clean-auth:
+	rm $(AUTH_FILE)
 
 clean-toolchain:
 	-sudo rm $(TOOLCHAIN_ROOT)
