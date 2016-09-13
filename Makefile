@@ -41,8 +41,22 @@ clean:
 # Retrieve the toolchain distribution and install it for the buildroot
 # to use.  Run it as sudo to store it in /opt/toolchain.
 #
-$(TOOLCHAIN_ROOT):
+$(TOOLCHAIN_ROOT):  $(KEYINFO_FILE)
 	sudo scripts/toolchainSetup.sh -v $(TOOLCHAIN_VER)
+
+KEYINFO_FILE=$(HOME)/.irvine-01.keyInfo
+AUTH_FILE=$(HOME)/.polysat_fsw.auth
+
+genKeys:
+	$(MAKE) $(KEYINFO_FILE)
+
+
+$(KEYINFO_FILE):
+	scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -g $$USER-irvine-01-sw
+
+$(AUTH_FILE):
+	wget -o $(HOME)/.polysat_fsw.auth.enc https://github.com/irvinecubesat/irvine-01-sw/auth/access.enc
+	scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(HOME)/.polysat_fsw.auth.enc
 
 clean-toolchain:
 	-sudo rm $(TOOLCHAIN_ROOT)
