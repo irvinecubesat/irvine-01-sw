@@ -47,9 +47,11 @@ $(TOOLCHAIN_ROOT):  $(KEYINFO_FILE)
 KEYINFO_FILE=$(HOME)/.irvine-01.keyInfo
 AUTH_FILE=$(HOME)/.polysat_fsw.auth
 
-genKeys:
+genKeys: 
 	$(MAKE) $(KEYINFO_FILE)
 
+authfile:
+	$(MAKE) $(AUTH_FILE)
 
 $(KEYINFO_FILE):
 	@scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -g $$USER-irvine-01-sw
