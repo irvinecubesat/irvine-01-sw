@@ -59,7 +59,7 @@ $(AUTH_FILE):
 	@scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(AUTH_FILE).enc
 
 clean-auth:
-	rm $(AUTH_FILE)
+	rm -f $(AUTH_FILE)
 
 clean-toolchain:
 	-sudo rm $(TOOLCHAIN_ROOT)
