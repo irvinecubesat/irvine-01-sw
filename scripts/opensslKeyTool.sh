@@ -17,7 +17,7 @@ Options
     -g {keyName} Generate a new self-signed cert with public/private keys
     -e {file}    Encrypt the input file with public certifcates
     -d {file}    decrypt the input file with private key 
-    -o {file}    specify the output file (Default:  
+    -o {file}    specify the output file (Default:  {input}.enc
     -k {dir}     Keystore directory (Default: $keyDir)
     -c {CN}      The common name (CN) for cert generation(Default:  ${commonName}))
     -f {cfgfile} File to store cert params/initialze params
