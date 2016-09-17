@@ -20,6 +20,8 @@ all: build
 all-arm: build-arm
 	$(MAKE) -C build-arm
 
+initialize: $(TOOLCHAIN_ROOT)
+
 build:
 	-mkdir build
 	(cd build; cmake ../)
@@ -34,8 +36,10 @@ install:
 install-arm:
 	$(MAKE) -C build-arm install DESTDIR=$(DESTDIR)
 
-clean: clean-auth
+clean: 
 	rm -rf build build-arm
+
+distclean: clean clean-auth
 
 #
 # Retrieve the toolchain distribution and install it for the buildroot
