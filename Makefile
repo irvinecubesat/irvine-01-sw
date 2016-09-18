@@ -11,7 +11,7 @@
 #
 #
 
-TOOLCHAIN_VER=01.00.02
+TOOLCHAIN_VER=01.00.03
 TOOLCHAIN_ROOT=/opt/toolchain/toolchain-arm-linux
 
 all: build
