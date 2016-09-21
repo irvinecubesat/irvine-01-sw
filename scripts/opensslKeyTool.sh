@@ -51,8 +51,8 @@ while getopts "g:e:d:k:c:g:o:i:f:h" arg; do
             ;;
         f)
             cfgFile=$OPTARG
-            if [ -n "$cfgFile" ] && [ -f $cfgFile ]; then
-                . $cfgFile
+            if [ -n "$cfgFile" ] && [ -f "$cfgFile" ]; then
+                . "$cfgFile"
             fi
             ;;
         h)
@@ -69,22 +69,25 @@ if [ -n "$cfgFile" ] && [ -n "${keyName}" ] && [ -n "$keyDir" ]; then
     {
         echo "keyName=${keyName}"
         echo "keyDir=${keyDir}"
-    } > $cfgFile
+    } > "$cfgFile"
 fi
 
 case $cmd in
     gen)
-        openssl req -x509 -newkey rsa:4096 -days 3650 -nodes -subj "/C=US/ST=*/L=*/O=*/OU=*/CN=${commonName}/" -keyout ${keyDir}/${keyName}.key -out ${keyDir}/${keyName}.cert
+        mkdir -p "${keyDir}"
+        chmod 700 "${keyDir}"
+        openssl req -x509 -newkey rsa:4096 -days 3650 -nodes -subj "/C=US/ST=*/L=*/O=*/OU=*/CN=${commonName}/" -keyout "${keyDir}/${keyName}.key" -out "${keyDir}/${keyName}.cert"
         exitStatus=$?
     ;;
     enc)
         if [ -n "$*" ]; then
             keys="$*"
         else
-            keys=${keyDir}/${keyName}.cert
+            keys="${keyDir}/${keyName}.cert"
         fi
         outputFile=${outputFile-${inputFile}.enc}
-        openssl smime -encrypt -aes256 -in $inputFile -out $outputFile -outform PEM $keys
+        # shellcheck disable=SC2086
+        openssl smime -encrypt -aes256 -in "$inputFile" -out "$outputFile" -outform PEM $keys
         exitStatus=$?
         ;;
     dec)
@@ -95,7 +98,7 @@ case $cmd in
         fi
         outputFile=${outputFile-${inputFile%.*}}
 
-        openssl smime -decrypt -in $inputFile -inform PEM -inkey $key > $outputFile
+        openssl smime -decrypt -in "$inputFile" -inform PEM -inkey "$key" > "$outputFile"
         exitStatus=$?
         ;;
     *)
