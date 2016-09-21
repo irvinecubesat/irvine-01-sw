@@ -62,7 +62,7 @@ $(KEYINFO_FILE):
 
 $(AUTH_FILE):
 	@cp auth/access.enc $(AUTH_FILE).enc
-	@scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(AUTH_FILE).enc
+	scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(AUTH_FILE).enc
 
 clean-auth:
 	rm -f $(AUTH_FILE)

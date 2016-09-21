@@ -5,6 +5,11 @@
 keyDir=~/.ssh
 commonName=$(whoami)
 
+log()
+{
+    echo "$*"
+}
+
 usage()
 {
     cat <<EOF
@@ -100,9 +105,14 @@ case $cmd in
 
         openssl smime -decrypt -in "$inputFile" -inform PEM -inkey "$key" > "$outputFile"
         exitStatus=$?
+        if [ $exitStatus -ne 0 ]; then
+            log "[E] Unable to decript $inputFile with $key"
+            # cleanup output file
+            rm "$outputFile"
+        fi
         ;;
     *)
-        echo "Unknown cmd:  $cmd"
+        log "[E] Unknown cmd:  $cmd"
         exit 1
         ;;
 esac
