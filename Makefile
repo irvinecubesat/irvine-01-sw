@@ -11,7 +11,7 @@
 #
 #
 
-TOOLCHAIN_VER=01.00.04
+TOOLCHAIN_VER=01.00.05
 TOOLCHAIN_ROOT=/opt/toolchain/toolchain-arm-linux
 TOOLCHAIN_DIR=$(TOOLCHAIN_ROOT)-$(TOOLCHAIN_VER)
 
@@ -23,11 +23,11 @@ all-arm: build-arm
 
 initialize: $(TOOLCHAIN_DIR)
 
-build:
+build: initialize
 	-mkdir build
 	(cd build; cmake ../)
 
-build-arm: $(TOOLCHAIN_DIR)
+build-arm: initialize
 	-mkdir build-arm
 	(cd build-arm; cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/arm-linux.cmake ../)
 
