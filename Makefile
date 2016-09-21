@@ -11,8 +11,9 @@
 #
 #
 
-TOOLCHAIN_VER=01.00.03
+TOOLCHAIN_VER=01.00.04
 TOOLCHAIN_ROOT=/opt/toolchain/toolchain-arm-linux
+TOOLCHAIN_DIR=$(TOOLCHAIN_ROOT)-$(TOOLCHAIN_VER)
 
 all: build
 	$(MAKE) -C build
@@ -20,13 +21,13 @@ all: build
 all-arm: build-arm
 	$(MAKE) -C build-arm
 
-initialize: $(TOOLCHAIN_ROOT)
+initialize: $(TOOLCHAIN_DIR)
 
 build:
 	-mkdir build
 	(cd build; cmake ../)
 
-build-arm: $(TOOLCHAIN_ROOT)
+build-arm: $(TOOLCHAIN_DIR)
 	-mkdir build-arm
 	(cd build-arm; cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/arm-linux.cmake ../)
 
@@ -45,7 +46,7 @@ distclean: clean clean-auth
 # Retrieve the toolchain distribution and install it for the buildroot
 # to use.  Run it as sudo to store it in /opt/toolchain.
 #
-$(TOOLCHAIN_ROOT):  $(KEYINFO_FILE)
+$(TOOLCHAIN_DIR):  $(KEYINFO_FILE)
 	sudo scripts/toolchainSetup.sh -v $(TOOLCHAIN_VER)
 
 KEYINFO_FILE=$(HOME)/.irvine-01.keyInfo
@@ -67,5 +68,8 @@ $(AUTH_FILE):
 clean-auth:
 	rm -f $(AUTH_FILE)
 
+clean-keyinfo:
+	rm -f $(KEYINFO_FILE)
+
 clean-toolchain:
-	-sudo rm $(TOOLCHAIN_ROOT)
+	-sudo rm $(TOOLCHAIN_DIR) $(TOOLCHAIN_ROOT)
