@@ -106,7 +106,7 @@ case $cmd in
         openssl smime -decrypt -in "$inputFile" -inform PEM -inkey "$key" > "$outputFile"
         exitStatus=$?
         if [ $exitStatus -ne 0 ]; then
-            log "[E] Unable to decript $inputFile with $key"
+            log "[E] Unable to decrypt $inputFile with $key"
             # cleanup output file
             rm "$outputFile"
         fi
