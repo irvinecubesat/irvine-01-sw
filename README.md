@@ -3,12 +3,20 @@ irvine-01-sw software repository development tree
 
 The irvine-01-sw project is the main entry point for irvine cubesat development
 
+# Ubuntu 14.04 packages
+
+To build irvine-01-sw, make sure you have `cmake` and the GNU C compiler installed:
+
+```
+sudo apt-get install cmake gcc g++
+```
+
 # irvine-01-sw project and toolchain install
 
 The irvine-01-sw utilizes CMake to build the software.  You can build the
 software for your host machine to test it, then cross compile it for the arm architecture in order to run it on the board.
 
-To get started, retrieve the man software project and install the arm toolchain.
+To get started, retrieve the main software project and install the arm toolchain.
 ```
 git clone https://github.com/irvinecubesat/irvine-01-sw
 cd irvine-01-sw
@@ -19,8 +27,8 @@ This will build the arm binaries and put them under the `build-arm` directory.
 
 You can type `make all ` to build x86 binaries under the `build` directory.
 
-The first time you run the all-arm build, it will download and install the
-toolchain.
+The first time you run the all or all-arm build, it will download and install
+the toolchain.
 
 For the next step, generate keys to be able to build the BuildRoot.
 Inside the irvine-01-sw project, type:
@@ -45,12 +53,18 @@ git clone https://github.com/irvinecubesat/irvine-01-cfg
 
 # The BuildRoot Project
 
-The BuildRoot environment builds the image to upload to the computer on the
-cubesat.  The buildroot environment is set up to build the irvine-01-sw sources
-and install the irvine-01-cfg files into the fsw_image.
+The BuildRoot environment builds the image to upload to the 
+cubesat board.  The buildroot environment is set up to build the irvine-01-sw
+sources and install the irvine-01-cfg files into the fsw_image.
 
 Be sure to send your cert file to the system admin before this step and receive
 confirmation that the cert has been registered.
+
+Make sure you have the necessary packages installed on your system:
+
+```
+ sudo apt-get install git bison g++ flex gettext texinfo libncurses5-dev
+```
 
 Clone the irvinecubsat buildroot project from github:
 
