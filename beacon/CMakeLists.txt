@@ -24,6 +24,7 @@ INSTALL(FILES beacon DESTINATION bin)
 #
 target_link_libraries(beacon proc)
 
+IF (NOT_BUILDROOT_COMPILE)
 # Include directories to search in
 target_include_directories(beacon PUBLIC /opt/toolchain/toolchain-arm-linux/include)
-
+ENDIF (NOT_BUILDROOT_COMPILE)
