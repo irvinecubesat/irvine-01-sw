@@ -8,8 +8,8 @@
 #include <arpa/inet.h>
 
 #define BEACON_PKT_ID         1
-#define BEACON_DST_PORT       2345
-#define BEACON_DST_IP_STR     "224.0.0.1"
+#define BEACON_DST_PORT       50000
+#define BEACON_DST_IP_STR     "192.168.0.100"
 #define BEACON_MESSAGE        "IRVINE-01"
 
 static ProcessData *gProc=NULL;
