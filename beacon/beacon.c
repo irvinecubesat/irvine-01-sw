@@ -8,9 +8,23 @@
 #include <arpa/inet.h>
 
 #define BEACON_PKT_ID         1
-#define BEACON_DST_PORT       2
+#define BEACON_DST_PORT       2345
 #define BEACON_DST_IP_STR     "224.0.0.1"
-#define BEACON_MESSAGE        "Hello World!"
+#define BEACON_MESSAGE        "IRVINE-01"
+
+static ProcessData *gProc=NULL;
+
+/**
+ * Respond to status commands to let watchdog know we're alive.
+ **/
+void beacon_status(int socket, unsigned char cmd, void * data, size_t dataLen,
+                   struct sockaddr_in * src)
+{
+   char status = 0;
+
+   PROC_cmd_sockaddr(gProc, CMD_STATUS_RESPONSE, &status,
+                     sizeof(status), src);
+}
 
 static void send_beacon_packet(ProcessData *proc, char *data, int len)
 {
@@ -32,7 +46,10 @@ static int assemble_beacon(void *arg)
    ProcessData *proc = (ProcessData*)arg;
 
    if (proc)
-      send_beacon_packet(proc, BEACON_MESSAGE, strlen(BEACON_MESSAGE));
+   {
+     DBG_print(DBG_LEVEL_INFO, "Sending beacon:  %s\n", BEACON_MESSAGE);
+     send_beacon_packet(proc, BEACON_MESSAGE, strlen(BEACON_MESSAGE));
+   }
 
    return EVENT_KEEP;
 }
@@ -48,31 +65,33 @@ static int sigint_handler(int signum, void *arg)
 
 int main(void)
 {
-   ProcessData *proc;
    void *beacon_evt;
 
    // Initialize the process
-   proc = PROC_init("beacon");
-   if (!proc)
+   gProc = PROC_init("beacon");
+   if (!gProc)
       return -1;
+   DBG_print(DBG_LEVEL_INFO, "Beacon starting:  %s\n", BEACON_MESSAGE);
 
    // Schedule an event to run periodically.  The event generates the
    //   beacon.
-   beacon_evt = EVT_sched_add(PROC_evt(proc),
-      EVT_ms2tv(17 * 1000), assemble_beacon, proc);
+   beacon_evt = EVT_sched_add(PROC_evt(gProc),
+      EVT_ms2tv(17 * 1000), assemble_beacon, gProc);
 
    // Add an event-loop based signal handler call back for SIGINT signal
-   PROC_signal(proc, SIGINT, &sigint_handler, proc);
+   PROC_signal(gProc, SIGINT, &sigint_handler, gProc);
 
    // Enter the main event loop.
-   EVT_start_loop(PROC_evt(proc));
+   EVT_start_loop(PROC_evt(gProc));
 
    // Clean up after the event loop exits
    if (beacon_evt)
-      EVT_sched_remove(PROC_evt(proc), beacon_evt);
+      EVT_sched_remove(PROC_evt(gProc), beacon_evt);
 
+   DBG_print(DBG_LEVEL_INFO, "Cleaning up\n");
+   
    // Clean up, whenever we exit event loop
-   PROC_cleanup(proc);
+   PROC_cleanup(gProc);
 
    return 0;
 }
