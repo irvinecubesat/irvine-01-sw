@@ -24,11 +24,11 @@ all-arm: build-arm
 initialize: $(TOOLCHAIN_DIR)
 
 build: initialize
-	-mkdir build
+	if [ ! -e build ]; then mkdir build; fi;
 	(cd build; cmake ../)
 
 build-arm: initialize
-	-mkdir build-arm
+	if [ ! -e build-arm ]; then mkdir build-arm; fi;
 	(cd build-arm; cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/arm-linux.cmake ../)
 
 install:
