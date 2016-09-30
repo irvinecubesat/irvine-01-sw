@@ -8,7 +8,7 @@ The irvine-01-sw project is the main entry point for irvine cubesat development
 To build irvine-01-sw, make sure you have `cmake` and the GNU C compiler installed:
 
 ```
-sudo apt-get install cmake gcc g++
+sudo apt-get install cmake gcc g++ cmake
 ```
 
 # irvine-01-sw project and toolchain install
@@ -65,7 +65,10 @@ Make sure you have the necessary packages installed on your system:
 ```
  sudo apt-get install git bison g++ flex gettext texinfo libncurses5-dev
 ```
-
+64-bit Ubuntu should also install the 32-bit libraries:
+```
+sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
+```
 Clone the irvinecubsat buildroot project from github:
 
 ```
