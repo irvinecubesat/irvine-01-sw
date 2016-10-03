@@ -3,6 +3,14 @@ irvine-01-sw software repository development tree
 
 The irvine-01-sw project is the main entry point for irvine cubesat development
 
+# Development Machine OS
+
+The irvine-01-sw project should work on any modern Linux distribution, 64-bit or
+32-bit.  buildroot has only been built and tested on a 32-bit Ubuntu 14.04
+machine.  You may install Ubuntu on a new/repurposed PC or in a 
+virtual guest in [VirtualBox](https://www.virtualbox.org/).  The Ubuntu 14.04
+ISO image may be downloaded from the [Ubuntu website](http://www.ubuntu.com/download/alternative-downloads)
+
 # Ubuntu 14.04 packages
 
 To build irvine-01-sw, make sure you have `cmake` and the GNU C compiler installed:
@@ -69,7 +77,7 @@ Make sure you have the necessary packages installed on your system:
 ```
 sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
 ```
-Clone the irvinecubsat buildroot project from github:
+Clone the irvinecubesat buildroot project from github:
 
 ```
 git clone https://github.com/irvinecubesat/buildroot
