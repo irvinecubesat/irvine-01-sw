@@ -20,18 +20,19 @@ Usage:  $0 [options] {key file(s)} ...
 
 Options
     -g {keyName} Generate a new self-signed cert with public/private keys
-    -e {file}    Encrypt the input file with public certifcates
+    -e {file}    Encrypt the input file with public certifcates  
     -d {file}    decrypt the input file with private key 
-    -o {file}    specify the output file (Default:  {input}.enc
+    -o {file}    specify the output file (Default output file:  {input}.enc
     -k {dir}     Keystore directory (Default: $keyDir)
     -c {CN}      The common name (CN) for cert generation(Default:  ${commonName}))
+    -p {keyName} Extract the public key from the cert
     -f {cfgfile} File to store cert params/initialze params
 EOF
     exit 1
 }
 
 
-while getopts "g:e:d:k:c:g:o:i:f:h" arg; do
+while getopts "g:e:d:k:c:g:o:i:f:ph" arg; do
     case $arg in
         g)
             cmd="gen"
@@ -60,6 +61,9 @@ while getopts "g:e:d:k:c:g:o:i:f:h" arg; do
                 . "$cfgFile"
             fi
             ;;
+        p)
+            cmd="pubkey"
+            ;;
         h)
             usage
             ;;
@@ -70,15 +74,14 @@ while getopts "g:e:d:k:c:g:o:i:f:h" arg; do
 done
 shift "$((OPTIND-1))"
 
-if [ -n "$cfgFile" ] && [ -n "${keyName}" ] && [ -n "$keyDir" ]; then
-    {
-        echo "keyName=${keyName}"
-        echo "keyDir=${keyDir}"
-    } > "$cfgFile"
-fi
-
 case $cmd in
     gen)
+        if [ -n "$cfgFile" ] && [ -n "${keyName}" ] && [ -n "$keyDir" ]; then
+            {
+                echo "keyName=${keyName}"
+                echo "keyDir=${keyDir}"
+            } > "$cfgFile"
+        fi
         mkdir -p "${keyDir}"
         chmod 700 "${keyDir}"
         openssl req -x509 -newkey rsa:4096 -days 3650 -nodes -subj "/C=US/ST=*/L=*/O=*/OU=*/CN=${commonName}/" -keyout "${keyDir}/${keyName}.key" -out "${keyDir}/${keyName}.cert"
@@ -110,6 +113,12 @@ case $cmd in
             # cleanup output file
             rm "$outputFile"
         fi
+        ;;
+    pubkey)
+        key=${keyDir}/${keyName}.key
+        cert=${keyDir}/${keyName}.cert
+        pubkey=${key}.pub
+        openssl x509 -pubkey -noout -in $cert|ssh-keygen -f /dev/stdin -i -m PKCS8|sed -e "1 s/\$/ $keyName/">$pubkey
         ;;
     *)
         log "[E] Unknown cmd:  $cmd"
