@@ -8,7 +8,8 @@ commonName=$(whoami)
 cfgFile=~/.irvine-01.keyInfo
 instdir=$(cd $(dirname $0); pwd)
 ovpnCfg=$(mktemp)
-
+ovpnx=~/.ssh/*.ovpnx
+cmd="connect"
 keytool=$instdir/opensslKeyTool.sh
 
 cleanup()
@@ -31,7 +32,7 @@ Usage:  $0 [options]
         Tool to connect to openvpn
 
 Options
-    -c {ovpnx file} Connect to VPN using the ovpnx file
+    -c {ovpnx file} Connect to VPN using the ovpnx file (default $ovpnx)
     -f {cfgFile}    File to store cert params/initialze params (default $cfgFile)
     -u              Update the config file with the latest settings (existing will be renamed config.bak)
     -h              this message
@@ -39,8 +40,23 @@ EOF
     exit 1
 }
 
+connectMessage()
+{
+    cat <<EOF 
+#########################################################################
+           You are connected to Irvine Cubesat Net!
 
-while getopts "c:uf:h" arg; do
+In a different terminal window type:
+
+"ssh irvine-01"       to connect to irvine-01
+"ssh cubesatgateway"  to connect to cubesat gateway
+
+If ssh fails, contact your adminstrator with the error messages you see.
+#########################################################################
+EOF
+}
+
+while getopts "c:uf:mh" arg; do
     case $arg in
         c)
             cmd="connect"
@@ -51,6 +67,10 @@ while getopts "c:uf:h" arg; do
             ;;
         u)
             cmd="update"
+            ;;
+        m)
+            connectMessage
+            exit 0
             ;;
         h)
             usage
@@ -69,6 +89,11 @@ else
     usage
 fi
 
+if [ ! -e $ovpnx ]; then
+    log "[E] $ovpnx does not exist"
+    usage
+fi
+
 cert=$keyDir/${keyName}.cert
 privKey=$keyDir/${keyName}.key
 pubKey=$keyDir/${privKey}.pub
@@ -79,11 +104,6 @@ pubKey=$keyDir/${privKey}.pub
 setupSshConfig()
 {
     chmod 700 $keyDir
-    cat <<EOF 
-Setting up default ssh config...  Once you connect, you should be able to
-connect to irvine-01 via "ssh irvine-01" and cubesat gateway via
-"ssh cubesatgateway"
-EOF
     cat >$sshConfig <<EOF
 Host cubesatgateway
      HostName 10.133.33.2
@@ -125,7 +145,7 @@ case $cmd in
             log "[E] Unable to decode openvpn configuration"
             exit 1
         fi
-        sudo openvpn --config "${ovpnCfg}"
+        sudo openvpn --config "${ovpnCfg}" --script-security 2 --up "$0 -m"
         ;;
     "update")
         if [ -e "$sshConfig" ]; then
