@@ -136,7 +136,7 @@ case $cmd in
         #
         # Some systems like Fedora don't have nogroup, so replace it with nobody
         #
-        if id -u nogroup >& /dev/null; then
+        if grep -q nogroup /etc/group; then
             $keytool -d $ovpnx -o $ovpnCfg -f $cfgFile
         else
             $keytool -d $ovpnx -o /dev/stdout -f $cfgFile |sed -e "s/nogroup/nobody/g">$ovpnCfg
