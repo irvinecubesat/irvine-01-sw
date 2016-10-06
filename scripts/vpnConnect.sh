@@ -52,6 +52,8 @@ In a different terminal window type:
 "ssh cubesatgateway"  to connect to cubesat gateway
 
 If ssh fails, contact your adminstrator with the error messages you see.
+*note:  prefix the ssh command with SSH_AUTH_SOCK=0 
+        or disable SSH Key Agent from startup applications
 #########################################################################
 EOF
 }
@@ -104,6 +106,7 @@ pubKey=$keyDir/${privKey}.pub
 setupSshConfig()
 {
     chmod 700 $keyDir
+    chmod 700 $keyDir/*.key
     cat >$sshConfig <<EOF
 Host cubesatgateway
      HostName 10.133.33.2
