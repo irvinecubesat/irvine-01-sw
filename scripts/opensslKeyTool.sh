@@ -25,14 +25,15 @@ Options
     -o {file}    specify the output file (Default output file:  {input}.enc
     -k {dir}     Keystore directory (Default: $keyDir)
     -c {CN}      The common name (CN) for cert generation(Default:  ${commonName}))
-    -p {keyName} Extract the public key from the cert
+    -n {keyName} Use keyname (Default:  $keyName)
+    -p           Extract the public key from the cert
     -f {cfgfile} File to store cert params/initialze params
 EOF
     exit 1
 }
 
 
-while getopts "g:e:d:k:c:g:o:i:f:ph" arg; do
+while getopts "g:e:d:k:n:c:g:o:i:f:ph" arg; do
     case $arg in
         g)
             cmd="gen"
@@ -48,6 +49,9 @@ while getopts "g:e:d:k:c:g:o:i:f:ph" arg; do
             ;;
         c)
             commonName=$OPTARG
+            ;;
+        n)
+            keyName=$OPTARG
             ;;
         k)
             keyDir=$OPTARG
@@ -118,7 +122,7 @@ case $cmd in
         key=${keyDir}/${keyName}.key
         cert=${keyDir}/${keyName}.cert
         pubkey=${key}.pub
-        openssl x509 -pubkey -noout -in $cert|ssh-keygen -f /dev/stdin -i -m PKCS8|sed -e "1 s/\$/ $keyName/">$pubkey
+        openssl x509 -pubkey -noout -in "$cert"|ssh-keygen -f /dev/stdin -i -m PKCS8|sed -e "1 s/\$/ $keyName/">"$pubkey"
         ;;
     *)
         log "[E] Unknown cmd:  $cmd"
