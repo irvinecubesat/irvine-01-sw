@@ -58,11 +58,13 @@ SET(MAKE_INCLUDE_CURRENT_DIR ON)
 #
 ADD_SUBDIRECTORY(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 
-#
-# matrix/linear algebra class library
-#
-ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
-
+if (!WITH_BUILDROOT)
+  #
+  # matrix/linear algebra class library
+  #
+  ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
+endif (WITH_BUILDROOT)
+  
 #
 # Beacon broadcasting library
 #
