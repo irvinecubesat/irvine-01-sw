@@ -20,15 +20,15 @@
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="727.1974705590144" width="832.9889357979789" x="-261.7060546875" y="-331.0"/>
+              <y:Geometry height="744.7216225503211" width="824.7180176319832" x="-261.7060546875" y="-346.95441819501025"/>
               <y:Fill color="#F2F0D8" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#B7B69E" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="832.9889357979789" x="0.0" y="0.0">Intrepid</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#B7B69E" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="824.7180176319832" x="0.0" y="0.0">Intrepid</y:NodeLabel>
               <y:Shape type="rectangle"/>
               <y:DropShadow color="#D2D2D2" offsetX="4" offsetY="4"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="5" bottomF="5.0" left="5" leftF="5.0" right="5" rightF="5.0" top="5" topF="5.0"/>
-              <y:BorderInsets bottom="0" bottomF="0.0" left="12" leftF="11.667426215277487" right="8" rightF="8.270918165995681" top="17" topF="17.4765625"/>
+              <y:BorderInsets bottom="6" bottomF="6.386996021977552" left="12" leftF="11.667426215277487" right="0" rightF="0.0" top="0" topF="0.0"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="241.0" x="-261.7060546875" y="-331.0"/>
@@ -220,7 +220,7 @@
               <y:Geometry height="40.0" width="80.0" x="427.32725694444457" y="346.3802083333333"/>
               <y:Fill color="#E8EEF7" color2="#00FF00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="49.3046875" x="15.34765625" y="11.015625">Satcom<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="60.994140625" x="9.5029296875" y="11.015625">Satcomm<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -273,10 +273,10 @@
         <node id="n0::n10">
           <data key="d6">
             <y:GenericNode configuration="com.yworks.flowchart.directData">
-              <y:Geometry height="40.0" width="203.0" x="292.74371163512853" y="-264.3020462607142"/>
+              <y:Geometry height="40.0" width="149.0011574074074" x="276.418480153647" y="-254.25574996441787"/>
               <y:Fill color="#E8EEF7" color2="#008080" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="53.658203125" x="74.6708984375" y="11.015625">UART[0]<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="53.658203125" x="47.671477141203695" y="11.015625">UART[0]<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -289,7 +289,7 @@
         <node id="n0::n11">
           <data key="d6">
             <y:GenericNode configuration="com.yworks.flowchart.process">
-              <y:Geometry height="40.0" width="80.0" x="171.0" y="-283.25"/>
+              <y:Geometry height="40.0" width="80.0" x="153.73292824074076" y="-305.22627314814815"/>
               <y:Fill color="#E8EEF7" color2="#00FF00" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="48.4375" x="15.78125" y="11.015625">clksync<y:LabelModel>
@@ -517,14 +517,14 @@
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="207.24746372713506" width="219.6174045138888" x="-245.0386284722225" y="92.39084645805062"/>
+                  <y:Geometry height="258.169628078987" width="226.44762731481467" x="-245.0386284722225" y="83.60033719879127"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="219.6174045138888" x="0.0" y="0.0"> Initial Deployment</y:NodeLabel>
+                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="226.44762731481467" x="0.0" y="0.0"> Initial Deployment</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:Insets bottom="5" bottomF="5.0" left="5" leftF="5.0" right="5" rightF="5.0" top="5" topF="5.0"/>
-                  <y:BorderInsets bottom="0" bottomF="0.0" left="10" leftF="10.400245949074133" right="5" rightF="5.058810763888687" top="2" topF="2.1076344447273243"/>
+                  <y:BorderInsets bottom="6" bottomF="5.580729166665719" left="7" leftF="7.101996527777374" right="12" rightF="11.889033564814554" top="2" topF="2.1076344447273243"/>
                 </y:GroupNode>
                 <y:GroupNode>
                   <y:Geometry height="50.0" width="164.15834780092587" x="-242.60807291666697" y="60.793624235828446"/>
@@ -543,7 +543,7 @@
             <node id="n0::n18::n0">
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
-                  <y:Geometry height="40.0" width="194.15834780092598" x="-229.63838252314838" y="163.9100839120373"/>
+                  <y:Geometry height="40.0" width="194.15834780092598" x="-229.63838252314838" y="155.11957465277794"/>
                   <y:Fill color="#E8EEF7" color2="#FFFF00" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="149.119140625" x="22.51960358796299" y="11.015625">Initialize Magnetorquers<y:LabelModel>
@@ -562,7 +562,7 @@
             <node id="n0::n18::n1">
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
-                  <y:Geometry height="40.0" width="190.76750578703695" x="-228.50810185185208" y="120.95941840277794"/>
+                  <y:Geometry height="40.0" width="190.76750578703695" x="-228.50810185185208" y="112.16890914351859"/>
                   <y:Fill color="#E8EEF7" color2="#FFFF00" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="150.8359375" x="19.965784143518476" y="11.015625">Enable Payload 5V/3.3 V<y:LabelModel>
@@ -579,12 +579,17 @@
               </data>
             </node>
             <node id="n0::n18::n2">
+              <data key="d5"><![CDATA[Release DSA1
+Release DSA2
+Deploy DSA1
+Deploy DSA2
+Sensing GPIO's should be High (1) if fully deployed]]></data>
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
-                  <y:Geometry height="40.0" width="190.76750578703695" x="-228.50810185185208" y="207.99103009259284"/>
+                  <y:Geometry height="40.0" width="190.76750578703695" x="-229.18518518518533" y="199.6348379629634"/>
                   <y:Fill color="#E8EEF7" color2="#FFFF00" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="100.298828125" x="45.234338831018476" y="11.015625">Deploy Antenna<y:LabelModel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="163.703125" x="13.532190393518476" y="11.015625">Deploy DSA - Auto/manual<y:LabelModel>
                       <y:SmartNodeLabelModel distance="4.0"/>
                     </y:LabelModel>
                     <y:ModelParameter>
@@ -605,10 +610,34 @@ Deploy DSA2
 Sensing GPIO's should be High (1) if fully deployed]]></data>
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
-                  <y:Geometry height="40.0" width="190.76750578703695" x="-229.18518518518533" y="254.63831018518567"/>
+                  <y:Geometry height="40.0" width="190.76750578703695" x="-231.62557870370404" y="244.1064814814822"/>
                   <y:Fill color="#E8EEF7" color2="#FFFF00" transparent="false"/>
                   <y:BorderStyle color="#000000" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="74.8984375" x="57.934534143518476" y="11.015625">Deploy DSA<y:LabelModel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="149.998046875" x="20.384729456018476" y="11.015625">Antennae Deploy Config<y:LabelModel>
+                      <y:SmartNodeLabelModel distance="4.0"/>
+                    </y:LabelModel>
+                    <y:ModelParameter>
+                      <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                    </y:ModelParameter>
+                  </y:NodeLabel>
+                  <y:StyleProperties>
+                    <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+                  </y:StyleProperties>
+                </y:GenericNode>
+              </data>
+            </node>
+            <node id="n0::n18::n4">
+              <data key="d5"><![CDATA[Release DSA1
+Release DSA2
+Deploy DSA1
+Deploy DSA2
+Sensing GPIO's should be High (1) if fully deployed]]></data>
+              <data key="d6">
+                <y:GenericNode configuration="com.yworks.flowchart.process">
+                  <y:Geometry height="40.0" width="190.76750578703695" x="-232.93663194444514" y="291.18923611111256"/>
+                  <y:Fill color="#E8EEF7" color2="#FFFF00" transparent="false"/>
+                  <y:BorderStyle color="#000000" type="line" width="1.0"/>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="114.84765625" x="37.959924768518476" y="11.015625">Satcom Init/Config<y:LabelModel>
                       <y:SmartNodeLabelModel distance="4.0"/>
                     </y:LabelModel>
                     <y:ModelParameter>
@@ -624,12 +653,22 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </graph>
         </node>
         <node id="n0::n19">
+          <data key="d5"><![CDATA[Pictures every 3-4 seconds in time window.
+Generate thumbnails for transfer/image selection]]></data>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.flowchart.process">
               <y:Geometry height="40.0" width="143.6125397618846" x="91.55246550661707" y="263.73382241141826"/>
               <y:Fill color="#E8EEF7" color2="#FF9900" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="114.197265625" x="14.707637068442295" y="11.015625">Camera Controller<y:LabelModel>
+                  <y:SmartNodeLabelModel distance="4.0"/>
+                </y:LabelModel>
+                <y:ModelParameter>
+                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                </y:ModelParameter>
+              </y:NodeLabel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="4.0" x="69.8062698809423" y="18.0">
+                <y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -643,25 +682,6 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </data>
         </node>
         <node id="n0::n20">
-          <data key="d6">
-            <y:GenericNode configuration="com.yworks.flowchart.process">
-              <y:Geometry height="40.0" width="125.86020308414938" x="-231.25240022335734" y="320.62140375124363"/>
-              <y:Fill color="#E8EEF7" color2="#FF9900" transparent="false"/>
-              <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="112.615234375" x="6.622484354574681" y="11.015625">Antenna Deployer<y:LabelModel>
-                  <y:SmartNodeLabelModel distance="4.0"/>
-                </y:LabelModel>
-                <y:ModelParameter>
-                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-                </y:ModelParameter>
-              </y:NodeLabel>
-              <y:StyleProperties>
-                <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
-              </y:StyleProperties>
-            </y:GenericNode>
-          </data>
-        </node>
-        <node id="n0::n21">
           <data key="d6">
             <y:SVGNode>
               <y:Geometry height="46.887996673583984" width="39.527000427246094" x="294.0811178419325" y="268.2512418252453"/>
@@ -682,26 +702,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:SVGNode>
           </data>
         </node>
-        <node id="n0::n22">
-          <data key="d6">
-            <y:GenericNode configuration="com.yworks.flowchart.process">
-              <y:Geometry height="40.0" width="97.5" x="51.75" y="183.75"/>
-              <y:Fill color="#E8EEF7" color2="#FF9900" transparent="false"/>
-              <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="92.833984375" x="2.3330078125" y="11.015625">Health Monitor<y:LabelModel>
-                  <y:SmartNodeLabelModel distance="4.0"/>
-                </y:LabelModel>
-                <y:ModelParameter>
-                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-                </y:ModelParameter>
-              </y:NodeLabel>
-              <y:StyleProperties>
-                <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
-              </y:StyleProperties>
-            </y:GenericNode>
-          </data>
-        </node>
-        <node id="n0::n23" yfiles.foldertype="group">
+        <node id="n0::n21" yfiles.foldertype="group">
           <data key="d4"/>
           <data key="d6">
             <y:ProxyAutoBoundsNode>
@@ -731,8 +732,8 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
               </y:Realizers>
             </y:ProxyAutoBoundsNode>
           </data>
-          <graph edgedefault="directed" id="n0::n23:">
-            <node id="n0::n23::n0">
+          <graph edgedefault="directed" id="n0::n21:">
+            <node id="n0::n21::n0">
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
                   <y:Geometry height="40.0" width="138.99104477848755" x="394.79183633199136" y="183.86838079253732"/>
@@ -751,7 +752,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
                 </y:GenericNode>
               </data>
             </node>
-            <node id="n0::n23::n1">
+            <node id="n0::n21::n1">
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
                   <y:Geometry height="40.0" width="140.24104477848755" x="396.7709181659957" y="277.4341903962686"/>
@@ -770,7 +771,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
                 </y:GenericNode>
               </data>
             </node>
-            <node id="n0::n23::n2">
+            <node id="n0::n21::n2">
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
                   <y:Geometry height="40.0" width="137.74104477848755" x="395.54183633199136" y="230.3683807925372"/>
@@ -791,11 +792,10 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </node>
           </graph>
         </node>
-        <node id="n0::n24">
-          <data key="d5"/>
+        <node id="n0::n22">
           <data key="d6">
             <y:SVGNode>
-              <y:Geometry height="46.887996673583984" width="39.527000427246094" x="-53.89544465806745" y="322.3407238854304"/>
+              <y:Geometry height="46.887996673583984" width="39.527000427246094" x="-3.66396317658581" y="305.0736521261713"/>
               <y:Fill color="#CCCCFF" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="136.076171875" x="-48.27458572387695" y="50.887996673583984">Telemetry and Events<y:LabelModel>
@@ -812,8 +812,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:SVGNode>
           </data>
         </node>
-        <node id="n0::n25">
-          <data key="d5"/>
+        <node id="n0::n23">
           <data key="d6">
             <y:ShapeNode>
               <y:Geometry height="30.0" width="93.19444444444446" x="59.02777777777794" y="29.39583333333337"/>
@@ -830,6 +829,25 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ShapeNode>
           </data>
         </node>
+        <node id="n0::n24">
+          <data key="d6">
+            <y:GenericNode configuration="com.yworks.flowchart.process">
+              <y:Geometry height="40.0" width="196.86954979509036" x="308.32769676979626" y="-320.49348069501025"/>
+              <y:Fill color="#E8EEF7" color2="#FF9900" transparent="false"/>
+              <y:BorderStyle color="#000000" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="122.705078125" x="37.082235835045196" y="11.015625">GPS Data Processor<y:LabelModel>
+                  <y:SmartNodeLabelModel distance="4.0"/>
+                </y:LabelModel>
+                <y:ModelParameter>
+                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                </y:ModelParameter>
+              </y:NodeLabel>
+              <y:StyleProperties>
+                <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+              </y:StyleProperties>
+            </y:GenericNode>
+          </data>
+        </node>
       </graph>
     </node>
     <node id="n1" yfiles.foldertype="group">
@@ -838,15 +856,15 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="558.5625" width="504.79331313898706" x="578.545154858255" y="-332.35964206110754"/>
+              <y:Geometry height="527.1678240740741" width="510.8412732084315" x="572.4971947888106" y="-332.35964206110754"/>
               <y:Fill color="#F2F0D8" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#B7B69E" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="504.79331313898706" x="0.0" y="0.0">C Card</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#B7B69E" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="510.8412732084315" x="0.0" y="0.0">C Card</y:NodeLabel>
               <y:Shape type="rectangle"/>
               <y:DropShadow color="#D2D2D2" offsetX="4" offsetY="4"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="5" bottomF="5.0" left="5" leftF="5.0" right="5" rightF="5.0" top="5" topF="5.0"/>
-              <y:BorderInsets bottom="14" bottomF="14.098596643518476" left="12" leftF="12.433087384259352" right="25" rightF="24.767777838061193" top="14" topF="13.8515625"/>
+              <y:BorderInsets bottom="17" bottomF="17.238064236111143" left="0" leftF="0.0" right="25" rightF="24.767777838061193" top="4" topF="4.349804098144659"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="653.875" y="-316.0"/>
@@ -866,7 +884,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         <node id="n1::n0">
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="50.0" width="154.0" x="635.0169430526995" y="157.10426129537393"/>
+              <y:Geometry height="50.0" width="154.0" x="650.7142810156626" y="122.57011777685545"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="96.578125" x="28.7109375" y="28.03125">Sun Sensors x4<y:LabelModel>
@@ -898,7 +916,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         <node id="n1::n1">
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="68.15625" width="75.0" x="617.570690159181" y="-114.20339206110754"/>
+              <y:Geometry height="68.15625" width="75.0" x="615.0591160851071" y="-144.34228094999645"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="40.515625" x="17.2421875" y="39.03633469801683">DSA 1<y:LabelModel>
@@ -924,7 +942,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <data key="d5"><![CDATA[J6 83/85]]></data>
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="59.6875" width="174.0" x="595.9782422425144" y="-269.8678204331809"/>
+              <y:Geometry height="59.6875" width="174.0" x="595.9782422425144" y="-246.32181348873644"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="28.15234375" x="72.923828125" y="29.703125">GPS<y:LabelModel>
@@ -948,7 +966,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         <node id="n1::n3">
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="30.0" width="154.0" x="602.6129355295515" y="88.21857671195204"/>
+              <y:Geometry height="30.0" width="154.0" x="577.4971947888106" y="83.50937532306318"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="140.810546875" x="6.5947265625" y="6.015625">Accion MAX-1 Thruster<y:LabelModel>
@@ -963,6 +981,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </data>
         </node>
         <node id="n1::n4">
+          <data key="d4"><![CDATA[http://www.ti.com/product/TCA9554A]]></data>
           <data key="d6">
             <y:ShapeNode>
               <y:Geometry height="73.0" width="121.875" x="815.133190159181" y="-187.39089206110754"/>
@@ -989,7 +1008,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         <node id="n1::n5">
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="68.15625" width="75.0" x="703.0372073303182" y="-31.384710539875073"/>
+              <y:Geometry height="68.15625" width="75.0" x="769.5939202932813" y="-53.98887720654176"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="40.515625" x="17.2421875" y="39.03633469801683">DSA 2<y:LabelModel>
@@ -1068,6 +1087,50 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="29.318359375" x="0.3408203125" y="6.015625">MT1<y:LabelModel>
+                  <y:SmartNodeLabelModel distance="4.0"/>
+                </y:LabelModel>
+                <y:ModelParameter>
+                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                </y:ModelParameter>
+              </y:NodeLabel>
+              <y:Shape type="rectangle"/>
+            </y:ShapeNode>
+          </data>
+        </node>
+        <node id="n1::n10">
+          <data key="d5"><![CDATA[Maps P0-p7 to GPIO[296-303]]]></data>
+          <data key="d6">
+            <y:GenericNode configuration="com.yworks.flowchart.process">
+              <y:Geometry height="68.8831018518519" width="168.80787037037044" x="880.7078993055555" y="63.27517361111137"/>
+              <y:Fill color="#E8EEF7" color2="#FF9900" transparent="false"/>
+              <y:BorderStyle color="#000000" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="165.63671875" x="4.000000000000114" y="11.801049786261103">i2c Expander Kernel Driver<y:LabelModel>
+                  <y:SmartNodeLabelModel distance="4.0"/>
+                </y:LabelModel>
+                <y:ModelParameter>
+                  <y:SmartNodeLabelModelParameter labelRatioX="0.49499598648243837" labelRatioY="-0.5" nodeRatioX="0.5" nodeRatioY="-0.3286800467893878" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                </y:ModelParameter>
+              </y:NodeLabel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="98.552734375" x="35.12756799768522" y="36.19646990740722">&amp; Configuration<y:LabelModel>
+                  <y:SmartNodeLabelModel distance="4.0"/>
+                </y:LabelModel>
+                <y:ModelParameter>
+                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.5" nodeRatioX="0.0" nodeRatioY="0.2863353776358868" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                </y:ModelParameter>
+              </y:NodeLabel>
+              <y:StyleProperties>
+                <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+              </y:StyleProperties>
+            </y:GenericNode>
+          </data>
+        </node>
+        <node id="n1::n11">
+          <data key="d6">
+            <y:ShapeNode>
+              <y:Geometry height="30.0" width="158.7181712962963" x="617.53587962963" y="-301.5489004629629"/>
+              <y:Fill color="#FFCC00" transparent="false"/>
+              <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="119.74609375" x="19.486038773148152" y="6.015625">GPS Patch Antenna<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -1555,6 +1618,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
       <graph edgedefault="directed" id="n5:">
         <node id="n5::n0">
           <data key="d4"><![CDATA[http://www.onsemi.com/pub_link/Collateral/AX5042-D.PDF]]></data>
+          <data key="d5"><![CDATA[Antenna must be plugged in before powering UHF card.]]></data>
           <data key="d6">
             <y:ShapeNode>
               <y:Geometry height="68.75" width="140.0" x="591.0833333333333" y="320.625"/>
@@ -1586,7 +1650,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <y:Path sx="5.684341886080801E-13" sy="-2.8421709430404007E-14" tx="0.0" ty="2.8421709430404007E-13"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="27.630859375" x="-68.10674144603593" y="-41.74134177556212">CS2<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="27.630859375" x="-43.046560781973426" y="-39.97196569790695">CS2<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1604,7 +1668,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <y:Path sx="7.796126003015047" sy="17.181585539875073" tx="0.0" ty="-1.1368683772161603E-13"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="32.447265625" x="-135.59099998737202" y="-33.93456323093775">[2,4]<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="32.447265625" x="-190.51293668927417" y="-28.183230168319636">[2,4]<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1622,7 +1686,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <y:Path sx="5.684341886080801E-13" sy="8.526512829121202E-14" tx="0.0" ty="2.2737367544323206E-13"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="40.15234375" x="-95.21234305237147" y="-40.10090855671922">TX/RX<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="40.15234375" x="-165.53086292722685" y="-46.814648726409786">TX/RX<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1630,7 +1694,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="39.8125" x="-44.7903124449856" y="-39.35635851628081">COM1<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="39.8125" x="-44.78475824576685" y="-40.359276667383455">COM1<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1648,7 +1712,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <y:Path sx="2.2737367544323206E-13" sy="-1.9895196601282805E-13" tx="0.0" ty="2.8421709430404007E-13"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="103.9609375" x="-193.40557993635662" y="-26.02249975103632">CS10, 11, 12, 14<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="103.9609375" x="-179.1145043366331" y="-3.9461311956553686">CS10, 11, 12, 14<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1668,7 +1732,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="44.86328125" x="-212.8644899154723" y="-93.43937394757796">SCK[0]<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="44.86328125" x="-241.63528861388767" y="-58.44589194657752">SCK[0]<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1684,11 +1748,11 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="5.684341886080801E-13" sy="-2.8421709430404007E-14" tx="0.0" ty="-1.1368683772161603E-13">
-            <y:Point x="677.5848911184902" y="44.83255444075496"/>
+            <y:Point x="646.1902151925643" y="29.13521647779197"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="47.716796875" x="-168.04869080453568" y="-106.6094611840847">[23,24]<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="47.716796875" x="-137.0293399657586" y="-101.91816937500266">[23,24]<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1696,7 +1760,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="4.0" x="26.199120215275457" y="-43.65178553817672">
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="4.0" x="21.508304716964744" y="-56.182138577404785">
             <y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
@@ -1715,7 +1779,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <y:Path sx="69.4375" sy="6.53125" tx="0.0" ty="-1.1368683772161603E-13"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="19.4453125" x="5.520999232058102" y="15.603164351727912">PV<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="19.4453125" x="4.08375665800736" y="16.43804582054304">PV<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1723,7 +1787,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="32.447265625" x="-268.9596264426793" y="112.27057439651043">[22] <y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="32.447265625" x="-257.5866370513123" y="87.86283617950446">[22] <y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1741,7 +1805,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           <y:Path sx="2.2737367544323206E-13" sy="-1.2434497875801753E-13" tx="0.0" ty="-1.1368683772161603E-13"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="32.447265625" x="-70.79951205000702" y="0.5774121039972613">[0,1]<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="32.447265625" x="-80.52300217686309" y="11.778669003903588">[0,1]<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1761,7 +1825,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="79.57421875" x="-2.120674959449957" y="-53.77960928453177">DSA1_RLS_B<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="79.57421875" x="4.999973018700871" y="-44.35394145180274">DSA1_RLS_B<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1769,7 +1833,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="94.26019913028222" y="-75.10560497480563">P0<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="96.77173477481347" y="-53.59271892744235">P0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1790,7 +1854,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="87.42578125" x="5.0000114482435265" y="-11.097717093883205">DSA1_DPLY_B<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="87.42578125" x="4.999973018700871" y="-0.4981717451738916">DSA1_DPLY_B<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1798,7 +1862,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="108.03229589854482" y="-27.451232942455192">P1<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="110.54383154307607" y="-5.472061189525505">P1<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1818,7 +1882,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="79.57421875" x="-57.85388418695004" y="-33.50018263793737">DSA2_RLS_B<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="79.57421875" x="-64.13964277373816" y="-27.270570972615786">DSA2_RLS_B<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1826,7 +1890,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="66.67292351075253" y="-72.4873466653194">P2<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="10.784434741221276" y="-42.13625718778033">P2<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1847,7 +1911,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="87.42578125" x="29.506776072760886" y="19.937547872196227">DSA2_DPLY_B<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="87.42578125" x="-29.344463432177577" y="26.696188879087735">DSA2_DPLY_B<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -1855,7 +1919,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="118.34851090404436" y="-111.53048590075292">P3<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="18.87109375" x="51.79180924388811" y="-100.81015590082922">P3<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -2142,12 +2206,11 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e10" source="n0::n23::n2" target="n1::n5">
+    <edge id="e10" source="n0::n21::n2" target="n1::n10">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-5.6843418860808015E-14" sy="2.8421709430404007E-13" tx="0.0" ty="0.0">
+          <y:Path sx="-5.6843418860808015E-14" sy="2.8421709430404007E-13" tx="1.4633969907407618" ty="0.817687862694064">
             <y:Point x="830.4168363319914" y="208.75"/>
-            <y:Point x="834.1668363319914" y="83.75"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2155,14 +2218,13 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e11" source="n0::n23::n2" target="n1::n1">
+    <edge id="e11" source="n0::n21::n2" target="n1::n10">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-5.6843418860808015E-14" sy="2.8421709430404007E-13" tx="0.0" ty="0.0">
+          <y:Path sx="-5.6843418860808015E-14" sy="2.8421709430404007E-13" tx="-19.8849826388888" ty="0.11211442358673754">
             <y:Point x="815.4168363319914" y="212.5"/>
             <y:Point x="815.4168363319914" y="212.5"/>
-            <y:Point x="815.4168363319914" y="113.75"/>
-            <y:Point x="679.1668363319914" y="27.5"/>
+            <y:Point x="860.6251696653246" y="141.37731481481478"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2188,43 +2250,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e13" source="n0::n23::n1" target="n1::n7">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-1.1368683772161603E-13" sy="2.2737367544323206E-13" tx="0.0" ty="0.0">
-            <y:Point x="996.25" y="190.5"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e14" source="n0::n23::n1" target="n1::n8">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-1.1368683772161603E-13" sy="2.2737367544323206E-13" tx="0.0" ty="0.0">
-            <y:Point x="1018.75" y="189.25"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e15" source="n0::n23::n1" target="n1::n9">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-1.1368683772161603E-13" sy="2.2737367544323206E-13" tx="0.0" ty="0.0">
-            <y:Point x="1037.9999999999998" y="189.25"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e16" source="n0::n7" target="n5::n0">
+    <edge id="e13" source="n0::n7" target="n5::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-5.6843418860808015E-14" sy="-5.6843418860808015E-14" tx="0.0" ty="0.0"/>
@@ -2234,7 +2260,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e17" source="n0::n23::n0" target="n1::n3">
+    <edge id="e14" source="n0::n21::n0" target="n1::n3">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-5.6843418860808015E-14" sy="-2.8421709430404007E-13" tx="0.0" ty="0.0"/>
@@ -2244,17 +2270,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e18" source="n0::n20" target="n2::n2">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-8.526512829121202E-14" sy="1.1368683772161603E-13" tx="-1.1368683772161603E-13" ty="-5.6843418860808015E-14"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e19" source="n0::n19" target="n2::n1">
+    <edge id="e15" source="n0::n19" target="n2::n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="5.6843418860808015E-14" sy="2.2737367544323206E-13" tx="2.8421709430404007E-14" ty="5.6843418860808015E-14"/>
@@ -2280,7 +2296,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e20" source="n0::n16" target="n2::n0">
+    <edge id="e16" source="n0::n16" target="n2::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-8.89317197202432" sy="53.75097651739293" tx="9.947598300641403E-14" ty="-5.6843418860808015E-14">
@@ -2292,11 +2308,11 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e21" source="n0::n16" target="n1::n2">
+    <edge id="n0::e0" source="n0::n16" target="n0::n24">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-3.747938395889982" sy="-19.19677732763991" tx="0.0" ty="0.0">
-            <y:Point x="265.5666232638889" y="-187.109302662037"/>
+          <y:Path sx="-3.747938395889982" sy="-19.19677732763991" tx="-42.65107120437807" ty="-6.461959119804533">
+            <y:Point x="245.16008391203707" y="-262.45652488425924"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2304,7 +2320,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e22" source="n0::n15" target="n2::n0">
+    <edge id="e17" source="n0::n15" target="n2::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="4.263256414560601E-14" sy="2.7000623958883807E-13" tx="9.947598300641403E-14" ty="-5.6843418860808015E-14">
@@ -2316,7 +2332,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e23" source="n2::n0" target="n0::n12">
+    <edge id="e18" source="n2::n0" target="n0::n12">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="9.947598300641403E-14" sy="-5.6843418860808015E-14" tx="0.0" ty="-2.8421709430404007E-14">
@@ -2341,12 +2357,11 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e24" source="n1::n2" target="n0::n11">
+    <edge id="e19" source="n1::n2" target="n0::n24">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="-2.8421709430404007E-13">
-            <y:Point x="541.5" y="-299.5"/>
-            <y:Point x="371.5" y="-298.25"/>
+          <y:Path sx="0.0" sy="0.0" tx="0.9875283326585418" ty="-2.7738804161008943">
+            <y:Point x="541.5" y="-303.26736111111114"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2354,7 +2369,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e0" source="n0::n0" target="n0::n12">
+    <edge id="n0::e1" source="n0::n0" target="n0::n12">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2372,7 +2387,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e1" source="n0::n1" target="n0::n14">
+    <edge id="n0::e2" source="n0::n1" target="n0::n14">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-78.69759845825973" ty="-8.508982510174363">
@@ -2395,7 +2410,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e2" source="n0::n2" target="n0::n9">
+    <edge id="n0::e3" source="n0::n2" target="n0::n9">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2413,7 +2428,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e3" source="n0::n5" target="n0::n0">
+    <edge id="n0::e4" source="n0::n5" target="n0::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2432,7 +2447,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e4" source="n0::n6" target="n0::n7">
+    <edge id="n0::e5" source="n0::n6" target="n0::n7">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -2446,26 +2461,6 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
             </y:LabelModel>
             <y:ModelParameter>
               <y:SmartEdgeLabelModelParameter angle="0.0" distance="31.137960322466306" distanceToCenter="true" position="right" ratio="0.794476069979048" segment="1"/>
-            </y:ModelParameter>
-            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-          </y:EdgeLabel>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="n0::e5" source="n0::n6" target="n0::n22">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="21.734374999999986" ty="7.375">
-            <y:Point x="207.99999999999977" y="226.75"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="85.45703125" x="-130.05713408876665" y="-0.5688269212707837">Health Status<y:LabelModel>
-              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartEdgeLabelModelParameter angle="0.0" distance="1.030991624307355" distanceToCenter="false" position="left" ratio="22.407508335146495" segment="-2"/>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
@@ -2563,7 +2558,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e13" source="n0::n16" target="n0::n23::n1">
+    <edge id="n0::e13" source="n0::n16" target="n0::n21::n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="9.52839854145443" sy="19.196777327640472" tx="-1.1368683772161603E-13" ty="2.8421709430404007E-14">
@@ -2588,7 +2583,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e15" source="n0::n16" target="n0::n23::n0">
+    <edge id="n0::e15" source="n0::n16" target="n0::n21::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="73.48092960680734" sy="55.57918582335778" tx="-5.6843418860808015E-14" ty="0.0"/>
@@ -2665,13 +2660,13 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e19" source="n0::n19" target="n0::n21">
+    <edge id="n0::e19" source="n0::n19" target="n0::n20">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="185.3125" x="-64.30368816117905" y="22.557578334538448">Image/Metadata Management<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.46875" x="-38.38181316117905" y="22.557578334538448">Image/Metadata Files<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -2683,7 +2678,7 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e20" source="n0::n22" target="n0::n15">
+    <edge id="n0::e20" source="n0::n15" target="n0::n22">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2693,11 +2688,21 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e21" source="n0::n22" target="n0::n23::n0">
+    <edge id="n0::e21" source="n0::n15" target="n0::n23">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-5.6843418860808015E-14" ty="0.0">
-            <y:Point x="315.8333333333333" y="201.125"/>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="n0::e22" source="n0::n6" target="n0::n15">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="46.529586226851734" y="230.43460648148198"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2705,8 +2710,74 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e22" source="n0::n15" target="n0::n24">
-      <data key="d9"/>
+    <edge id="n0::e23" source="n0::n24" target="n0::n11">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="33.736328125" x="-54.17296508262211" y="-36.38778703638212">Time<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.5" segment="0"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="n1::e8" source="n1::n10" target="n1::n4">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="standard" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="4.0" x="42.595419877803124" y="-96.43933930631809">
+            <y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="73.82737435891605" distanceToCenter="true" position="right" ratio="0.391458237925971" segment="-1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e20" source="n0::n21::n1" target="n1::n10">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="951.5057870370372" y="210.17476851851865"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e21" source="n1::n10" target="n0::n13">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="93.021484375" x="-193.00569651101046" y="-17.68983444446387">GPIO[296-303]<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="left" ratio="0.2987377121334214" segment="-1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="n1::e9" source="n1::n2" target="n1::n11">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -2716,11 +2787,14 @@ Sensing GPIO's should be High (1) if fully deployed]]></data>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e23" source="n0::n15" target="n0::n25">
-      <data key="d9"/>
+    <edge id="e22" source="n5::n0" target="n2::n2">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="533.6426504629634" y="390.00636574074076"/>
+            <y:Point x="144.34866898148186" y="396.285300925926"/>
+            <y:Point x="-136.6336805555552" y="437.0983796296297"/>
+          </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>

@@ -1,0 +1,86 @@
+#+TITLE: Irvine-01 Software Tasks
+#+AUTHOR: Maurice Ling
+#+DATE: <2016-10-30 Sun>
+#
+# This file created and edited with org-mode in emacs.
+#
+* Development Environment [3/3]
+  - [X] VPN Access
+  - [X] Polysat binary access
+  - [X] Github project setup [5/5]
+    - [X] irvine-01-sw
+    - [X] irvine-01-cfg
+    - [X] toolchain
+    - [X] kernel
+    - [X] buildroot
+  - [ ] Software development process
+* General System
+  - [ ] Change root password
+  - [ ] authorized_keys configuration
+  - [ ] GPS clock sync
+* Initial Deployment [0/2]
+  - [ ] Initial DSA Deployment
+  - [ ] Payload Power On
+    - [ ] 5V0_PL_Enable
+    - [ ] 3V3_PL_Enable (Is this needed?)
+* I2C Expander TCA9554A Kernel Driver [1/2]
+  - [X] Add Driver to kernel
+  - [ ] Driver setup module
+* DSA Deployment [0/3]
+  - [ ] Monitor Deployment Sensors
+  - [ ] Manual Control
+* Camera Control [0/4]
+  - [ ] Take Pictures Immediately after deployment
+  - [ ] Targeting interface
+  - [ ] Thumbnail generation
+  - [ ] Picture window trigger
+    - take pictures every 3-4 seconds within a time/target window
+* ADCS [0/2]
+  - [ ] Scenarios [0/5]
+    - [ ] Detumbling
+    - [ ] Sun Tracking
+    - [ ] Object Targeting/Camera Trigger
+    - [ ] Attitude Determination
+      - [ ] Store telemetry
+    - [ ] De-orbiting
+  - [ ] Device Interfaces [0/7]
+    - [ ] Accelerometer
+    - [ ] Magnetometer
+    - [ ] Gyro
+    - [ ] Magnetorquer
+    - [ ] GPS Interface
+      - [ ] Device Configuration/Communication Test via Serial connection
+      - [ ] Cable Interface with C Card/Intrepid
+      - [ ] GPS Data Processor
+    - [ ] Thruster [0/3]
+      - [ ] Test SPI communications via Host Adapter
+      - [ ] Cable Interface with C-Card (cable)
+      - [ ] Thruster control via Intrepid SPI bus
+    - [ ] Sun Sensor [0/2]
+      - [ ] Calibration
+      - [ ] Angle Computations
+* Comms [0/5]
+  - [ ] UHF Radio [0/2] - *Make sure antenna is always connected when powering*
+    - [ ] Integration with Intrepid Card
+    - [ ] SDR/Comms Bench Testing
+  - [ ] Satcomm Configuration (satcomm.cfg)
+  - [ ] Add Satcomm process to inittab 
+  - [ ] Antenna Deployment Configuration
+  - [-] Beacon [1/3]
+    - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]])
+    - [ ] Broadcast beacon to 224.0.0.1 port 2
+    - [ ] Beacon contents
+      - [ ] Identifier (e.g. irvine-01)
+      - [ ] Health/Telemetry Information
+        - [ ] GPS Coordinates
+        - [ ] System Time
+        - [ ] Uptime
+* Ground Station [0/3]
+  - [ ] Beacon Decoder
+  - [ ] Data Offload Controller (arsftp)
+  - [ ] Command and Control
+    - [ ] Clock Check/sync
+    - [ ] Health Monitoring/Reporting
+    - [ ] DSA Monitor/Control
+    - [ ] Data Offload Initiation
+    - [ ] Data Archiving
