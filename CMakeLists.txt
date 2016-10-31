@@ -25,14 +25,6 @@ include(gmock)
 #
 include(DownloadProject)
 
-#
-# Google unit test framework
-#
-download_project(PROJ                googletest
-                 GIT_REPOSITORY      https://github.com/google/googletest.git
-                 GIT_TAG             release-1.8.0
-                 ${UPDATE_DISCONNECTED_IF_AVAILABLE})
-                 
 # WITH_BUILDROOT allows you to set whether we are compiling as part of the
 # build root environment or not.  
 option(WITH_BUILDROOT "with(out) buildroot compile" OFF)
@@ -40,12 +32,20 @@ if (WITH_BUILDROOT)
 else (WITH_BUILDROOT)
   SET(NOT_BUILDROOT_COMPILE ON)
   #
+  # Google unit test framework
+  #
+  download_project(PROJ                googletest
+                   GIT_REPOSITORY      https://github.com/google/googletest.git
+                   GIT_TAG             release-1.8.0
+                   ${UPDATE_DISCONNECTED_IF_AVAILABLE})
+  #
   # eigen library for linear algebra.  Matricies, vectors, numerical solvers
   # and algorithms.
   #
   download_project(PROJ                eigen
     URL      http://bitbucket.org/eigen/eigen/get/3.2.10.tar.bz2
     ${UPDATE_DISCONNECTED_IF_AVAILABLE})
+
 endif(WITH_BUILDROOT)
 
 #
@@ -53,12 +53,11 @@ endif(WITH_BUILDROOT)
 #
 SET(MAKE_INCLUDE_CURRENT_DIR ON)
 
-#
-# Unit test framework
-#
-ADD_SUBDIRECTORY(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-
 if (!WITH_BUILDROOT)
+  #
+  # Unit test framework
+  #
+  ADD_SUBDIRECTORY(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
   #
   # matrix/linear algebra class library
   #
