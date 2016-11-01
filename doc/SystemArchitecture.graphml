@@ -882,6 +882,7 @@ Generate thumbnails for transfer/image selection]]></data>
       </data>
       <graph edgedefault="directed" id="n1:">
         <node id="n1::n0">
+          <data key="d4"><![CDATA[http://www.alldatasheet.com/datasheet-pdf/pdf/212390/HAMAMATSU/S5990-01.html]]></data>
           <data key="d6">
             <y:ShapeNode>
               <y:Geometry height="50.0" width="154.0" x="650.7142810156626" y="122.57011777685545"/>
