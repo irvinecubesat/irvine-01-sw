@@ -23,9 +23,14 @@
   - [ ] Payload Power On
     - [ ] 5V0_PL_Enable
     - [ ] 3V3_PL_Enable (Is this needed?)
-* I2C Expander TCA9554A Kernel Driver [1/2]
+* I2C Expander TCA9554A Kernel Driver [2/3]
   - [X] Add Driver to kernel
-  - [ ] Driver setup module
+  - [X] Driver setup module
+  - [ ] Testing
+    - [ ] i2cdetect -l 1 shows 0x38 used by kernel
+    - [ ] gpio 300-302 come up Low
+    - [ ] gpio 296-299, 303 come up High
+    - [ ] Can set gpio's 300-303
 * DSA Deployment [0/3]
   - [ ] Monitor Deployment Sensors
   - [ ] Manual Control
