@@ -1,12 +1,4 @@
-#
-# Host (x86_64) libraries are located in the toolchain lib directory.
-# Only add these libraries if we're not crosscompiling.
-# The cmake/arm-linux.cmake file is used during crosscompiling and
-# arm libs are under sysroot of the toolchain
-#
-IF (NOT CMAKE_CROSSCOMPILING)
-  link_directories(/opt/toolchain/toolchain-arm-linux/lib /opt/toolchain/toolchain-arm-linux/lib64)
-ENDIF (NOT CMAKE_CROSSCOMPILING)
+include(${CMAKE_SOURCE_DIR}/cmake/nativeCompile.cmake)
 
 #
 # The beacon executable is build using the beacon.c source file
@@ -25,7 +17,7 @@ INSTALL(FILES beacon.cmd.cfg DESTINATION /etc/ COMPONENT config)
 #
 target_link_libraries(beacon proc)
 
-IF (NOT_BUILDROOT_COMPILE)
+IF (PROJECT_COMPILE)
 # Include directories to search in
 target_include_directories(beacon PUBLIC /opt/toolchain/toolchain-arm-linux/include)
-ENDIF (NOT_BUILDROOT_COMPILE)
+ENDIF (PROJECT_COMPILE)
