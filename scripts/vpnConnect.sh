@@ -4,17 +4,16 @@
 #
 keyDir=~/.ssh
 sshConfig=$keyDir/config
-commonName=$(whoami)
 cfgFile=~/.irvine-01.keyInfo
-instdir=$(cd $(dirname $0); pwd)
-ovpnCfg=$(mktemp)
-ovpnx=~/.ssh/*.ovpnx
+instdir=$(cd "$(dirname "$0")"; pwd)
+ovpnCfg=$(mktemp --tmpdir="${HOME}"/.ssh/)
+ovpnx=$(find ~/.ssh/ -name "*.ovpnx"|head -1)
 cmd="connect"
 keytool=$instdir/opensslKeyTool.sh
 
 cleanup()
 {
-    rm -f $ovpnCfg
+    rm -f "$ovpnCfg"
 }
 
 trap cleanup EXIT
@@ -91,22 +90,24 @@ else
     usage
 fi
 
-if [ ! -e $ovpnx ]; then
+if [ ! -e "$ovpnx" ]; then
     log "[E] $ovpnx does not exist"
     usage
 fi
 
-cert=$keyDir/${keyName}.cert
-privKey=$keyDir/${keyName}.key
-pubKey=$keyDir/${privKey}.pub
+# shellcheck disable=SC2154
+cert=$keyDir/"${keyName}.cert"
+# shellcheck disable=SC2154
+privKey=$keyDir/"${keyName}.key"
+pubKey=$keyDir/"${privKey}.pub"
 
 #
 # Set up ssh config
 #
 setupSshConfig()
 {
-    chmod 700 $keyDir
-    chmod 700 $keyDir/*.key
+    chmod 700 "$keyDir"
+    chmod 700 "$keyDir/*.key"
     cat >$sshConfig <<EOF
 Host cubesatgateway
      HostName 10.133.33.2
@@ -118,36 +119,60 @@ Host irvine-01
   ProxyCommand ssh -q cubesatgateway nc 192.168.0.100 22
   
 EOF
-    chmod 600 $sshConfig
+    chmod 600 "$sshConfig"
     log "[I] Updated $sshConfig: "
-    cat $sshConfig
+    cat "$sshConfig"
 }
 
 case $cmd in
     "connect")
-        if [ ! -f $sshConfig ]; then
+        if [ ! -f "$sshConfig" ]; then
             setupSshConfig
         fi
         if [ ! -f "${pubKey}" ]; then
-            $keytool -p -f $cfgFile
+            $keytool -p -f "$cfgFile"
             if [ $? -ne 0 ]; then
                 log "[E] Unable to generate public key from $cert"
                 exit 1
             fi
         fi
 
-        #
-        # Some systems like Fedora don't have nogroup, so replace it with nobody
-        #
-        if grep -q nogroup /etc/group; then
-            $keytool -d $ovpnx -o $ovpnCfg -f $cfgFile
+        NOBODY_SED="sed -e s/nogroup/nobody/g"
+        
+        hasNoGroup()
+        {
+            grep -q nogroup /etc/group
+        }
+        
+        decryptCfg()
+        {
+            #
+            # Some systems like Fedora don't have nogroup, so replace it with nobody
+            #
+            if hasNoGroup; then
+                $keytool -d "$ovpnx" -o "$ovpnCfg" -f "$cfgFile"
+            else
+                $keytool -d "$ovpnx" -o /dev/stdout -f "$cfgFile" |$NOBODY_SED>"$ovpnCfg"
+            fi
+            if [ $? -ne 0 ]; then
+                log "[E] Unable to decode openvpn configuration"
+                exit 1
+            fi
+        }
+        copyCfg()
+        {
+            if hasNoGroup; then
+                cp "$ovpnx" "$ovpnCfg"
+            else
+                $NOBODY_SED "$ovpnx" >"$ovpnCfg"
+            fi
+        }
+        if [ "${ovpnx##*.}" = .vpnx ]; then
+            decryptCfg
         else
-            $keytool -d $ovpnx -o /dev/stdout -f $cfgFile |sed -e "s/nogroup/nobody/g">$ovpnCfg
+            copyCfg
         fi
-        if [ $? -ne 0 ]; then
-            log "[E] Unable to decode openvpn configuration"
-            exit 1
-        fi
+        
         sudo openvpn --config "${ovpnCfg}" --script-security 2 --up "$0 -m"
         ;;
     "update")
