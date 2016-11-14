@@ -44,9 +44,31 @@
     - [ ] gpio 296-299, 303 come up High
     - [ ] Can set gpio's 300-303
 * DSA Deployment [0/3]
-  - [ ] Initial Deployment
+  Create dsa_deployer
+  | Operation       | GPIO |
+  |-----------------+------|
+  | DSA1_RLS_B      |  296 |
+  | DSA1_DPLY_B     |  297 |
+  | DSA2_RLS_B      |  298 |
+  | DSA2_DPLY_B     |  299 |
+  | DSA_EN_BAR      |  303 |
+  | Deploy Sense 1A |    0 |
+  | Deploy Sense 1B |    1 |
+  | Deploy Sense 2A |    2 |
+  | Deploy Sense 2B |    4 |
+  |-----------------+------|
+  - [ ] Initial Deployment Algorithm
+    For each of the following operations, you need to set the DSA_EN_BAR GPIO
+    timer
+    - Release DSA1
+    - Release DSA2
+    - Deploy DSA1
+    - Deploy DSA2
   - [ ] Monitor Deployment Sensors
+    Use the Deploy Sense GPIOs to provide the status of deployment
+    When the DSA's are deployed, the GPIO should be 0.
   - [ ] Manual Control
+    - Add ability to manually deploy DSA1 or DSA2 based on a command
 * Camera Control [0/4]
   - [ ] Take Pictures Immediately after deployment
   - [ ] Targeting interface

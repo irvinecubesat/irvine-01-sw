@@ -583,7 +583,7 @@
 Release DSA2
 Deploy DSA1
 Deploy DSA2
-Sensing GPIO's should be High (1) if fully deployed]]></data>
+Sensing GPIO's should be Low (0) if fully deployed]]></data>
               <data key="d6">
                 <y:GenericNode configuration="com.yworks.flowchart.process">
                   <y:Geometry height="40.0" width="190.76750578703695" x="-229.18518518518533" y="199.6348379629634"/>
