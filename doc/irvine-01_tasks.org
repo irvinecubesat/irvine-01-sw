@@ -158,10 +158,10 @@
       - 129.65.147.55 (engineering unit)
   - [ ] Add Satcomm process to inittab 
   - [-] Beacon [1/3]
-    Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
+    - Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
     - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]]) 
     - [ ] Broadcast beacon to 224.0.0.1 port 2
-    - [ ] Beacon contents 
+    - [ ] Beacon contents [0/2]
       - Beacon contents are limited to 227 bytes.
       - Use packed binary structure in network order.
       - The structure takes the form of:
