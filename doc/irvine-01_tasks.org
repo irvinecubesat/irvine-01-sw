@@ -56,6 +56,9 @@
 * ADCS
 ** ADCS Scenarios [0/5]
   - [ ] Detumbling
+    - http://digitalcommons.calpoly.edu/cgi/viewcontent.cgi?article=1022&context=aerosp
+    - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140016484.pdf
+    - adcs_manager.c (attitude_control) from upsat:  https://github.com/librespacefoundation/upsat-adcs-software/blob/master/adcs/Src/adcs_manager.c
   - [ ] Sun Tracking
   - [ ] Object Targeting/Camera Trigger
   - [ ] Attitude Determination
@@ -81,10 +84,29 @@
     - [ ] Interface
     - [ ] Test
   - [ ] GPS Interface [0/5]
-    - [ ] Device Configuration/Communication Test via Serial connection
+    - [ ] OEM615V Device Configuration/Communication Test via Serial connection
+      - http://www.novatel.com/assets/Documents/Manuals/om-20000128.pdf
+      - Pg 121 has a diagram of the pin-outs
+        - Pin 1 - 6-12 VDC for Antenna output
+        - Pin 2 - 3.3 V Supply
+        - Pin 10 - Gnd
+        - Pins 11/12/13 - Com 1 TXD1/RXD/GND
+        - Pins 14/15/16 - Com 2 TXD/RXD/GND
+        - Pin 17 - PV Active high output
+        - Pin 18 - Gnd
+        - 19 - PPS for GPS time synchronization
+      - You need two power supplies, one 6-12 VDC and one 3.3 V.
+      - See Pages 39-40 regarding connecting the comm ports to RS-232
+      - See Pages 52, 53 regarding Serial port communication setup.
+      - Configure, retrieve logs, and verify that PV 
+        gets set high when a valid signal is detected
+      - Validate that the GPS coordinates are accurate
     - [ ] Cable Interface with C Card/Intrepid
     - [ ] Driver
     - [ ] GPS Data Processor/Interface
+        - Retrieve GPS coordinate information
+        - Current Date/Time
+        - PV (This should be GPIO 22)
     - [ ] Integration Test
   - [ ] Thruster [0/3]
     - [ ] Test SPI communications via Host Adapter
