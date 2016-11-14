@@ -1,6 +1,7 @@
 #+TITLE: Irvine-01 Software Tasks
 #+AUTHOR: Maurice Ling
 #+DATE: <2016-10-30 Sun>
+#+DISABLE_PLAIN_FOOTNOTES: No footnotes
 #
 # This file created and edited with org-mode in emacs, but you can use any
 # text editor to edit.
@@ -161,8 +162,15 @@
     - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]]) 
     - [ ] Broadcast beacon to 224.0.0.1 port 2
     - [ ] Beacon contents 
-      Beacon contents are limited to 227 bytes.
-      Use packed binary structure in network order.
+      o Beacon contents are limited to 227 bytes.
+      o Use packed binary structure in network order.
+      o The structure takes the form of:
+        struct {
+          uint16_t id; 
+          uint8_t gyro[3];
+          (fill in the data)...
+        } __attribute__((packed));
+      o Use network order (convert any multi-byte value using the htonl function
       - Reduce the resolution (round them down) to save on bytes
       - If values are not valid, then they should be set to 0
       - [ ] Identifier/magic number
