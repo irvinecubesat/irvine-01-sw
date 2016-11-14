@@ -57,18 +57,18 @@
   | Deploy Sense 2A |    2 |
   | Deploy Sense 2B |    4 |
   |-----------------+------|
-  - [ ] Initial Deployment Algorithm
+  - [ ] Deployment Operations
     For each of the following operations, you need to set the DSA_EN_BAR GPIO
-    timer
-    - Release DSA1
-    - Release DSA2
-    - Deploy DSA1
-    - Deploy DSA2
+    timer.  Service should allow executing these operations individually
+    via libproc events
+    - [ ] Release DSA1
+    - [ ] Release DSA2
+    - [ ] Deploy DSA1
+    - [ ]Deploy DSA2
   - [ ] Monitor Deployment Sensors
     Use the Deploy Sense GPIOs to provide the status of deployment
     When the DSA's are deployed, the GPIO should be 0.
-  - [ ] Manual Control
-    - Add ability to manually deploy DSA1 or DSA2 based on a command
+  - [ ] Utility to command release/deploy via command line
 * Camera Control [0/4]
   - [ ] Take Pictures Immediately after deployment
   - [ ] Targeting interface
