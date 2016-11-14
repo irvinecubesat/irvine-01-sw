@@ -163,10 +163,15 @@
     - [ ] Beacon contents 
       Beacon contents are limited to 227 bytes.
       Use packed binary structure in network order.
+      - Reduce the resolution (round them down) to save on bytes
+      - If values are not valid, then they should be set to 0
       - [ ] Identifier/magic number
       - [ ] Health/Telemetry Information
-        - [ ] GPS Coordinates
-        - [ ] Attitude
+        - [ ] GPS Coordinates (when available, if valid)
+        - [ ] Attitude (when available, if valid)
+        - [ ] Gyro telemetry
+        - [ ] Magnetometer
+        - [ ] Accelerometer
         - [ ] System Time
         - [ ] Uptime
 * Ground Station [0/3]
