@@ -96,6 +96,9 @@
         - Pin 18 - Gnd
         - 19 - PPS for GPS time synchronization
       - You need two power supplies, one 6-12 VDC and one 3.3 V.
+      - Connect COM1 pins to RS232 DB-9 serial port connector of proper
+        gender to connect to the serial cable on the gateway.  
+        (See http://www.db9-pinout.com/).  
       - See Pages 39-40 regarding connecting the comm ports to RS-232
       - See Pages 52, 53 regarding Serial port communication setup.
       - Configure, retrieve logs, and verify that PV 
@@ -104,9 +107,9 @@
     - [ ] Cable Interface with C Card/Intrepid
     - [ ] Driver
     - [ ] GPS Data Processor/Interface
-        - Retrieve GPS coordinate information
-        - Current Date/Time
-        - PV (This should be GPIO 22)
+      - Retrieve GPS coordinate information
+      - Current Date/Time
+      - PV (This should be GPIO 22)
     - [ ] Integration Test
   - [ ] Thruster [0/3]
     - [ ] Test SPI communications via Host Adapter
