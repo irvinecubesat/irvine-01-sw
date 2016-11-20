@@ -45,7 +45,7 @@
     - [ ] gpio 296-299, 303 come up High
     - [ ] Can set gpio's 300-303
 * DSA Deployment [0/3]
-  Create dsa_deployer
+  Create dsa_deployer service to initiate DSA release and deployment.
   | Operation       | GPIO |
   |-----------------+------|
   | DSA1_RLS_B      |  296 |
@@ -61,15 +61,43 @@
   - [ ] Deployment Operations
     For each of the following operations, you need to set the DSA_EN_BAR GPIO
     timer.  Service should allow executing these operations individually
-    via libproc events
+    via libproc events using the command struct:  
+    #+BEGIN_SRC c-mode
+        typedef enum dsaOp
+        {
+          DSA1_RELEASE=0,
+          DSA2_RELEASE=1,
+          DSA1_DEPLOY=2,
+          DSA2_DEPLOY=3
+        } DsaOp;
+
+        /**
+         * Dsa Command structure
+         **/
+        struct DsaCommand {
+          DsaOp op; /* Operation */
+        } __attribute__((packed));
+    #+END_SRC
     - [ ] Release DSA1
     - [ ] Release DSA2
     - [ ] Deploy DSA1
-    - [ ]Deploy DSA2
+    - [ ] Deploy DSA2
   - [ ] Monitor Deployment Sensors
-    Use the Deploy Sense GPIOs to provide the status of deployment
+    Use the Deploy Sense GPIOs to provide the status of deployment 
     When the DSA's are deployed, the GPIO should be 0.
-  - [ ] Utility to command release/deploy via command line
+    Structure for status should contain the status of the four deployment sensors
+    #+BEGIN_SRC c-mode
+        /**
+         * Array values set to 0 for not deployed, 1 for deployed
+         **/
+        struct DsaStatus {
+          uint_8_t dsa1Status[2]; /* sensors A and B for DSA 1 */
+          uint_8_t dsa2Status[2]; /* sensors A and B for DSA 2 */
+        } __attribute__((packed));
+    #+END_SRC
+  - [ ] Utility to command release, deploy, and query status via command line
+    For the utility and service interaction, use the adcs-sensors service
+    and accompanying utility as an example.
 * Camera Control [0/4]
   - [ ] Take Pictures Immediately after deployment
   - [ ] Targeting interface
@@ -165,11 +193,13 @@
       - Beacon contents are limited to 227 bytes.
       - Use packed binary structure in network order.
       - The structure takes the form of:
+#+BEGIN_SRC c-mode
         struct {
           uint16_t id; 
           uint8_t gyro[3];
           (fill in the data)...
         } __attribute__((packed));
+#+END_SRC
       - Use network order (convert any multi-byte value using the htonl function)
       - Reduce the resolution (round them down) to save on bytes
       - If values are not valid, then they should be set to 0
