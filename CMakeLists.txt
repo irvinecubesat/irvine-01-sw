@@ -30,7 +30,7 @@ include(DownloadProject)
 option(WITH_BUILDROOT "with(out) buildroot compile" OFF)
 if (WITH_BUILDROOT)
 else (WITH_BUILDROOT)
-  SET(NOT_BUILDROOT_COMPILE ON)
+  SET(PROJECT_COMPILE ON)
   #
   # Google unit test framework
   #
@@ -62,8 +62,13 @@ if (!WITH_BUILDROOT)
   # matrix/linear algebra class library
   #
   ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
-endif (WITH_BUILDROOT)
+endif (!WITH_BUILDROOT)
   
+#
+# ADCS Sensor service
+#
+ADD_SUBDIRECTORY(adcs-sensors)
+
 #
 # Beacon broadcasting library
 #
