@@ -58,6 +58,8 @@
   | Deploy Sense 2A |    2 |
   | Deploy Sense 2B |    4 |
   |-----------------+------|
+  Read/write the specified GPIOs.  Here's a [[http://falsinsoft.blogspot.com/2012/11/access-gpio-from-linux-user-space.html][Tutorial about how to read/write 
+  GPIO's from user space]]. 
   - [ ] Deployment Operations
     For each of the following operations, you need to set the DSA_EN_BAR GPIO
     timer.  Service should allow executing these operations individually
@@ -75,6 +77,7 @@
          * Dsa Command structure
          **/
         struct DsaCommand {
+          
           DsaOp op; /* Operation */
         } __attribute__((packed));
     #+END_SRC
