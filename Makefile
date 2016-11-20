@@ -55,7 +55,7 @@ AUTH_FILE=$(HOME)/.polysat_fsw.auth
 genKeys: 
 	$(MAKE) $(KEYINFO_FILE)
 
-authfile:
+authfile: clean-auth
 	$(MAKE) $(AUTH_FILE)
 
 $(KEYINFO_FILE):
