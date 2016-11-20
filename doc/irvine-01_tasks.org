@@ -2,10 +2,8 @@
 #+AUTHOR: Maurice Ling
 #+DATE: <2016-10-30 Sun>
 #+DISABLE_PLAIN_FOOTNOTES: No footnotes
-#
 # This file created and edited with org-mode in emacs, but you can use any
 # text editor to edit.
-#
 * Development Environment [3/3]
   - [X] VPN Access
   - [X] Polysat binary access

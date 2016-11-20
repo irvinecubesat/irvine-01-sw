@@ -15,7 +15,7 @@ INSTALL(FILES beacon.cmd.cfg DESTINATION /etc/ COMPONENT config)
 #
 # Libraries that beacon depends on
 #
-target_link_libraries(beacon proc)
+target_link_libraries(beacon proc pthread)
 
 IF (PROJECT_COMPILE)
 # Include directories to search in
