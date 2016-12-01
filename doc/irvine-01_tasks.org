@@ -115,6 +115,10 @@
   - [ ] Object Targeting/Camera Trigger
   - [ ] Attitude Determination
   - [ ] De-orbiting
+** Star Tracking
+   - [X] astrometry software evaluation
+   - [ ] cross compile astrometry for arm
+   - [ ] Integrate into ADCS/flight software
 ** Devices [0/7]
   - [-] Accelerometer [1/3]
     - [X] Driver 
@@ -138,7 +142,7 @@
   - [ ] GPS Interface [0/5]
     - [ ] OEM615V Device Configuration/Communication Test via Serial connection
       - http://www.novatel.com/assets/Documents/Manuals/om-20000128.pdf
-      - Pg 121 has a diagram of the pin-outs
+      - Pg 121 has a diagram of the pin-outs (2x10, 2mm pitch header)
         - Pin 1 - 6-12 VDC for Antenna output
         - Pin 2 - 3.3 V Supply
         - Pin 10 - Gnd
