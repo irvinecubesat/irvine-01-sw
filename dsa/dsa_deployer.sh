@@ -1,6 +1,9 @@
 #!/bin/sh
 # deployment script for irvine-01 cubesat deployable solar arrays
 
+instDir=$(cd $(dirname "$0");pwd)
+. $instDir/gpio.sh
+
 DSA1_RLS_B=296
 DSA1_DPLY_B=297
 DSA2_RLS_B=298
@@ -11,33 +14,6 @@ DPLY_SENSE_1B=1
 DPLY_SENSE_2A=2
 DPLY_SENSE_2B=4
 
-
-# TODO: CHANGE THIS TO CORRECT VALUE WHEN POSSIBLE
-
-GPIO_PATH=${GPIO_PATH-"/sys/class/gpio"}
-
-# call    setGPIO GPIONUM VALUE
-# returns void
-setGPIO(){
-  local gpio=$1
-  local val=$2
-  local path="$GPIO_PATH/gpio$gpio/value"
-  echo "$val"> "$path"
-}
-
-# call    getGPIO GPIONUM
-# returns $gpio_out
-getGPIO(){
-  local path="$GPIO_PATH/gpio$1/value"
-  local ret=$(cat $path)
-  gpio_out=$ret
-}
-
-#reads from gpio and stores in gpio_out, then echos the value
-printGPIO(){
-  getGPIO $2
-  echo "$1: $gpio_out"
-}
 
 #handles the deploy command
 handleDeploy(){
