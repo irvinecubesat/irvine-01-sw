@@ -11,7 +11,7 @@
 #
 #
 
-TOOLCHAIN_VER=01.00.06
+TOOLCHAIN_VER=01.01.01
 TOOLCHAIN_ROOT=/opt/toolchain/toolchain-arm-linux
 TOOLCHAIN_DIR=$(TOOLCHAIN_ROOT)-$(TOOLCHAIN_VER)
 
@@ -55,7 +55,7 @@ AUTH_FILE=$(HOME)/.polysat_fsw.auth
 genKeys: 
 	$(MAKE) $(KEYINFO_FILE)
 
-authfile:
+authfile: clean-auth
 	$(MAKE) $(AUTH_FILE)
 
 $(KEYINFO_FILE):

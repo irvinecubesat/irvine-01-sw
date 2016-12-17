@@ -1,10 +1,9 @@
 #+TITLE: Irvine-01 Software Tasks
 #+AUTHOR: Maurice Ling
 #+DATE: <2016-10-30 Sun>
-#
+#+DISABLE_PLAIN_FOOTNOTES: No footnotes
 # This file created and edited with org-mode in emacs, but you can use any
 # text editor to edit.
-#
 * Development Environment [3/3]
   - [X] VPN Access
   - [X] Polysat binary access
@@ -44,7 +43,7 @@
     - [ ] gpio 296-299, 303 come up High
     - [ ] Can set gpio's 300-303
 * DSA Deployment [0/3]
-  Create dsa_deployer
+  Create dsa_deployer service to initiate DSA release and deployment.
   | Operation       | GPIO |
   |-----------------+------|
   | DSA1_RLS_B      |  296 |
@@ -57,18 +56,49 @@
   | Deploy Sense 2A |    2 |
   | Deploy Sense 2B |    4 |
   |-----------------+------|
+  Read/write the specified GPIOs.  Here's a [[http://falsinsoft.blogspot.com/2012/11/access-gpio-from-linux-user-space.html][Tutorial about how to read/write 
+  GPIO's from user space]]. 
   - [ ] Deployment Operations
     For each of the following operations, you need to set the DSA_EN_BAR GPIO
     timer.  Service should allow executing these operations individually
-    via libproc events
+    via libproc events using the command struct:  
+    #+BEGIN_SRC c-mode
+        typedef enum dsaOp
+        {
+          DSA1_RELEASE=0,
+          DSA2_RELEASE=1,
+          DSA1_DEPLOY=2,
+          DSA2_DEPLOY=3
+        } DsaOp;
+
+        /**
+         * Dsa Command structure
+         **/
+        struct DsaCommand {
+          
+          DsaOp op; /* Operation */
+        } __attribute__((packed));
+    #+END_SRC
     - [ ] Release DSA1
     - [ ] Release DSA2
     - [ ] Deploy DSA1
-    - [ ]Deploy DSA2
+    - [ ] Deploy DSA2
   - [ ] Monitor Deployment Sensors
-    Use the Deploy Sense GPIOs to provide the status of deployment
+    Use the Deploy Sense GPIOs to provide the status of deployment 
     When the DSA's are deployed, the GPIO should be 0.
-  - [ ] Utility to command release/deploy via command line
+    Structure for status should contain the status of the four deployment sensors
+    #+BEGIN_SRC c-mode
+        /**
+         * Array values set to 0 for not deployed, 1 for deployed
+         **/
+        struct DsaStatus {
+          uint_8_t dsa1Status[2]; /* sensors A and B for DSA 1 */
+          uint_8_t dsa2Status[2]; /* sensors A and B for DSA 2 */
+        } __attribute__((packed));
+    #+END_SRC
+  - [ ] Utility to command release, deploy, and query status via command line
+    For the utility and service interaction, use the adcs-sensors service
+    and accompanying utility as an example.
 * Camera Control [0/4]
   - [ ] Take Pictures Immediately after deployment
   - [ ] Targeting interface
@@ -85,6 +115,10 @@
   - [ ] Object Targeting/Camera Trigger
   - [ ] Attitude Determination
   - [ ] De-orbiting
+** Star Tracking
+   - [X] astrometry software evaluation
+   - [ ] cross compile astrometry for arm
+   - [ ] Integrate into ADCS/flight software
 ** Devices [0/7]
   - [-] Accelerometer [1/3]
     - [X] Driver 
@@ -108,7 +142,7 @@
   - [ ] GPS Interface [0/5]
     - [ ] OEM615V Device Configuration/Communication Test via Serial connection
       - http://www.novatel.com/assets/Documents/Manuals/om-20000128.pdf
-      - Pg 121 has a diagram of the pin-outs
+      - Pg 121 has a diagram of the pin-outs (2x10, 2mm pitch header)
         - Pin 1 - 6-12 VDC for Antenna output
         - Pin 2 - 3.3 V Supply
         - Pin 10 - Gnd
@@ -157,16 +191,30 @@
       - 129.65.147.55 (engineering unit)
   - [ ] Add Satcomm process to inittab 
   - [-] Beacon [1/3]
-    Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
+    - Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
     - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]]) 
     - [ ] Broadcast beacon to 224.0.0.1 port 2
-    - [ ] Beacon contents 
-      Beacon contents are limited to 227 bytes.
-      Use packed binary structure in network order.
+    - [ ] Beacon contents [0/2]
+      - Beacon contents are limited to 227 bytes.
+      - Use packed binary structure in network order.
+      - The structure takes the form of:
+#+BEGIN_SRC c-mode
+        struct {
+          uint16_t id; 
+          uint8_t gyro[3];
+          (fill in the data)...
+        } __attribute__((packed));
+#+END_SRC
+      - Use network order (convert any multi-byte value using the htonl function)
+      - Reduce the resolution (round them down) to save on bytes
+      - If values are not valid, then they should be set to 0
       - [ ] Identifier/magic number
       - [ ] Health/Telemetry Information
-        - [ ] GPS Coordinates
-        - [ ] Attitude
+        - [ ] GPS Coordinates (when available, if valid)
+        - [ ] Attitude (when available, if valid)
+        - [ ] Gyro telemetry
+        - [ ] Magnetometer
+        - [ ] Accelerometer
         - [ ] System Time
         - [ ] Uptime
 * Ground Station [0/3]

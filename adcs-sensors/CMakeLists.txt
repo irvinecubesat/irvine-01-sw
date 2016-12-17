@@ -4,10 +4,10 @@ add_executable(adcs-sensors adcs-sensors.c)
 add_executable(adcs-sensors-util adcs-sensors-util.c)
 
 #
-# Libraries that beacon depends on
+# Libraries that adcs-sensors depends on
 #
 target_link_libraries(adcs-sensors proc polydrivers m pthread dl rt pthread )
-target_link_libraries(adcs-sensors-util proc polydrivers m pthread dl rt pthread)
+target_link_libraries(adcs-sensors-util proc pthread polydrivers m dl rt )
 
 IF (PROJECT_COMPILE)
 # Include directories to search in

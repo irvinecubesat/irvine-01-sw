@@ -1,4 +1,7 @@
 #include <polysat/polysat.h>
+#include <polysat_pkt/sys_manager_cmd.h>
+#include <polysat_pkt/sys_manager_structs.h>
+#include <polysat_pkt/status-structs.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -14,6 +17,56 @@
 
 static ProcessData *gProc=NULL;
 
+typedef struct {
+  uint16_t id; 
+  uint8_t gyro[3];
+  uint8_t mag[3];
+  uint16_t ldc;			/* Long Duration Timer (about 4min 20 sec/tick) */
+} __attribute__((packed)) BeaconData;
+
+/**
+ * Retrieve data from system manager and populate the 
+ * beacon structure.
+ * (Doxygen comment style)
+ * @param ip The IP Address where the system manager is running
+ * @param data What the beacon will send
+ * @return 0 for success
+ * @return non-zero if error
+ **/
+int retrieveSystemStatus(const char *ip, BeaconData *data)
+{
+  struct {
+    uint8_t cmd;
+    struct SMStatus_v5 sms;
+  } __attribute__((packed)) resp;
+
+  int len;
+  char cmd = SYS_MANAGER_STATUS;
+  uint8_t cmd_resp = CMD_STATUS_RESPONSE;
+
+  len = socket_send_packet_and_read_response(ip, "sys_manager", &cmd,
+					     sizeof(cmd), &resp, sizeof(resp), 5000);
+
+  if (len != sizeof(resp))
+  {
+    return len;
+  }
+
+  if (resp.cmd != cmd_resp) 
+  {
+    printf("response code incorrect.  Got 0x%02X expected 0x%02X\n",
+	   resp.cmd, cmd_resp);
+    return 5;
+  }
+
+  //
+  // Fill in BeaconData elements with sys manager info in the
+  // response.
+  //
+
+  return 0;
+}
+
 /**
  * Respond to status commands to let watchdog know we're alive.
  **/
@@ -26,7 +79,7 @@ void beacon_status(int socket, unsigned char cmd, void * data, size_t dataLen,
                      sizeof(status), src);
 }
 
-static void send_beacon_packet(ProcessData *proc, char *data, int len)
+static void send_beacon_packet(ProcessData *proc, BeaconData *data, int len)
 {
    struct sockaddr_in dest;
 
@@ -41,18 +94,34 @@ static void send_beacon_packet(ProcessData *proc, char *data, int len)
    PROC_cmd_sockaddr(proc, BEACON_PKT_ID, data, len, &dest);
 }
 
-static int assemble_beacon(void *arg)
+/**
+ * Send Beacon runs periodically to send the beacon
+ */
+static int send_beacon(void *arg)
 {
    ProcessData *proc = (ProcessData*)arg;
 
+   /*
+    * Make sure all data in BeanData is in network byte order
+    */
+   BeaconData beaconData;	/* struct to send in beacon */
    if (proc)
    {
-     DBG_print(DBG_LEVEL_INFO, "Sending beacon:  %s\n", BEACON_MESSAGE);
-     send_beacon_packet(proc, BEACON_MESSAGE, strlen(BEACON_MESSAGE));
+     // Fill in Beacon Data
+      int stat = retrieveSystemStatus("127.0.0.1", &beaconData);
+
+      if (stat != 0)
+      {
+        DBG_print(DBG_LEVEL_INFO, "There were problems retrieving system status\n");
+      }
+      DBG_print(DBG_LEVEL_INFO, "Sending beacon:  %s\n", BEACON_MESSAGE);
+      send_beacon_packet(proc, &beaconData , sizeof(BeaconData));
    }
 
    return EVENT_KEEP;
 }
+
+
 
 // Simple SIGINT handler example
 static int sigint_handler(int signum, void *arg)
@@ -63,6 +132,9 @@ static int sigint_handler(int signum, void *arg)
    return EVENT_KEEP;
 }
 
+/**
+ * @TODO add argument processing using getopt
+ **/
 int main(void)
 {
    void *beacon_evt;
@@ -76,7 +148,7 @@ int main(void)
    // Schedule an event to run periodically.  The event generates the
    //   beacon.
    beacon_evt = EVT_sched_add(PROC_evt(gProc),
-      EVT_ms2tv(17 * 1000), assemble_beacon, gProc);
+      EVT_ms2tv(17 * 1000), send_beacon, gProc);
 
    // Add an event-loop based signal handler call back for SIGINT signal
    PROC_signal(gProc, SIGINT, &sigint_handler, gProc);

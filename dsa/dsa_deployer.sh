@@ -1,6 +1,9 @@
 #!/bin/sh
 # deployment script for irvine-01 cubesat deployable solar arrays
 
+instDir=$(cd $(dirname "$0");pwd)
+. $instDir/gpio.sh
+
 DSA1_RLS_B=296
 DSA1_DPLY_B=297
 DSA2_RLS_B=298
