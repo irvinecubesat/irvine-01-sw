@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/sh
 # deployment script for irvine-01 cubesat deployable solar arrays
 
 DSA1_RLS_B=296
@@ -15,8 +14,7 @@ DPLY_SENSE_2B=4
 
 # TODO: CHANGE THIS TO CORRECT VALUE WHEN POSSIBLE
 
-# GPIO_PATH="./sys/class/gpio"
-GPIO_PATH="./gpio"
+GPIO_PATH=${GPIO_PATH-"/sys/class/gpio"}
 
 # call    setGPIO GPIONUM VALUE
 # returns void
@@ -153,6 +151,8 @@ if [ -z $1 ]||[ $1 = "-h" ]; then
   echo "sh dsa_deployer.sh Deploy"
   echo "sh dsa_deployer.sh Deploy [1 or 2]"
   echo "sh dsa_deployer.sh CLEAR"
+
+  echo "GPIO_PATH:  $GPIO_PATH"
   exit
 elif [ $1 = "ReadDSA" ]; then
   readDsaStatus
