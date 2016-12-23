@@ -1,8 +1,15 @@
 #!/bin/sh
-# deployment script for irvine-01 cubesat deployable solar arrays
+# deploy script for irvine-01 cubesat deployable solar arrays
 
 instDir=$(cd $(dirname "$0");pwd)
-. $instDir/gpio.sh
+. $instDir/scripts/gpio.sh
+. $instDir/scripts/deploy.sh
+. $instDir/scripts/release.sh
+
+
+#TODO: CHANGE BEFORE LAUNCH
+GPIO_PATH="$instDir/gpio"
+
 
 DSA1_RLS_B=296
 DSA1_DPLY_B=297
@@ -14,123 +21,13 @@ DPLY_SENSE_1B=1
 DPLY_SENSE_2A=2
 DPLY_SENSE_2B=4
 
-
-# TODO: CHANGE THIS TO CORRECT VALUE WHEN POSSIBLE
-
-GPIO_PATH=${GPIO_PATH-"/sys/class/gpio"}
-
-# call    setGPIO GPIONUM VALUE
-# returns void
-setGPIO(){
-  local gpio=$1
-  local val=$2
-  local path="$GPIO_PATH/gpio$gpio/value"
-  echo "$val"> "$path"
-}
-
-# call    getGPIO GPIONUM
-# returns $gpio_out
-getGPIO(){
-  local path="$GPIO_PATH/gpio$1/value"
-  local ret=$(cat $path)
-  gpio_out=$ret
-}
-
-#reads from gpio and stores in gpio_out, then echos the value
-printGPIO(){
-  getGPIO $2
-  echo "$1: $gpio_out"
-}
-
-#handles the deploy command
-handleDeploy(){
-  getGPIO $DSA1_RLS_B
-  local rls1=$gpio_out
-  getGPIO $DSA2_RLS_B
-  local rls2=$gpio_out
-  getGPIO $DSA1_DPLY_B
-  local dply1=$gpio_out
-  getGPIO $DSA2_DPLY_B
-  local dply2=$gpio_out
-
-  dep1(){
-    if [ $rls1 = "0" ]; then
-      echo "CANNOT DEPLOY DSA 1, NOT RELEASED"
-    elif [ $dply1 = "1" ]; then
-      echo "DSA 1 IS ALREADY DEPLOYED"
-    else
-      setGPIO $DSA1_DPLY_B 1
-      echo "DEPLOYED DSA 1"
-    fi
-  }
-
-  dep2(){
-    if [ $rls2 = "0" ]; then
-      echo "CANNOT DEPLOY DSA 2, NOT RELEASED"
-    elif [ $dply2 = "1" ]; then
-      echo "DSA 2 IS ALREADY DEPLOYED"
-    else
-      setGPIO $DSA2_DPLY_B 1
-      echo "DEPLOYED DSA 2"
-    fi
-  }
-
-  if [ -z $1 ]; then
-    dep1
-    dep2
-  else
-    if [ $1 = "1" ]; then
-      dep1
-    elif [ $1 = "2" ]; then
-      dep2
-    fi
-  fi
-}
-
-#handles the release command
-handleRelease(){
-  getGPIO $DSA1_RLS_B
-  local rls1=$gpio_out
-  getGPIO $DSA2_RLS_B
-  local rls2=$gpio_out
-
-  rel1(){
-    if [ $rls1 = "1" ]; then
-      echo "DSA 1 IS ALREADY RELEASED"
-    else
-      setGPIO $DSA1_RLS_B 1
-      echo "RELEASED DSA 1"
-    fi
-  }
-
-  rel2(){
-    if [ $rls2 = "1" ]; then
-      echo "DSA 2 IS ALREADY RELEASED"
-    else
-      setGPIO $DSA2_RLS_B 1
-      echo "RELEASED DSA 2"
-    fi
-  }
-
-  if [ -z $1 ]; then
-    rel1
-    rel2
-  else
-    if [ $1 = "1" ]; then
-      rel1
-    elif [ $1 = "2" ]; then
-      rel2
-    fi
-  fi
-}
-
 #reads the status of all 4 deploy sense variables
 readDsaStatus(){
   local successes=0
 
   sense(){
     printGPIO $1 $2
-    if [ "$gpio_out" = "0" ]; then
+    if [ "$?" = "0" ]; then
       ((successes++))
     fi
   }

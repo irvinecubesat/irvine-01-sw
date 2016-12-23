@@ -23,6 +23,7 @@ getGPIO(){
 #reads from gpio and stores in gpio_out, then echos the value
 printGPIO(){
   getGPIO $2
-  gpioVal=$?
+  local gpioVal=$?
   echo "$1: $gpioVal"
+  return $gpioVal
 }
