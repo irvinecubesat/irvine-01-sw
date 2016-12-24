@@ -1,3 +1,4 @@
+#!/bin/sh
 #handles the deploy command
 handleDeploy(){
   getGPIO $DSA1_RLS_B
@@ -16,6 +17,8 @@ handleDeploy(){
       echo "DSA 1 IS ALREADY DEPLOYED"
     else
       setGPIO $DSA1_DPLY_B 1
+      setGPIO $DPLY_SENSE_1B 1
+      setGPIO $DSA_EN_BAR 1
       echo "DEPLOYED DSA 1"
     fi
   }
@@ -27,6 +30,8 @@ handleDeploy(){
       echo "DSA 2 IS ALREADY DEPLOYED"
     else
       setGPIO $DSA2_DPLY_B 1
+      setGPIO $DPLY_SENSE_2B 1
+      setGPIO $DSA_EN_BAR 1
       echo "DEPLOYED DSA 2"
     fi
   }

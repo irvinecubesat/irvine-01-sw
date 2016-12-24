@@ -1,3 +1,4 @@
+#!/bin/sh
 #handles the release command
 handleRelease(){
   getGPIO $DSA1_RLS_B
@@ -10,6 +11,8 @@ handleRelease(){
       echo "DSA 1 IS ALREADY RELEASED"
     else
       setGPIO $DSA1_RLS_B 1
+      setGPIO $DPLY_SENSE_1A 1
+      setGPIO $DSA_EN_BAR 1
       echo "RELEASED DSA 1"
     fi
   }
@@ -19,6 +22,8 @@ handleRelease(){
       echo "DSA 2 IS ALREADY RELEASED"
     else
       setGPIO $DSA2_RLS_B 1
+      setGPIO $DPLY_SENSE_2A 1
+      setGPIO $DSA_EN_BAR 1
       echo "RELEASED DSA 2"
     fi
   }

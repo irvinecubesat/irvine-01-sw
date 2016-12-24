@@ -1,3 +1,5 @@
+#!/bin/sh
+#A bunch of commands relating to gpio access
 GPIO_PATH=${GPIO_PATH-"/sys/class/gpio"}
 
 # call    setGPIO GPIONUM VALUE
