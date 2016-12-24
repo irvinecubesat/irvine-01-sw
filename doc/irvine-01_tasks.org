@@ -1,0 +1,230 @@
+#+TITLE: Irvine-01 Software Tasks
+#+AUTHOR: Maurice Ling
+#+DATE: <2016-10-30 Sun>
+#+DISABLE_PLAIN_FOOTNOTES: No footnotes
+# This file created and edited with org-mode in emacs, but you can use any
+# text editor to edit.
+* Development Environment [3/3]
+  - [X] VPN Access
+  - [X] Polysat binary access
+  - [X] Github project setup [5/5]
+    - [X] irvine-01-sw
+    - [X] irvine-01-cfg
+    - [X] toolchain
+    - [X] kernel
+    - [X] buildroot
+  - [ ] Software development process
+* General System [1/5]
+  - [ ] Change root password
+  - [X] authorized_keys configuration
+  - [ ] GPS clock sync
+  - [ ] Hardware watchdog
+  - [ ] Store telemetry
+* Initial Deployment [0/3]
+  Initial deployment happens once the satellite launches from the P-Pod.  This
+  occurs once in the CubeSat lifecycle.
+  - [ ] Deployment script
+    - This script is the integration point for all subtasks.
+      1. [ ] Detect deployment condition
+      2. [ ] Set deployment flag in persistent location (/data)
+      3. [ ] Run deployment functions/scripts
+      4. [ ] Log deployment status
+  - [ ] Initial DSA Deployment Integration
+* Power On [0/1]
+  - [ ] Payload Power On
+    - [ ] 5V0_PL_Enable
+    - [ ] 3V3_PL_Enable (Is this needed?)
+* I2C Expander TCA9554A Kernel Driver [2/3]
+  - [X] Add Driver to kernel
+  - [X] Driver setup module
+  - [ ] Testing
+    - [ ] i2cdetect -l 1 shows 0x38 used by kernel
+    - [ ] gpio 300-302 come up Low
+    - [ ] gpio 296-299, 303 come up High
+    - [ ] Can set gpio's 300-303
+* DSA Deployment [1/3]
+  Create dsa_deployer service to initiate DSA release and deployment.
+  | Operation       | GPIO |
+  |-----------------+------|
+  | DSA1_RLS_B      |  296 |
+  | DSA1_DPLY_B     |  297 |
+  | DSA2_RLS_B      |  298 |
+  | DSA2_DPLY_B     |  299 |
+  | DSA_EN_BAR      |  303 |
+  | Deploy Sense 1A |    0 |
+  | Deploy Sense 1B |    1 |
+  | Deploy Sense 2A |    2 |
+  | Deploy Sense 2B |    4 |
+  |-----------------+------|
+  Read/write the specified GPIOs.  Here's a [[http://falsinsoft.blogspot.com/2012/11/access-gpio-from-linux-user-space.html][Tutorial about how to read/write
+  GPIO's from user space]].
+  - [X] Deployment Operations
+    For each of the following operations, you need to set the DSA_EN_BAR GPIO
+    timer.  Service should allow executing these operations individually
+    via libproc events using the command struct:
+    #+BEGIN_SRC c-mode
+        typedef enum dsaOp
+        {
+          DSA1_RELEASE=0,
+          DSA2_RELEASE=1,
+          DSA1_DEPLOY=2,
+          DSA2_DEPLOY=3
+        } DsaOp;
+
+        /**
+         * Dsa Command structure
+         **/
+        struct DsaCommand {
+
+          DsaOp op; /* Operation */
+        } __attribute__((packed));
+    #+END_SRC
+    - [X] Release DSA1
+    - [X] Release DSA2
+    - [X] Deploy DSA1
+    - [X] Deploy DSA2
+  - [ ] Monitor Deployment Sensors
+    Use the Deploy Sense GPIOs to provide the status of deployment
+    When the DSA's are deployed, the GPIO should be 0.
+    Structure for status should contain the status of the four deployment sensors
+    #+BEGIN_SRC c-mode
+        /**
+         * Array values set to 0 for not deployed, 1 for deployed
+         **/
+        struct DsaStatus {
+          uint_8_t dsa1Status[2]; /* sensors A and B for DSA 1 */
+          uint_8_t dsa2Status[2]; /* sensors A and B for DSA 2 */
+        } __attribute__((packed));
+    #+END_SRC
+  - [ ] Utility to command release, deploy, and query status via command line
+    For the utility and service interaction, use the adcs-sensors service
+    and accompanying utility as an example.
+* Camera Control [0/4]
+  - [ ] Take Pictures Immediately after deployment
+  - [ ] Targeting interface
+  - [ ] Thumbnail generation
+  - [ ] Picture window trigger
+    - take pictures every 3-4 seconds within a time/target window
+* ADCS
+** ADCS Scenarios [0/5]
+  - [ ] Detumbling
+    - http://digitalcommons.calpoly.edu/cgi/viewcontent.cgi?article=1022&context=aerosp
+    - https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20140016484.pdf
+    - adcs_manager.c (attitude_control) from upsat:  https://github.com/librespacefoundation/upsat-adcs-software/blob/master/adcs/Src/adcs_manager.c
+  - [ ] Sun Tracking
+  - [ ] Object Targeting/Camera Trigger
+  - [ ] Attitude Determination
+  - [ ] De-orbiting
+** Star Tracking
+   - [X] astrometry software evaluation
+   - [ ] cross compile astrometry for arm
+   - [ ] Integrate into ADCS/flight software
+** Devices [0/7]
+  - [-] Accelerometer [1/3]
+    - [X] Driver
+      - adcs-sensors - Currently shows all zeros, John investigating
+    - [ ] Interface
+    - [ ] Test
+  - [-] Magnetometer [1/3]
+    - [X] Driver
+      - adcs-sensors
+    - [ ] Interface
+    - [ ] Test
+  - [-] Gyro [1/3]
+    - [X] Driver
+      - adcs-sensors
+    - [ ] Interface
+    - [ ] Test
+  - [ ] Magnetorquer [0/3]
+    - [ ] Driver
+    - [ ] Interface
+    - [ ] Test
+  - [ ] GPS Interface [0/5]
+    - [ ] OEM615V Device Configuration/Communication Test via Serial connection
+      - http://www.novatel.com/assets/Documents/Manuals/om-20000128.pdf
+      - Pg 121 has a diagram of the pin-outs (2x10, 2mm pitch header)
+        - Pin 1 - 6-12 VDC for Antenna output
+        - Pin 2 - 3.3 V Supply
+        - Pin 10 - Gnd
+        - Pins 11/12/13 - Com 1 TXD1/RXD/GND
+        - Pins 14/15/16 - Com 2 TXD/RXD/GND
+        - Pin 17 - PV Active high output
+        - Pin 18 - Gnd
+        - 19 - PPS for GPS time synchronization
+      - You need two power supplies, one 6-12 VDC and one 3.3 V.
+      - Connect COM1 pins to RS232 DB-9 serial port connector of proper
+        gender to connect to the serial cable on the gateway.
+        (See http://www.db9-pinout.com/).
+      - See Pages 39-40 regarding connecting the comm ports to RS-232
+      - See Pages 52, 53 regarding Serial port communication setup.
+      - Configure, retrieve logs, and verify that PV
+        gets set high when a valid signal is detected
+      - Validate that the GPS coordinates are accurate
+    - [ ] Cable Interface with C Card/Intrepid
+    - [ ] Driver
+    - [ ] GPS Data Processor/Interface
+      - Retrieve GPS coordinate information
+      - Current Date/Time
+      - PV (This should be GPIO 22)
+    - [ ] Integration Test
+  - [ ] Thruster [0/3]
+    - [ ] Test SPI communications via Host Adapter
+    - [ ] Cable Interface with C-Card (cable)
+    - [ ] Driver - Thruster control via Intrepid SPI bus
+      [ ] Integration Test
+  - [ ] Sun Sensor [0/4]
+    - [ ] Driver
+    - [ ] Calibration
+    - [ ] Angle Computations
+    - [ ] Test
+* Comms [0/5]
+  - [ ] Antenna Deployment Configuration
+    1. [ ] Determine time required for Antenna Release
+    2. [ ] Set configuration
+  - [ ] UHF Radio [0/2] - *Make sure antenna is always connected when powering*
+    - [ ] Integration with Intrepid Card
+    - [ ] SDR/Comms Bench Testing
+  - [ ] Satcomm Configuration (satcomm.cfg)
+    - https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/SatcommConfigurationChecklist
+    - IP Address of Satellites (SAT_IP) - Confirm with John
+      - 129.65.147.53 (flight unit)
+      - 129.65.147.55 (engineering unit)
+  - [ ] Add Satcomm process to inittab
+  - [-] Beacon [1/3]
+    - Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
+    - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]])
+    - [ ] Broadcast beacon to 224.0.0.1 port 2
+    - [ ] Beacon contents [0/2]
+      - Beacon contents are limited to 227 bytes.
+      - Use packed binary structure in network order.
+      - The structure takes the form of:
+#+BEGIN_SRC c-mode
+        struct {
+          uint16_t id;
+          uint8_t gyro[3];
+          (fill in the data)...
+        } __attribute__((packed));
+#+END_SRC
+      - Use network order (convert any multi-byte value using the htonl function)
+      - Reduce the resolution (round them down) to save on bytes
+      - If values are not valid, then they should be set to 0
+      - [ ] Identifier/magic number
+      - [ ] Health/Telemetry Information
+        - [ ] GPS Coordinates (when available, if valid)
+        - [ ] Attitude (when available, if valid)
+        - [ ] Gyro telemetry
+        - [ ] Magnetometer
+        - [ ] Accelerometer
+        - [ ] System Time
+        - [ ] Uptime
+* Ground Station [0/3]
+  - [ ] Beacon Decoder
+  - [ ] Data Offload Controller (arsftp)
+  - [ ] Send commands via UDP to Spacecraft
+    - Need to be less than 256 bytes (227 - UDP header)
+  - [ ] Command and Control
+    - [ ] Clock Check/sync
+    - [ ] Health Monitoring/Reporting
+    - [ ] DSA Monitor/Control
+    - [ ] Data Offload Initiation
+    - [ ] Data Archiving
