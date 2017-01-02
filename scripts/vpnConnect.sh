@@ -167,7 +167,7 @@ case $cmd in
                 $NOBODY_SED "$ovpnx" >"$ovpnCfg"
             fi
         }
-        if [ "${ovpnx##*.}" = .vpnx ]; then
+        if [ "${ovpnx##*.}" = "ovpnx" ]; then
             decryptCfg
         else
             copyCfg

@@ -80,6 +80,11 @@ ADD_SUBDIRECTORY(beacon)
 ADD_SUBDIRECTORY(satcomm)
 
 #
+# Flight scripts
+#
+ADD_SUBDIRECTORY(flightscripts)
+
+#
 # Experimental Version generation -
 # I'd like to have the version in this project, but currently the version file,
 # /etc/issue is specified in the irvine-01-cfg project due to the way
