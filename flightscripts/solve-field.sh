@@ -4,5 +4,5 @@
 #
 # Configuration may be adjusted in astrometry.cfg
 #
-solve-field --no-fits2fits --no-verify --no-plots $*
+solve-field --config /usr/local/astrometry/etc/astrometry.cfg --no-fits2fits --no-verify --no-plots $*
       
