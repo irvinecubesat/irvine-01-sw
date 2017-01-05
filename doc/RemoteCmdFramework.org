@@ -1,0 +1,26 @@
+* Remote Command Framework Criteria
+  1) Easily extensible
+     - Each cmd associated with a sh script
+       - exit status
+       - std out
+     - A directory to put cmd scripts
+       - only run commands from this directory
+     - Pass arguments to command.
+     - Each command should have help output
+  2) Testable modular components
+     - No dependencies between modules
+     - Framework doesn't know specific module implemention
+     - Each module has a common interface.
+       - Common arguments (-h for help)
+       - Standard return status values
+     - Modules might have module-specific pass through arguments.
+  3) Somewhat secure
+     - Don't allow arbitrary command execution
+     - Naming convention (e.g. cmdXxxx)
+  4) Bi-directional communication (limit 247 bytes in a packet)
+     - proc library (libproc)
+     - error handling
+     - Return results
+  5) Remote Command Processor (on satellite)
+  6) Ground Command execution (on Ground)
+
