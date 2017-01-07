@@ -577,7 +577,7 @@ RX<y:LabelModel>
       </data>
     </node>
     <node id="n32">
-      <data key="d4"><![CDATA[ttp://airborn.com.au/serial/rs232.htm]]></data>
+      <data key="d4"><![CDATA[http://airborn.com.au/serial/rs232.htm]]></data>
       <data key="d6">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="307.5" x="-612.6614583333337" y="395.75"/>
@@ -800,7 +800,6 @@ Configure to 115200 baud
       </data>
     </edge>
     <edge id="e10" source="n37" target="n4">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
