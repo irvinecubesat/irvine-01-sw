@@ -3,7 +3,7 @@
      - Each cmd associated with a sh script
        - exit status
        - std out
-     - A directory to put cmd scripts
+     - A directory to put cmd scripts/programs
        - only run commands from this directory
      - Pass arguments to command.
      - Each command should have help output
@@ -24,3 +24,11 @@
   5) Remote Command Processor (on satellite)
   6) Ground Command execution (on Ground)
 
+* cmdd
+  cmdd is the command daemon that runs on the satellite to process
+  commands.  Pass in the directory where commands are located.
+* command modules
+  - command modules must be located in the command directory and be prefixed
+    with "cmd".  e.g. cmdRun.sh
+  - command module names must be less than 24 characters (not including the prefix)
+    
