@@ -10,7 +10,7 @@
 #define BEACON_PKT_ID         1
 #define BEACON_DST_PORT       2
 #define BEACON_DST_IP_STR     "224.0.0.1"
-#define BEACON_MESSAGE        "IRVINE-01"
+#define BEACON_MESSAGE        "IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01"
 
 static ProcessData *gProc=NULL;
 
@@ -71,6 +71,8 @@ int main(void)
    gProc = PROC_init("beacon");
    if (!gProc)
       return -1;
+   DBG_setLevel(DBG_LEVEL_INFO);
+
    DBG_print(DBG_LEVEL_INFO, "Beacon starting:  %s\n", BEACON_MESSAGE);
 
    // Schedule an event to run periodically.  The event generates the
