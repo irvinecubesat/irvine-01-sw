@@ -29,7 +29,7 @@ exit 1
 log()
 {
   output="$(date +%Y%m%d_%H%M%S) $*"
-  if [ ${1:0:2} != "[D" ]; then
+  if [ "${1:0:2}" != "[D" ]; then
     echo $output
     echo $output>> ${logFile}
   fi
