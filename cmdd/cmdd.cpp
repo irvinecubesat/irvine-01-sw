@@ -237,7 +237,8 @@ void parseDirectoryPaths(char *inPaths, std::vector<std::string> &dirs)
 
   while (true)
   {
-    item = strtok(ptr, ":");
+    // inittab uses ":" as separators, so allow : and + as delimiters.
+    item = strtok(ptr, ":+");
     ptr=NULL;
     if (item != NULL)
     {
