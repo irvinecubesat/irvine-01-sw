@@ -2,6 +2,7 @@
  * Remote command execution utility
  */
 #include <string>
+#include <iostream>
 #include <string.h>
 #include <stdio.h>
 #include <polysat/polysat.h>
@@ -15,24 +16,32 @@
 #define WAIT_MS 120000
 
 /**
+ * Status returned if there is a cmd execution error
+ **/
+#define CMD_ERR_STATUS 99
+
+/**
  * cmdExec usage
  **/
 void usage(char *argv[])
 {
-  printf("Usage:  %s [options]\n\n", argv[0]);
-  printf("        Execute a command on the target cmdd\n");
-  printf("        Command will be automatically prefixed with 'cmd'\n");
-  printf("\n");
-  printf("Options:\n\n");
-  printf(" -d {log level}     set log level\n");
-  printf(" -h {host IP}       target host IP\n");
-  printf(" -s                 get cmdd status\n");
-  printf(" -c {cmd}           execute command\n");
-  printf(" -a {args}          arguments for command.  Quote for multiple arguments\n");
-  printf(" -i {cmd ID}        Integer ID used to track command execution and return (optional)\n");
-  printf(" -t {timeout ms}    Timeout in ms.  Default 120000 (2 min)\n");
-  printf("\n");
-  exit(1);
+  std::cout<<"Usage:  "<<argv[0]<<"<<%s [options]"<<std::endl
+           <<"        Execute a command on the target cmdd"<<std::endl
+           <<"        Command will be automatically prefixed with 'cmd'"<<std::endl
+           <<std::endl
+           << "Options:"
+           <<std::endl
+           <<std::endl
+           <<" -d {log level}     set log level"<<std::endl
+           <<" -h {host IP}       target host IP"<<std::endl
+           <<" -s                 get cmdd status"<<std::endl
+           <<" -c {cmd}           execute command"<<std::endl
+           <<" -a {args}          arguments for command.  Quote for multiple arguments"<<std::endl
+           <<" -p                 pass through the status, stderr, and stdout as output of this program"<<std::endl
+           <<" -i {cmd ID}        Integer ID used to track command execution and return (optional)"<<std::endl
+           <<" -t {timeout ms}    Timeout in ms. (Default "<< WAIT_MS<<")"
+           <<std::endl<<std::endl;
+  exit(CMD_ERR_STATUS);
 }
 
 static int getCmdStatus(const std::string &host, uint32_t timeout)
@@ -62,19 +71,19 @@ static int getCmdStatus(const std::string &host, uint32_t timeout)
  
   if (resp.cmd != CMD_STATUS_RESPONSE)
   {
-    printf("response code incorrect, Got 0x%02X expected 0x%02X\n", 
-           resp.cmd, CMD_STATUS_RESPONSE);
-    return 5;
-   }
+    std::cerr<<"response code incorrect, Got "<<resp.cmd<<" received  "<<CMD_STATUS_RESPONSE;
+    return CMD_ERR_STATUS;
+  }
 
-  printf("Cmds:  %d\n", ntohl(resp.status.cmdCount));
-  printf("Errs:  %d\n", ntohl(resp.status.errCount));
+  std::cout<<"Cmds:  "<<ntohl(resp.status.cmdCount)<<std::endl;
+  std::cout<<"Errs:  "<< ntohl(resp.status.errCount)<<std::endl;
   return 0;
 }
 
 static int execCmd(const std::string &host, uint32_t cmdId, const std::string &cmd,
-                   const std::string &args, uint32_t timeout)
+                   const std::string &args, uint32_t timeout, bool passThrough)
 {
+  int status=0;
   struct
   {
     uint8_t cmd;
@@ -106,43 +115,58 @@ static int execCmd(const std::string &host, uint32_t cmdId, const std::string &c
  
   if (resp.cmd != CMD_EXEC_RESPONSE)
   {
-    printf("response code incorrect, Got 0x%02X expected 0x%02X\n", 
-           resp.cmd, CMD_EXEC_RESPONSE);
-    return 5;
-   }
+    std::cerr<<"response code incorrect, Got "<<resp.cmd
+            <<" expected "<< CMD_EXEC_RESPONSE<<std::endl;
+    return CMD_ERR_STATUS;
+  }
 
   if (IRV_CMD_PROTO_ID != ntohl(resp.cmdResp.protocolId))
   {
-    printf("Invalid protocolId:  %08x != %08x\n",
-           ntohl(resp.cmdResp.protocolId),
-           IRV_CMD_PROTO_ID);
-    return 5;
+    std::cerr<<"Invalid protocolId:  "<<ntohl(resp.cmdResp.protocolId)
+             <<" != "<< IRV_CMD_PROTO_ID<<std::endl;
+    return CMD_ERR_STATUS;
   }
 
   if (IRV_CMD_VERSION != ntohl(resp.cmdResp.version))
   {
-    printf("Incoming protocol version mismatch (%d != %d)\n",
-           ntohl(resp.cmdResp.version), IRV_CMD_VERSION);
-    return 5;
+    std::cerr<<"Incoming protocol version mismatch ("<< ntohl(resp.cmdResp.version) 
+        << " != "<< IRV_CMD_VERSION<<")"<<std::endl;
+    return CMD_ERR_STATUS;
   }
 
   if (cmdId != ntohl(resp.cmdResp.cmdId))
   {
-    printf("Wrong cmd ID received:  %d != %d.\n",
-           ntohl(resp.cmdResp.cmdId), cmdId);
-    return 5;
+    std::cerr<<"Wrong cmd ID received:  "<<ntohl(resp.cmdResp.cmdId) 
+             <<" != " <<cmdId <<std::endl;
+    return CMD_ERR_STATUS;
   }
-  printf("cmd:  %s\n", resp.cmdResp.cmd);
-  printf("status:  %d\n", ntohl(resp.cmdResp.status));
-  if (0 == resp.cmdResp.status)
+  if (passThrough)
   {
-    printf("msg:  %s\n", resp.cmdResp.msg);
-  } else
-  {
-    printf("msg:  %s\n", resp.cmdResp.msg);
-    printf("err:  %s\n", resp.cmdResp.err);
+    if (strlen(resp.cmdResp.msg)>0)
+	{
+	  std::cout<<resp.cmdResp.msg;
+	} 
+    if (strlen(resp.cmdResp.err)> 0)
+	{
+	  std::cerr<<resp.cmdResp.err;
+	}
   }
-  return resp.cmdResp.status;
+  else
+  {
+    std::cout<<"cmd:  "<< resp.cmdResp.cmd<<std::endl;
+    status=ntohl(resp.cmdResp.status);
+    std::cout<<"status:  "<<status<<std::endl;
+      
+    if (strlen(resp.cmdResp.msg) > 0)
+	{
+	  std::cout<<"msg:  "<< resp.cmdResp.msg;
+	}
+    if (strlen(resp.cmdResp.err)>0)
+	{
+	  std::cout<<"err:  "<<resp.cmdResp.err;
+	}
+  }
+  return status;
 }
 
 /**
@@ -157,6 +181,8 @@ int main(int argc, char *argv[])
   std::string args;
   uint32_t cmdId=0;
   uint32_t timeout=120000;
+  bool passThrough=false;		// pass through status, stdout/err to
+  // calling program
   enum Action
   {
     ExecCmd,
@@ -164,7 +190,7 @@ int main(int argc, char *argv[])
   };
   Action action=GetStatus;
 
-  while ((opt=getopt(argc,argv,"d:h:c:a:si:t:")) != -1)
+  while ((opt=getopt(argc,argv,"d:h:c:a:si:t:p")) != -1)
   {
     switch (opt)
     {
@@ -186,9 +212,12 @@ int main(int argc, char *argv[])
     case 'c':
       action=ExecCmd;
       cmd=optarg;
-    break;
+      break;
     case 'a':
       args=optarg;
+      break;
+    case 'p':
+      passThrough=true;
       break;
     default:
       usage(argv);
@@ -204,7 +233,7 @@ int main(int argc, char *argv[])
     status=getCmdStatus(host, timeout);
     break;
   case ExecCmd:
-    status=execCmd(host, cmdId, cmd, args, timeout);
+    status=execCmd(host, cmdId, cmd, args, timeout, passThrough);
     break;
   }
   return status;
