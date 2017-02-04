@@ -8,6 +8,7 @@
 #include <getopt.h>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <arpa/inet.h>
 #include <sstream>
 #include <sys/stat.h>
@@ -129,13 +130,13 @@ extern "C"
     if (IRV_CMD_PROTO_ID != ntohl(procCmd->protocolId))
     {
       DBG_print(DBG_LEVEL_WARN, "Incoming protocol mismatch (%08x != %08x)",
-                procCmd->protocolId, IRV_CMD_PROTO_ID);
+                ntohl(procCmd->protocolId), IRV_CMD_PROTO_ID);
       return;
     }
     if (IRV_CMD_VERSION != ntohl(procCmd->version))
     {
       DBG_print(DBG_LEVEL_WARN, "Incoming protocol version mismatch (%d != %d)",
-                procCmd->version, IRV_CMD_VERSION);
+                ntohl(procCmd->version), IRV_CMD_VERSION);
       return;
     }
     uint32_t cmdId=ntohl(procCmd->cmdId);
@@ -210,13 +211,14 @@ extern "C"
  **/
 void usage(char *argv[])
 {
-  printf("Usage:  %s [options]\n\n", argv[0]);
-  printf("        Process commands from network using scripts/executables from\n");
-  printf("        cmd directory\n\n");
-  printf("Options:\n\n");
-  printf(" -D {cmd path} set the colon-separated directory path(s) to execute commands\n" );
-  printf(" -d {log level}     set log level\n");
-  printf("\n");
+  std::cout<<"Usage:  "<<argv[0]<<" [options]"
+           <<std::endl<<std::endl
+           <<"        Process commands from network using scripts/executables from"<<std::endl
+           <<"        one or more cmd directories"<<std::endl<<std::endl
+           <<"Options:"<<std::endl<<std::endl
+           <<" -D {dir}        add directory path to execute commands"<<std::endl
+           <<" -d {log level}  set log level"<<std::endl
+           <<std::endl;
   exit(1);
 }
 
@@ -226,28 +228,6 @@ static int sigint_handler(int signum, void *arg)
   EVT_exit_loop(PROC_evt(proc->getProcessData()));
   
   return EVENT_KEEP;
-}
-
-void parseDirectoryPaths(char *inPaths, std::vector<std::string> &dirs)
-{
-  char *ptr=inPaths;
-  char *item=NULL;
-
-  while (true)
-  {
-    // inittab uses ":" as separators, so allow ':' or ',' as delimiters.
-    item = strtok(ptr, ":,");
-    ptr=NULL;
-    if (item != NULL)
-    {
-      DBG_print(DBG_LEVEL_INFO, "Adding cmd directory:  %s", item);
-      dirs.push_back(item);
-    } else
-    {
-      DBG_print(DBG_LEVEL_DEBUG, "item is NULL");
-      break;
-    }
-  }
 }
 
 int main(int argc, char *argv[])
@@ -260,7 +240,7 @@ int main(int argc, char *argv[])
     switch (opt)
     {
     case 'D':
-      parseDirectoryPaths(optarg, gCmdDirectories);
+      gCmdDirectories.push_back(optarg);
       break;
     case 'd':
       logLevel=strtol(optarg, NULL, 10);
