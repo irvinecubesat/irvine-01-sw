@@ -84,11 +84,10 @@ extern "C"
     }
     strncpy(resp->msg, buff, len);
     DBG_print(DBG_LEVEL_DEBUG, "msg is %s", resp->msg);
-    if (lastchance == 1)
-    {
-      CHLD_close_stdin(child); 
-    }
-    return 0;
+
+    CHLD_close_stdin(child); 
+
+    return len;
   }
 
   /**
@@ -107,11 +106,10 @@ extern "C"
       resp->err[len]='\0';
     }
     strncpy(resp->err, buff, len);
-    if (lastchance == 1)
-    {
-      CHLD_close_stdin(child);
-    }
-    return 0;
+
+    CHLD_close_stdin(child);
+
+    return len;
   }
 
 
@@ -237,7 +235,8 @@ void parseDirectoryPaths(char *inPaths, std::vector<std::string> &dirs)
 
   while (true)
   {
-    item = strtok(ptr, ":");
+    // inittab uses ":" as separators, so allow ':' or ',' as delimiters.
+    item = strtok(ptr, ":,");
     ptr=NULL;
     if (item != NULL)
     {

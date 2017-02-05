@@ -10,7 +10,12 @@
 #define BEACON_PKT_ID         1
 #define BEACON_DST_PORT       2
 #define BEACON_DST_IP_STR     "224.0.0.1"
-#define BEACON_MESSAGE        "IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01 IRVINE-01"
+#define BEACON_MESSAGE        "IRVINE-01"
+
+/*
+ * Debug level
+ */
+#define DBG_LEVEL_DEBUG  LOG_DEBUG
 
 static ProcessData *gProc=NULL;
 
@@ -47,7 +52,7 @@ static int assemble_beacon(void *arg)
 
    if (proc)
    {
-     DBG_print(DBG_LEVEL_INFO, "Sending beacon:  %s\n", BEACON_MESSAGE);
+     DBG_print(DBG_LEVEL_DEBUG, "Sending beacon:  %s\n", BEACON_MESSAGE);
      send_beacon_packet(proc, BEACON_MESSAGE, strlen(BEACON_MESSAGE));
    }
 
