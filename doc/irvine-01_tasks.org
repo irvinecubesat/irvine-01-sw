@@ -21,6 +21,7 @@
   - [X] ground station clock sync
   - [ ] Hardware watchdog
     - [ ] Board Configuration for 1 Day 12 hours 8 min
+      Short R120, 10KOhm on R2
     - [ ] Hardware watchdog disable command
   - [ ] Store telemetry
 * Initial Deployment [0/4]
