@@ -1,3 +1,4 @@
 * Release Notes for Irvine-01 Flight Software
-** 00.04.06
-   - Add cmdd remote command execution framework
+** 00.05.00
+   - cmdd remote command execution framework
+   - satcomm encryption configuration
