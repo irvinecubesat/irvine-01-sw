@@ -86,8 +86,6 @@ extern "C"
     strncpy(resp->msg, buff, len);
     DBG_print(DBG_LEVEL_DEBUG, "msg is %s", resp->msg);
 
-    CHLD_close_stdin(child); 
-
     return len;
   }
 
@@ -107,8 +105,6 @@ extern "C"
       resp->err[len]='\0';
     }
     strncpy(resp->err, buff, len);
-
-    CHLD_close_stdin(child);
 
     return len;
   }
@@ -203,6 +199,7 @@ extern "C"
     CHLD_death_notice(childProc, childDoneCb, &doneStruct);
     CHLD_stdout_reader(childProc, childStdOutCb, &cmdResp);
     CHLD_stderr_reader(childProc, childStdErrCb, &cmdResp);
+    CHLD_close_stdin(childProc); 
   }
 }
 
