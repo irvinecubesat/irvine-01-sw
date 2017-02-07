@@ -1,0 +1,200 @@
+2 of 46,546
+ 
+Re: CubeSat Radio Communication Testing
+Inbox
+	x
+John Michael Bellardo	
+Steve, The programs for process steps 1 and 2 are combined into 1. I need to ...
+	AttachmentsJan 22 (2 days ago)
+Steve Skwarlo	
+Thanks, John. I'd appreciate some clarification. My understanding is as follo...
+	Jan 22 (1 day ago)
+John Michael Bellardo	
+Steve, The software setup for two-way communication is as follows: 1. One lin...
+	Attachments7:11 AM (12 hours ago)
+Steve Skwarlo	
+ohn, This changes everything on our ground based computers. Good-bye Windows!...
+	11:36 AM (8 hours ago)
+Maurice Ling	
+We already have linux running on the cubesat gateway. We can run the ground s...
+	12:34 PM (7 hours ago)
+John Michael Bellardo <bellardo@calpoly.edu>
+	
+Attachments2:11 pm (1 day ago)
+	
+to Justin, Maurice, Steve, Jennifer, Brent, Bob
+Maurice, Steve, Bob,
+        I just completed testing the software with an ETU here are Cal Poly.  Two-way comm worked (verified with ping) using a KPC 9612 and manually tuned radio.  Here are the steps:
+
+1.  Send me your github account name so I can give you read access to the software repo (satnet).
+2.  Clone satnet.
+3.  Build the satnet-groundstation sub-project within satnet.
+4.  Attach the TNC to a Linux machine.  Note which USB port it is using.
+5.  Update / generate the configuration file.  I’ve attached an example to this email.  The items you need to change are:
+   Line 01: AX25_SAT_CALLSIGN=KJ6KSL   (use the callsign for Irvine01)
+   Line 02: AX25_SAT_SSID=1   (use the SSID for Irvine01)
+   Line 32: DEVICE=/dev/ttyUSB2   (change ttyUSB2 to the serial port attached to the TNC)
+   Line 33: BAUD=38400   (set the baud rate to the baud rate used over the serial port between the linux box and the TNC.  Note this is not necessarily the same as the baud rate used by the UHF radio).
+
+   Line 38: CALLSIGN=N6CP  (update to the callsign programmed into the TNC.  This only gets used if the TNC gets reset and needs reconfiguration)
+
+   Line 39:       EQUALIZE=155 (update to the correct equalize setting for the TNC/radio combo.  If unsure look at the current TNC settings and use that value)
+
+   Line 43:       XMITLVL_FAST=20 (update to the correct xmitlvl setting for the high speed port and TNC/radio combo.  If unsure look at the current TNC settings and use that value)
+
+   Line 50:    SAT_IP=129.65.147.19  (Update to match the IP address issued to the satellite.  Look in satcomm.cfg to verify)
+   Line 51:    GND_IP=129.65.147.18 (Update to match the IP address issued to the ground station.  Look in satcomm.cfg to verify)
+
+6.  Copy the updated configuration file to the linux box.
+7.  Run the satnet-groundstation program in a terminal window:
+       sudo ./satnet-groundstation -c jtest.cfg
+
+    You should see a bunch of output that will keep scrolling during the test.  I’ve included example output from my test of satnet-groundstation after my signature.  Keep this program running through the end of the test.
+
+8.  Verify that a new network device is created and configured on the linux box.  Run “ifconfig” in a separate window.  The new device should have the name "gnd-tun” and IP address equivalent to the “GND_IP” value in the config file.
+
+9.  Issue commands to the spacecraft, based on what you are attempting to test.  Two way communication can be verified with a simple ping:
+
+      ping <SAT-IP>
+
+Other commands can be issued using the 32 or 64 bit Intel command executables included in the FSW builds.  Beacons can be received using a custom program listening on the correct multicast port and address pair.  I sent an example of such a program previously.
+
+-John
+
+pi@raspberrypi:~ $ sudo ./satnet-groundstation -c jtest.cfg
+opendir /usr/lib/satnet-plugins error: No such file or directory
+[3381]: Using config file: jtest.cfg
+[3381]: Reading Config File jtest.cfg
+[3381]: Creating interface TNC
+TCP Server init port 5551
+Connect callback!
+[3381]: Unsupported baudrate (0)
+[3381]: Unable to open serial device (null): Bad address
+No more doppler
+rx_len: 0, 2
+rx_len: 2, 5
+rx_len: 7, 1
+rx_len: 8, 5
+rx_len: 13, 5
+rx_len: 18, 1
+rx_len: 19, 5
+rx_len: 24, 5
+rx_len: 29, 1
+rx_len: 30, 5
+rx_len: 35, 1
+rx_len: 36, 5
+rx_len: 41, 5
+rx_len: 46, 1
+rx_len: 47, 5
+rx_len: 52, 5
+rx_len: 57, 1
+rx_len: 58, 5
+rx_len: 63, 5
+rx_len: 68, 1
+rx_len: 69, 5
+rx_len: 74, 5
+rx_len: 79, 1
+rx_len: 80, 5
+rx_len: 85, 1
+rx_len: 86, 5
+rx_len: 91, 5
+rx_len: 96, 1
+rx_len: 97, 5
+rx_len: 102, 5
+rx_len: 107, 1
+rx_len: 108, 5
+rx_len: 113, 5
+rx_len: 118, 1
+rx_len: 119, 5
+rx_len: 124, 1
+rx_len: 125, 5
+rx_len: 130, 5
+rx_len: 135, 1
+rx_len: 136, 5
+rx_len: 141, 5
+rx_len: 146, 1
+rx_len: 147, 5
+rx_len: 152, 5
+rx_len: 157, 1
+rx_len: 158, 5
+rx_len: 163, 2
+TNC Entered command mode for reprogramming
+rx_len: 0, 4
+rx_len: 4, 1
+rx_len: 5, 5
+rx_len: 10, 5
+rx_len: 15, 1
+rx_len: 16, 5
+rx_len: 21, 1
+rx_len: 22, 3
+rx_len: 25, 1
+rx_len: 0, 3
+rx_len: 3, 1
+rx_len: 4, 5
+rx_len: 9, 1
+rx_len: 10, 5
+rx_len: 15, 1
+rx_len: 16, 5
+rx_len: 21, 5
+rx_len: 26, 1
+rx_len: 27, 3
+rx_len: 30, 4
+rx_len: 0, 3
+rx_len: 3, 5
+rx_len: 8, 1
+rx_len: 9, 5
+rx_len: 14, 4
+rx_len: 18, 4
+rx_len: 0, 2
+rx_len: 2, 1
+rx_len: 3, 5
+rx_len: 8, 1
+rx_len: 9, 5
+rx_len: 14, 5
+rx_len: 19, 1
+rx_len: 20, 5
+rx_len: 25, 5
+rx_len: 30, 1
+rx_len: 31, 2
+rx_len: 33, 3
+rx_len: 36, 1
+rx_len: 0, 3
+rx_len: 3, 1
+rx_len: 4, 5
+rx_len: 9, 1
+rx_len: 10, 5
+rx_len: 15, 1
+rx_len: 16, 5
+rx_len: 21, 5
+rx_len: 26, 1
+rx_len: 27, 4
+rx_len: 31, 1
+rx_len: 32, 1
+rx_len: 33, 2
+rx_len: 0, 4
+rx_len: 0, 3
+rx_len: 3, 5
+rx_len: 8, 1
+rx_len: 9, 5
+rx_len: 14, 5
+rx_len: 19, 3
+rx_len: 22, 1
+rx_len: 0, 2
+rx_len: 2, 5
+rx_len: 7, 1
+rx_len: 8, 5
+rx_len: 13, 5
+rx_len: 18, 1
+rx_len: 19, 3
+rx_len: 22, 1
+rx_len: 23, 1
+rx_len: 24, 2
+rx_len: 0, 3
+rx_len: 3, 5
+rx_len: 8, 1
+rx_len: 9, 5
+rx_len: 14, 3
+rx_len: 17, 1
+TNC Entered KISS mode
+    Rotor to 45.000000, 90.000000
+
