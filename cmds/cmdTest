@@ -4,6 +4,9 @@
 #  - command returns with the status given with the -e option
 #
 instdir=$(cd $(dirname $0); pwd)
+touch ${instdir}/log.sh
+
+
 . ${instdir}/log.sh
 log_init $0
 #

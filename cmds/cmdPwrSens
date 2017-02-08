@@ -11,8 +11,10 @@ usage() {
 	echo "-n removes old output"
 }
 
+outputFile=/var/log/"PwrSens$(date).output"
+
 removePreviousOutput() {
-	rm /var/log/cmdPwrSens.output
+	rm $outputFile
 }
 
 O=`getopt h "$@"` || exit 1
@@ -41,19 +43,15 @@ done
 #
 # Execute sys-status command, intercepting the output so we can filter it
 #
-sys-status >> /var/log/cmdPwrSens.output
+sys-status >> $outputFile
 
 exitStatus=$?
 
 if [ $exitStatus -eq 0 ] 
 	then
-	echo "Success: Find output in /var/log/cmdPwrSens.output"
+	echo "Success: Find output in $outputFile"
 else
 	log "[E] sys-status error"
 fi
 
 exit $exitStatus
-
-sys-status | grep PwrSens >> /var/log/PwrSens.output echo "Output at 
-/var/log/PwrSens.output"
-exit 0

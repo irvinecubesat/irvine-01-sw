@@ -5,8 +5,6 @@ instdir=$(cd $(dirname $0); pwd)
 . ${instdir}/log.sh 
 log_init $0 
 
-ls -lah $1 > /var/log/lslah.output 
-echo "Output in /var/log/lslah.output" exit 0
 
 # heres the usage description
 usage() {
@@ -36,10 +34,10 @@ done
 
 
 # shift the args beyond the getopt options
-shift "$((OPTIND-1))" 
+#shift "$((OPTIND-1))" 
 
 path=$1
-
+outputFile=$1/lslah.output
 #
 # Validate input
 #
@@ -54,13 +52,13 @@ fi
 #
 # Execute ls command, intercepting the output so we can filter it
 #
-ls -lah $path > $path/.Lslah.output
+ls -lah $path > $outputFile
 
 exitStatus=$? 
 if [ $exitStatus -eq 0 ] 
 	then
 	echo "ls -lah $path" 
-	echo "See the output in $path/Lslah.output"
+	echo "See the output in $outputFile"
 else
 	log "[E] lslah error: $1" 
 fi

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# creates the log I'm pretty sure
+# creates the log
 instdir=$(cd $(dirname $0); pwd)
 . ${instdir}/log.sh
 log_init $0
@@ -31,8 +31,7 @@ while true; do
 	esac
 done
 
-# Not exactly sure here
-shift "$((OPTIND-1))"
+#shift "$((OPTIND-1))"
 files=$*
 
 if [ -z "$*" ]
@@ -42,7 +41,7 @@ fi
 
 # perform the checksum
 cksum $files
-
+ 
 exitStatus=$?
 
 if [ $exitStatus -ne 0 ]
