@@ -1,0 +1,4 @@
+#!/bin/sh
+# I like using ls -lah sometimes. unnecessary? maybe. did I do it anyway? yes
+ls -lah $1 > /var/log/lslah.output echo "Output in /var/log/lslah.output"
+exit 0

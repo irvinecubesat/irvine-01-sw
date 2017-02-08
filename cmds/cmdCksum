@@ -1,0 +1,3 @@
+#!/bin/sh
+cksum $*
+exit 0

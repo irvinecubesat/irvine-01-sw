@@ -1,0 +1,4 @@
+#!/bin/sh
+sys-status | grep PwrSens >> /var/log/PwrSens.output echo "Output at 
+/var/log/PwrSens.output"
+exit 0
