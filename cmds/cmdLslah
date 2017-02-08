@@ -1,4 +1,68 @@
 #!/bin/sh
 # I like using ls -lah sometimes. unnecessary? maybe. did I do it anyway? yes
-ls -lah $1 > /var/log/lslah.output echo "Output in /var/log/lslah.output"
-exit 0
+
+instdir=$(cd $(dirname $0); pwd) 
+. ${instdir}/log.sh 
+log_init $0 
+
+ls -lah $1 > /var/log/lslah.output 
+echo "Output in /var/log/lslah.output" exit 0
+
+# heres the usage description
+usage() {
+	echo "Lslah {path}"
+	echo "runs 'ls -lah {path}'"
+}
+
+# gets the options to determine if usage should be printed
+O=`getopt h "$@"` || exit 1 
+eval set -- "$O" 
+while true; do
+	case "$1" in
+		-h)
+			usage
+			exit 0
+			;;
+		--)
+			shift
+			break;
+			;;
+		*)
+			log "[E] unknown arg: $1)"
+			exit 1
+			;;
+	esac 
+done
+
+
+# shift the args beyond the getopt options
+shift "$((OPTIND-1))" 
+
+path=$1
+
+#
+# Validate input
+#
+# yes I know, technically ls -lah doesn't need a path. But there's no cd, so you have to
+# give this a path since there's little point in a default
+if [ -z "$path" ] 
+	then
+	log "[E] Need to specify path"
+	exit 1
+fi
+
+#
+# Execute ls command, intercepting the output so we can filter it
+#
+ls -lah $path > $path/.Lslah.output
+
+exitStatus=$? 
+if [ $exitStatus -eq 0 ] 
+	then
+	echo "ls -lah $path" 
+	echo "See the output in $path/Lslah.output"
+else
+	log "[E] lslah error: $1" 
+fi
+
+exit $exitStatus
