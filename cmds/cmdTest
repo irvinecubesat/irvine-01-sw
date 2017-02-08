@@ -14,6 +14,9 @@ usage()
 
 exitStatus=0
 
+O=`getopt he: "$@"` || exit 1
+eval set -- "$O"
+
 while getopts "he:" arg ; do
     case $arg in 
         h)
@@ -21,17 +24,17 @@ while getopts "he:" arg ; do
             exit 0
             ;;
         e)
-            exitStatus="$OPTARG"
+            exitStatus="$2"
             ;;
         *)
-            ( >&2 echo "unknown arg:  $arg)" )
+            log "[E] unknown arg:  $arg"
             exit 1
             ;;
     esac
 done
 
 if [ $exitStatus -ne 0 ]; then
-  log "[E] Test error"
+  log "[E] Test status $exitStatus"
 else 
   log "$0 success"
 fi

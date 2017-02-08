@@ -12,18 +12,26 @@ usage()
     echo "Chmod {perm} {file path}"
 }
 
-while getopts "h" arg ; do
-    case $arg in 
-        h)
+O=`getopt h "$@"` || exit 1
+eval set -- "$O"
+while true; do
+    case "$1" in
+        -h) 
             usage
             exit 0
             ;;
-        *)
-            ( >&2 echo "unknown arg:  $arg)" )
-            exit 1
+        --)
+            shift
+            break;
             ;;
+        *)
+           log "[E] unknown arg:  $1)"
+           exit 1
+           ;;
+            
     esac
 done
+
 
 # shift the args beyond the getopt options
 shift "$((OPTIND-1))"
