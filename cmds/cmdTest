@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+#  Test cmd execution 
+#  - command returns with the status given with the -e option
+#
+instdir=$(cd $(dirname $0); pwd)
+. ${instdir}/log.sh
+log_init $0
+#
+usage()
+{
+    echo "Test [-e {status}]"
+}
+
+exitStatus=0
+
+while getopts "he:" arg ; do
+    case $arg in 
+        h)
+            usage
+            exit 0
+            ;;
+        e)
+            exitStatus="$OPTARG"
+            ;;
+        *)
+            ( >&2 echo "unknown arg:  $arg)" )
+            exit 1
+            ;;
+    esac
+done
+
+if [ $exitStatus -ne 0 ]; then
+  log "[E] Test error"
+else 
+  log "$0 success"
+fi
+
+exit "$exitStatus"
