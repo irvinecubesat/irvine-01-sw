@@ -128,13 +128,19 @@ return 5;
 // response.
 //
 
-data->gyro[0] = resp.sms.gyro.x;
-data->gyro[1] = resp.sms.gyro.y;
-data->gyro[2] = resp.sms.gyro.z;
+data->mb_gyro_x = resp.sms.mb_gyro_x;
+data->mb_gyro_y = resp.sms.mb_gyro_y;
+data->mb_gyro_z = resp.sms.mb_gyro_z;
 
-data->mag[0] = resp.sms.mag.x;
-data->mag[1] = resp.sms.mag.y;
-data->mag[2] = resp.sms.mag.z;
+data->nx_mag_x = resp.sms.mag.x;
+data->nx_mag_y = resp.sms.mag.y;
+data->nx_mag_z = resp.sms.mag.z;
+data->px_mag_x = resp.sms.mag.x;
+data->px_mag_y = resp.sms.mag.y;
+data->px_mag_z = resp.sms.mag.z;
+data->py_mag_x = resp.sms.mag.x;
+data->py_mag_y = resp.sms.mag.y;
+data->py_mag_z = resp.sms.mag.z;
 
 return 0;
 }
