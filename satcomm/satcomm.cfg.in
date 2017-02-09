@@ -1,0 +1,128 @@
+#
+# Irvine-01 Satcomm Configuration file.
+#
+
+ABV_NAME=IRVINE01
+NAME=IRVINE01SW
+AX25_CALLSIGN=KK6CVB
+AX25_SSID=1
+AX25_REMOTE_CALLSIGN=N6CP
+AX25_REMOTE_SSID=1
+
+MORSE_BEACON=IRV1
+MORSE_BYTES_PER_ELEMENT=36
+
+# The "normal" interface used to transmit packets
+# The actual queue used is the default TX queue for the interface
+DEFAULT_TX_INTF=1
+# The "normal" interface expected to receive packets
+# Satcomm treats this specially.  Packets received via
+# the default RX queue are always responded to out the
+# default TX queue
+DEFAULT_RX_INTF=1
+
+
+<IP_ADDRESS>
+   SAT_IP=129.65.147.55
+   GND_IP=129.65.147.54
+   SERIAL_NUM=0x8211
+</IP_ADDRESS>
+
+#
+# Flight board
+#
+<IP_ADDRESS>
+   SAT_IP=129.65.147.53
+   GND_IP=129.65.147.52
+   SERIAL_NUM=0x8212
+</IP_ADDRESS>
+
+UNSQUELCH_DELAY_SECS=30
+VERBOSE=<0, 1>
+2ND_INHIBIT_TYPE=NONE
+2ND_TIMER_DELAY_SECS=0
+
+#
+# The AES encryption key will be automatically replaced at build time.
+#
+AES128KEY=__AES128_KEY__
+AES128_IV=__AES128_IV__
+ENFORCE_ENCRYPTION=1
+DEFAULT_L2=CPL2
+DEFAULT_BEACON_L2=AX.25
+DEFAULT_L3=AES128
+DEFAULT_BEACON_L3=IPv4
+
+
+# Increase MTU to 512 bytes.  You should only use this if necessary
+<PACKET_SOURCE linux_vtun>
+MTU=512
+</PACKET_SOURCE>
+
+
+<INTERFACE ax5042>
+   DEVICE=/dev/AX5042
+   ID=1
+   NAME=UHF
+   DEFAULT_TX_QUEUE=2
+   DEFAULT_RX_QUEUE=3
+   CW_QUEUE=4
+   CW_SHORT_INTERVAL=45
+   CW_LONG_INTERVAL=7200
+
+
+   <QUEUE>
+       ID=1
+       SPEED=9600
+       MODULATION=FSK
+       ENCODING=NRZI+SCRAMBLED
+       FREQUENCY=437800000
+       CC_FEC=0
+       H=1.0
+       BEACON=1
+   </QUEUE>
+
+   <QUEUE>
+       ID=2
+       SPEED=9600
+       MODULATION=FSK
+       ENCODING=NRZI+SCRAMBLED
+       FREQUENCY=437800000
+       CC_FEC=0
+       H=1.0
+   </QUEUE>
+
+   <QUEUE>
+       ID=3
+       SPEED=9600
+       MODULATION=FSK
+       ENCODING=NRZI+SCRAMBLED
+       FREQUENCY=437800000
+       CC_FEC=0
+       H=1.0
+   </QUEUE>
+
+   <QUEUE>
+       ID=4
+       SPEED=5000
+       MODULATION=ASK
+       ENCODING=NRZ
+       FREQUENCY=437800000
+       CC_FEC=0
+       H=0.0
+   </QUEUE>
+
+</INTERFACE>
+
+<INTERFACE ethcomm>
+   DEVICE=/tmp/ethcomm
+   ID=10
+   DEFAULT_TX_QUEUE=1
+   DEFAULT_RX_QUEUE=1
+
+   <QUEUE>
+      ID=1
+      BEACON=1
+   </QUEUE>
+
+</INTERFACE>
