@@ -1,0 +1,72 @@
+#!/bin/sh
+#
+#  Command to chmod a file
+#
+instdir=$(cd $(dirname $0); pwd)
+. ${instdir}/log.sh
+log_init $0
+
+#
+usage()
+{
+    echo "Chmod {perm} {file path}"
+}
+
+O=`getopt h "$@"` || exit 1
+eval set -- "$O"
+while true; do
+    case "$1" in
+        -h) 
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            break;
+            ;;
+        *)
+           log "[E] unknown arg:  $1)"
+           exit 1
+           ;;
+            
+    esac
+done
+
+
+# shift the args beyond the getopt options
+shift "$((OPTIND-1))"
+
+perm=$1
+file=$2
+
+#
+# Validate input
+#
+if [ -z "$perm" ]; then
+    log "[E] Need to specify permissions"
+    exit 1
+fi
+
+if [ -z "$file" ]; then
+    log "[E] Need to specify file"
+    exit 1
+fi
+
+#
+# Execute chmod command, intercepting the output so we can filter it
+#
+
+chmod $perm $file
+
+exitStatus=$?
+
+if [ $exitStatus -eq 0 ]; then
+  echo "chmod $perm on $file"
+else
+  log "[E] chmod error:  $*"
+fi
+# Technically, the last command exit status will be used as the exit status.
+# However we want to be explicit to avoid  errors in status if anything else
+# gets executed (like logging) before the program exits
+exit $exitStatus
+

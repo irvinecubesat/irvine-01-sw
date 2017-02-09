@@ -80,6 +80,11 @@ ADD_SUBDIRECTORY(beacon)
 ADD_SUBDIRECTORY(cmdd)
 
 #
+# Remote commands
+#
+ADD_SUBDIRECTORY(cmds)
+
+#
 # Satcomm configuration file
 #
 ADD_SUBDIRECTORY(satcomm)
