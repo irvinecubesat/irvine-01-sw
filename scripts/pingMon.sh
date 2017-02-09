@@ -5,6 +5,7 @@
 LOG_DIR=~/logs
 logFile="$LOG_DIR"/pingMon.log
 hostIp=192.168.0.100
+message="Ping Monitoring"
 
 if [ ! -d $LOG_DIR ]; then
     mkdir -p $LOG_DIR
@@ -15,11 +16,13 @@ usage()
     cat <<EOF
 Usage:  pingMon.sh [options] {ip address} 
 
-       ping the given IP address, logging to the file
+       ping the given IP address, logging to the file.  
+       Use control-c to stop the test.
 
 Options:
 
-  -l {log file}    The log file to log output to
+    -m {message}   A message to help identify the test scenario
+    -l {log file}    The log file to log output to
 
 EOF
     exit 1
@@ -28,14 +31,17 @@ EOF
 log()
 {
     output="$(date +%Y%m%d_%H%M%S) $*"
-    echo $output |tee -a $logFile
+    echo "$output" |tee -a $logFile
 }
 
-while getopts "l:h" arg; do
+while getopts "l:m:h" arg; do
     case $arg in
 	    l)
 	        logFile=$OPTARG
 	        ;;
+        m)
+            message="$OPTARG"
+            ;;
         h)
 	        usage
 	        ;;
@@ -53,15 +59,15 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-log "[I] Starting Ping test"
-ping $hostIp 2>&1 |tee -a $logFile&
+log "[I] ------ Starting $message ------"
+ping "$hostIp" 2>&1 |tee -a "$logFile"&
 pid=$!
 
 cleanup()
 {
-    log "[I] Terminating test"
+    log "[I] ------ Stopping $message ------"
 }
 trap cleanup EXIT
-wait $(($pid))
+wait $pid
 
 
