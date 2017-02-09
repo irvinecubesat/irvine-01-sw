@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  Command to mkdir a folder
+#  Command to capture a photo
 #
 instdir=$(cd $(dirname $0); pwd)
 . ${instdir}/log.sh
@@ -9,7 +9,7 @@ log_init $0
 #
 usage()
 {
-    echo "mkdir {file path}"
+    echo "uvvcapture {args}"
 }
 
 O=`getopt h "$@"` || exit 1
@@ -34,32 +34,38 @@ done
 
 
 # shift the args beyond the getopt options
-# this is commented out because it causes errors in this and my other commands
-#shift "$((OPTIND-1))"
+shift "$((OPTIND-1))"
 
-file=$1
+
 
 #
 # Validate input
 #
 
-if [ -z "$file" ]; then
-    log "[E] Need to specify folder"
-    exit 1
-fi
-
+args = "" 
 #
-# Execute mkdir command, intercepting the output so we can filter it
-#
+# Execute rm command, intercepting the output so we can filter it
+# 
+flag = false; 
+for a in $@  
+do
+ if["$flag" = false]; then 
+    flag = true; 
+    continue; 
+ fi
+ args+= " "
+ args+= a
+ args+= " "
+done 
 
-mkdir $file
+uvccapture $args
 
 exitStatus=$?
 
 if [ $exitStatus -eq 0 ]; then
-  echo "mkdir $file"
+  echo "uvccapture @args"
 else
-  log "[E] mkdir error:  $*"
+  log "[E] uvccapture error:  $*"
 fi
 # Technically, the last command exit status will be used as the exit status.
 # However we want to be explicit to avoid  errors in status if anything else

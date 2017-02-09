@@ -34,7 +34,7 @@ done
 
 
 # shift the args beyond the getopt options
-shift "$((OPTIND-1))"
+#shift "$((OPTIND-1))"
 
 file=$1
 
