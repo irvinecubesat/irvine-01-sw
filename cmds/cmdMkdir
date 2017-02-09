@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+#  Command to mkdir a folder
+#
+instdir=$(cd $(dirname $0); pwd)
+. ${instdir}/log.sh
+log_init $0
+
+#
+usage()
+{
+    echo "mkdir {file path}"
+}
+
+O=`getopt h "$@"` || exit 1
+eval set -- "$O"
+while true; do
+    case "$1" in
+        -h) 
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            break;
+            ;;
+        *)
+           log "[E] unknown arg:  $1)"
+           exit 1
+           ;;
+            
+    esac
+done
+
+
+# shift the args beyond the getopt options
+shift "$((OPTIND-1))"
+
+file=$1
+
+#
+# Validate input
+#
+
+if [ -z "$file" ]; then
+    log "[E] Need to specify folder"
+    exit 1
+fi
+
+#
+# Execute mkdir command, intercepting the output so we can filter it
+#
+
+mkdir $file
+
+exitStatus=$?
+
+if [ $exitStatus -eq 0 ]; then
+  echo "mkdir $file"
+else
+  log "[E] mkdir error:  $*"
+fi
+# Technically, the last command exit status will be used as the exit status.
+# However we want to be explicit to avoid  errors in status if anything else
+# gets executed (like logging) before the program exits
+exit $exitStatus
+
