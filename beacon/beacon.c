@@ -108,8 +108,9 @@ int len;
 uint8_t cmd = CMD_STATUS_REQUEST;
 uint8_t cmd_resp = CMD_STATUS_RESPONSE;
 
-len = socket_send_packet_and_read_response(ip, "adcs-sensors", &cmd,
-                    sizeof(cmd), &resp, sizeof(resp), 5000);
+len = socket_send_packet_and_read_response(ip, "adcs-sensors",
+                                           &cmd, sizeof(cmd),
+                                           &resp, sizeof(resp), 5000);
 
 if (len != sizeof(resp))
 {
