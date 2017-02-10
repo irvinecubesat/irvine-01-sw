@@ -95,6 +95,11 @@ ADD_SUBDIRECTORY(satcomm)
 ADD_SUBDIRECTORY(flightscripts)
 
 #
+# datalogger storage
+#
+ADD_SUBDIRECTORY(datalogger)
+
+#
 # Experimental Version generation -
 # I'd like to have the version in this project, but currently the version file,
 # /etc/issue is specified in the irvine-01-cfg project due to the way
