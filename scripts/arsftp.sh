@@ -9,7 +9,12 @@ log()
   echo $*
 }
 
-arsftpPath=/opt/toolchain//toolchain-arm-linux/bin/arsftp
+host=${SAT_IP-192.168.0.100}
+
+arsftpPath=$(which arsftp 2> /dev/null)
+if [ $? -ne 0 ]; then
+    arsftpPath=/opt/toolchain//toolchain-arm-linux/bin/arsftp
+fi
 arsftpCmds=$(ls ${arsftpPath}-* | awk -F- '{print $NF}')
 
 if [ ! -x $arsftpPath ]; then
@@ -23,6 +28,9 @@ usage()
   Usage:  arsftp.sh cmd [args]
 
   run arsftp-{cmd} with given arguments
+
+  Default IP address is $host.  May be specified by the SAT_IP 
+  environment variable
 
   Possible commands are:
 
@@ -43,6 +51,5 @@ else
   fi	
 fi
 
-export LD_LIBRARY_PATH=/opt/toolchain//toolchain-arm-linux/lib
-${arsftpPath}-${cmd} $*
+${arsftpPath}-${cmd} -h $host $*
 

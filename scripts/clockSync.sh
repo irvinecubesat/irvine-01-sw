@@ -5,7 +5,7 @@ CLK_STATUS=${BIN_DIR}/clksync-status
 CLK_ADJUST=${BIN_DIR}/clksync-sync-offset
 logFile=/tmp/clockSync.log
 
-hostIp=192.168.0.100
+hostIp=${SAT_IP-192.168.0.100}
 
 syncThresholdSec=30
 

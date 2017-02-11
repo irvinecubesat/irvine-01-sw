@@ -4,7 +4,7 @@
 #
 LOG_DIR=~/logs
 logFile="$LOG_DIR"/pingMon.log
-hostIp=192.168.0.100
+hostIp=${SAT_IP-192.168.0.100}
 message="Ping Monitoring"
 
 if [ ! -d $LOG_DIR ]; then
@@ -16,8 +16,9 @@ usage()
     cat <<EOF
 Usage:  pingMon.sh [options] {ip address} 
 
-       ping the given IP address, logging to the file.  
-       Use control-c to stop the test.
+       ping the given IP address (default $hostIp), logging to the file.  
+       Use control-c to stop the test.  Default IP may be specified by
+       the SAT_IP environment variable.
 
 Options:
 
@@ -51,7 +52,9 @@ while getopts "l:m:h" arg; do
 done
 shift $((OPTIND-1))
 
-if [ -z "$1" ]; then
+hostIp=${1-$SAT_IP}
+
+if [ -z "$hostIp" ]; then
     echo
     echo "Please provide the IP address to monitor"
     echo
@@ -59,13 +62,13 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-log "[I] ------ Starting $message ------"
+log "[I] ------ Starting $message for $hostIp ------"
 ping "$hostIp" 2>&1 |tee -a "$logFile"&
 pid=$!
 
 cleanup()
 {
-    log "[I] ------ Stopping $message ------"
+    log "[I] ------ Stopping $message for $hostIp ------"
 }
 trap cleanup EXIT
 wait $pid
