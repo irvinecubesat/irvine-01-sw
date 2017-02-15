@@ -89,6 +89,15 @@ Make sure you have the necessary packages installed on your system:
 ```
 sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
 ```
+Note: The above instructions did not work for me on 64bit Kubuntu 16.10. If
+you run into errors about apt-get being unable to locate the packages, 
+follow these instructions instead
+```
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install libz1:i386 libncurses5:i386 libbz2-1.0:i386
+
+```
 Clone the irvinecubesat buildroot project from github:
 
 ```
