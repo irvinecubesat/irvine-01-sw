@@ -14,37 +14,47 @@
     - [X] kernel
     - [X] buildroot
   - [ ] Software development process
-* General System [2/6]
-  - [ ] Change root password
-  - [X] authorized_keys configuration
+* Descoped tasks
+  These tasks have been descoped but could be added if we have time
   - [ ] GPS clock sync
-  - [X] ground station clock sync
-  - [ ] Hardware watchdog
-    - [ ] Board Configuration for 1 Day 12 hours 8 min
+  
+* General System [3/4]
+  - [X] Change root password
+  - [X] authorized_keys configuration
+  - [-] Hardware watchdog [1/2]
+    - [X] Board Configuration for 1 Day 12 hours 8 min
       Short R120, 10KOhm on R2
-    - [ ] Hardware watchdog disable command
-  - [ ] Store telemetry
-* Initial Deployment [0/4]
+    - [ ] Hardware watchdog "clear" command
+  - [X] Store telemetry
+* Initial Deployment [0/3]
   Initial deployment happens once the satellite launches from the P-Pod.  This
   occurs once in the CubeSat lifecycle. 
-  - [ ] Antenna Deployment Configuration
-    1. [ ] Determine time required for Antenna Release
-    2. [ ] Set configuration
-  - [ ] Deployment script [0/4] - the integration point for all subtasks.  
-    1. [ ] Detect deployment condition
-    2. [ ] Set deployment flag in persistent location (/data)
-    3. [ ] Run deployment functions/scripts
+  - [ ] Configuration [0/1]
+    - [ ] Antenna Deployment - This should occur first
+      - Determine time required for Antenna Release
+    - [ ] Satcomm squelch/inhibit (T+45 min)
+      - Once Satcomm inhibit is disabled, beacon will transmit
+  - [ ] Initial deployment script [0/4] 
+    The integration point for initial deployment subtasks.  
+    1. [ ] Detect initial deployment condition via init deployment flag
+    2. [ ] Set init deployment flag in persistent location (/data)
+    3. [ ] Run deployment functions/scripts from a directory
     4. [ ] Log deployment status
-  - [ ] Initial DSA Deployment Integration
-  - [ ] Payload Power On [0/2]
-    - [ ] 5V0_PL_Enable
-    - [ ] 3V3_PL_Enable (Is this needed?)
+  - [ ] Initial Deployment Components
+    - [ ] Initial Pictures (@T+0 min)
+    - [ ] Automatic DSA Deployment (@T+30 min)
+* Bootup scripts [2/2]
+  - [X] C-Card initialization
+  - [X] Payload Power On [1/1]
+    - [X] 3V3_PL_Enable (GPIO 103)
 * I2C Expander TCA9554A Kernel Driver [2/3]
   - [X] Add Driver to kernel
   - [X] Driver setup module
-  - [ ] Testing
+  - [-] Testing
     - Encountered issues with module version with tca9554 support
-    - [ ] i2cdetect -l 1 shows 0x38 used by kernel
+    - [ ] i2cdetect -l 1 shows 0x38 used by kernel (shows UU stead of 38))
+      - Currently need to call i2cget and reload pcf857x module
+      - Setting value fails
     - [ ] gpio 300-302 come up Low
     - [ ] gpio 296-299, 303 come up High
     - [ ] Can set gpio's 300-303
@@ -169,7 +179,7 @@
       - 129.65.147.53 (flight unit)  
       - 129.65.147.55 (engineering unit)
   - [X] Add Satcomm process to inittab 
-  - [-] Beacon [2/3]
+  - [-] Beacon [2/4]
     - Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
     - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]]) 
     - [X] Broadcast beacon to 224.0.0.1 port 2
@@ -200,13 +210,18 @@
       - If values are not valid, then they should be set to 0 (or a known invalid value)
   - [X] Remote Command execution framework
     - Framework that executes commands on the board and provides return status and output.
-* Ground Station [0/3]
+    - Commands [2/2]:
+      - [X] Test
+      - [X] Chmod
+      
+* Ground Station [1/5]
   - [ ] Beacon Decoder
+  - [ ] Beacon listener
   - [ ] Data Offload Controller (arsftp)
-  - [ ] Send commands via UDP to Spacecraft
+  - [X] Send commands via UDP to Spacecraft
     - Need to be less than 256 bytes (227 - UDP header)
+  - [X] Ground station clock sync
   - [ ] Command and Control
-    - [ ] Clock Check/sync
     - [ ] Health Monitoring/Reporting
     - [ ] DSA Monitor/Control
     - [ ] Data Offload Initiation
