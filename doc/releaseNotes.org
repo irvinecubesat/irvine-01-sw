@@ -1,0 +1,3 @@
+* Release Notes for Irvine-01 Flight Software
+** 00.04.06
+   - Add cmdd remote command execution framework

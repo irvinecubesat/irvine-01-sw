@@ -14,12 +14,13 @@
     - [X] kernel
     - [X] buildroot
   - [ ] Software development process
-* General System [1/5]
+* General System [2/6]
   - [ ] Change root password
   - [X] authorized_keys configuration
   - [ ] GPS clock sync
-  - [-] Hardware watchdog
-    - [X] Board Configuration for 1 Day 12 hours 8 min
+  - [X] ground station clock sync
+  - [ ] Hardware watchdog
+    - [ ] Board Configuration for 1 Day 12 hours 8 min
     - [ ] Hardware watchdog disable command
   - [ ] Store telemetry
 * Initial Deployment [0/4]
@@ -41,6 +42,7 @@
   - [X] Add Driver to kernel
   - [X] Driver setup module
   - [ ] Testing
+    - Encountered issues with module version with tca9554 support
     - [ ] i2cdetect -l 1 shows 0x38 used by kernel
     - [ ] gpio 300-302 come up Low
     - [ ] gpio 296-299, 303 come up High
@@ -156,16 +158,16 @@
     - [ ] Cable Interface with C-Card (cable)
     - [ ] Driver - Thruster control via Intrepid SPI bus
       [ ] Integration Test
-* Comms [0/5]
-  - [-] UHF Radio [1/2] - *Make sure antenna is always connected when powering*
+* Comms [4/5]
+  - [X] UHF Radio [2/2] - *Make sure antenna is always connected when powering*
     - [X] Integration with Intrepid Card
-    - [ ] SDR/Comms Bench Testing
-  - [ ] Satcomm Configuration (satcomm.cfg)
+    - [X] SDR/Comms Bench Testing
+  - [X] Satcomm Configuration (satcomm.cfg)
     - https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/SatcommConfigurationChecklist
     - IP Address of Satellites (SAT_IP) - Confirm with John
       - 129.65.147.53 (flight unit)  
       - 129.65.147.55 (engineering unit)
-  - [ ] Add Satcomm process to inittab 
+  - [X] Add Satcomm process to inittab 
   - [-] Beacon [2/3]
     - Cal Poly instructions (summarized below):  https://asof.atl.calpoly.edu/trac/polysat_documentation/wiki/Beaconing
     - [X] Beacon process ([[https://github.com/irvinecubesat/irvine-01-sw/blob/master/beacon/beacon.c][beacon.c]]) 
@@ -186,16 +188,16 @@
         - Use packed binary structure in network order.
         - The structure takes the form of:
       #+BEGIN_SRC c-mode
-        struct {
-          uint16_t id; 
-          uint8_t gyro[3];
-          (fill in the data)...
-        } __attribute__((packed));
+      struct {
+      uint16_t id; 
+      uint8_t gyro[3];
+      (fill in the data)...
+      } __attribute__((packed));
       #+END_SRC
         - Use network order (convert any multi-byte value using the htonl function)
         - Reduce the resolution (round them down) to save on bytes
-       - If values are not valid, then they should be set to 0 (or a known invalid value)
-  - [ ] Remote Command execution framework
+      - If values are not valid, then they should be set to 0 (or a known invalid value)
+  - [X] Remote Command execution framework
     - Framework that executes commands on the board and provides return status and output.
 * Ground Station [0/3]
   - [ ] Beacon Decoder

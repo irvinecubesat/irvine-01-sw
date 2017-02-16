@@ -70,9 +70,14 @@ endif (!WITH_BUILDROOT)
 ADD_SUBDIRECTORY(adcs-sensors)
 
 #
-# Beacon broadcasting library
+# Beacon broadcasting process
 #
 ADD_SUBDIRECTORY(beacon)
+
+#
+# command processing daemon
+#
+ADD_SUBDIRECTORY(cmdd)
 
 #
 # Satcomm configuration file

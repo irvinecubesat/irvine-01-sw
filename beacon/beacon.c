@@ -180,14 +180,11 @@ static int send_beacon(void *arg)
 {
 ProcessData *proc = (ProcessData*)arg;
 
-/*
-* Make sure all data in BeanData is in network byte order
-*/
-BeaconData beaconData; /* struct to send in beacon */
-if (proc)
-{
-// Fill in Beacon Data
-int stat = retrieveSystemStatus("127.0.0.1", &beaconData);
+   if (proc)
+   {
+     DBG_print(DBG_LEVEL_INFO, "Sending beacon:  %s\n", BEACON_MESSAGE);
+     send_beacon_packet(proc, BEACON_MESSAGE, strlen(BEACON_MESSAGE));
+   }
 
 if (stat != 0)
 {
@@ -224,11 +221,11 @@ int main(void)
 {
 void *beacon_evt;
 
-// Initialize the process
-gProc = PROC_init("beacon");
-if (!gProc)
-return -1;
-DBG_print(DBG_LEVEL_INFO, "Beacon starting: %s\n", BEACON_MESSAGE);
+   // Initialize the process
+   gProc = PROC_init("beacon");
+   if (!gProc)
+      return -1;
+   DBG_print(DBG_LEVEL_INFO, "Beacon starting:  %s\n", BEACON_MESSAGE);
 
 // Schedule an event to run periodically. The event generates the
 // beacon.

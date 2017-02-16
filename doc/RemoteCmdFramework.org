@@ -3,7 +3,7 @@
      - Each cmd associated with a sh script
        - exit status
        - std out
-     - A directory to put cmd scripts
+     - A directory to put cmd scripts/programs
        - only run commands from this directory
      - Pass arguments to command.
      - Each command should have help output
@@ -24,3 +24,20 @@
   5) Remote Command Processor (on satellite)
   6) Ground Command execution (on Ground)
 
+* cmdd
+  - cmdd is the command daemon that runs on the satellite to process
+    commands.  Pass in a list of paths to search for command modules using the -D option.
+    Paths are separated by the ',' or ':' characters.
+  - On the satellite, cmdd is registered in the /etc/inittab file.  
+    Registering cmd in this file allows the process to be automatically started
+    and restarted if it crashes.
+    - Configuration is set in irvine-01-cfg/etc/inittab.append which gets appended to the
+      actual inittab at build time.
+  - cmdd also has an entry in the /etc/services file to use port 50012/udp
+    - Configured in irvine-01-cfg/etc/services
+    
+* command modules
+  - command modules are simply programs or scripts that may be executed.
+  - command modules must be located in the command directory path and be prefixed
+    with "cmd".  e.g. cmdRun.sh
+  - command module names must be less than 24 characters (not including the prefix)
