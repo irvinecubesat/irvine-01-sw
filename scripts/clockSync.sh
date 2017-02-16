@@ -1,10 +1,11 @@
+#!/bin/bash
 export LD_LIBRARY_PATH=/opt/toolchain/toolchain-arm-linux/lib
 BIN_DIR=/opt/toolchain/toolchain-arm-linux/bin/
 CLK_STATUS=${BIN_DIR}/clksync-status
 CLK_ADJUST=${BIN_DIR}/clksync-sync-offset
 logFile=/tmp/clockSync.log
 
-hostIp=192.168.0.100
+hostIp=${SAT_IP-192.168.0.100}
 
 syncThresholdSec=30
 
@@ -15,7 +16,7 @@ Usage:  $0 [options]
 
 Options:
 
-  -h {IP address}  The IP address of the target system (default $hostIp)
+  -t {IP address}  The IP address of the target system (default $hostIp)
   -l {log file}    The log file to log output to
   -m               Monitor the clock sync status and sync if necessary
   -q               Query clock difference (default)
@@ -29,10 +30,11 @@ exit 1
 log()
 {
   output="$(date +%Y%m%d_%H%M%S) $*"
-  if [ "${1:0:2}" != "[D" ]; then
-    echo $output
-    echo $output>> ${logFile}
+  if [ "${1:0:2}" = "[D" ]; then
+    return
   fi
+  echo $output
+  echo $output>> ${logFile}
 }
 
 cmd=query

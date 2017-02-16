@@ -1,3 +1,12 @@
 * Release Notes for Irvine-01 Flight Software
-** 00.04.06
-   - Add cmdd remote command execution framework
+** 00.05.01 (next release)
+   - cmdd
+     - robustness improvements
+     - increment error counter when cmd exec status != 0
+** 00.05.00
+   - cmdd remote command execution framework
+     - cmds cmdChmod, cmdLslah, cmdPwrSens, cmdTest, cmdUvccapture
+       cmdCksum, cmdMkdir, cmdRm, cmdTestErr.sh
+   - satcomm encryption configuration and persistence support
+     - modify /data/satcomm.cfg, then run restartSatcomm.sh to restart satcomm
+   - pingMon.sh to monitor and log ping responses

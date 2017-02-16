@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# creates the log
+instdir=$(cd $(dirname $0); pwd)
+. ${instdir}/log.sh
+log_init $0
+
+
+# describes the usage
+usage() {
+	echo "Cksum {files separate by space}"
+}
+
+# Check options and determine if usage should be shown
+O=`getopt h "$@"` || exit 1
+eval set -- "$O"
+while true; do
+	case "$1" in
+		-h)
+			usage
+			exit 0
+			;;
+		--)
+			shift
+			break;
+			;;
+		*)
+			log "[E] unknwon arg: $1)"
+			exit 1
+			;;
+	esac
+done
+
+#shift "$((OPTIND-1))"
+files=$*
+
+if [ -z "$*" ]
+	then
+	log "[E] Need to specify file(s)"
+fi
+
+# perform the checksum
+cksum $files
+ 
+exitStatus=$?
+
+if [ $exitStatus -ne 0 ]
+	then
+	log "[E] cksum error $*"
+fi
+
+exit $exitStatus

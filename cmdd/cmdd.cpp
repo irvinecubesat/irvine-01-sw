@@ -8,6 +8,7 @@
 #include <getopt.h>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <arpa/inet.h>
 #include <sstream>
 #include <sys/stat.h>
@@ -55,15 +56,26 @@ extern "C"
     CmdProcessorResp *resp = doneStruct->resp;
 
     DBG_print(DBG_LEVEL_INFO, "Done executing cmd %s", resp->cmd);
-    
-    resp->status=htonl(WEXITSTATUS(child->exitStatus));
+
+    int exitStatus=WEXITSTATUS(child->exitStatus);
+    resp->status=htonl(exitStatus);
     gCmdCount++;
+    if (exitStatus != 0)
+    {
+      gErrCount++;
+    }
 
     //
     // Send the response
     //
     PROC_cmd_sockaddr(gProc->getProcessData(), CMD_EXEC_RESPONSE,
                       resp, sizeof(*resp), doneStruct->src);
+
+    //
+    // clean up
+    //
+    delete resp;
+    delete doneStruct;
   }
 
   /**
@@ -85,8 +97,6 @@ extern "C"
     strncpy(resp->msg, buff, len);
     DBG_print(DBG_LEVEL_DEBUG, "msg is %s", resp->msg);
 
-    CHLD_close_stdin(child); 
-
     return len;
   }
 
@@ -106,8 +116,6 @@ extern "C"
       resp->err[len]='\0';
     }
     strncpy(resp->err, buff, len);
-
-    CHLD_close_stdin(child);
 
     return len;
   }
@@ -129,13 +137,13 @@ extern "C"
     if (IRV_CMD_PROTO_ID != ntohl(procCmd->protocolId))
     {
       DBG_print(DBG_LEVEL_WARN, "Incoming protocol mismatch (%08x != %08x)",
-                procCmd->protocolId, IRV_CMD_PROTO_ID);
+                ntohl(procCmd->protocolId), IRV_CMD_PROTO_ID);
       return;
     }
     if (IRV_CMD_VERSION != ntohl(procCmd->version))
     {
       DBG_print(DBG_LEVEL_WARN, "Incoming protocol version mismatch (%d != %d)",
-                procCmd->version, IRV_CMD_VERSION);
+                ntohl(procCmd->version), IRV_CMD_VERSION);
       return;
     }
     uint32_t cmdId=ntohl(procCmd->cmdId);
@@ -143,19 +151,18 @@ extern "C"
     DBG_print(DBG_LEVEL_INFO, "Executing cmd id %d:  %s %s", cmdId,
               procCmd->cmd, procCmd->arg);
 
-    CmdProcessorResp cmdResp;
+    CmdProcessorResp *cmdResp = new CmdProcessorResp;
+    ChildDoneStruct *doneStruct = new ChildDoneStruct;
+    doneStruct->resp=cmdResp;
+    doneStruct->src=src;
 
-    ChildDoneStruct doneStruct;
-    doneStruct.resp=&cmdResp;
-    doneStruct.src=src;
-
-    cmdResp.protocolId=procCmd->protocolId;
-    cmdResp.version=procCmd->version;
-    cmdResp.cmdId=procCmd->cmdId;
-    strncpy(cmdResp.cmd, procCmd->cmd, sizeof(cmdResp.cmd));
-    strcpy(cmdResp.msg, "");
-    strcpy(cmdResp.err, "");
-    cmdResp.status=htonl(1);
+    cmdResp->protocolId=procCmd->protocolId;
+    cmdResp->version=procCmd->version;
+    cmdResp->cmdId=procCmd->cmdId;
+    strncpy(cmdResp->cmd, procCmd->cmd, sizeof(cmdResp->cmd));
+    strcpy(cmdResp->msg, "");
+    strcpy(cmdResp->err, "");
+    cmdResp->status=htonl(1);
 
     std::string pathToCmd;
 
@@ -179,7 +186,7 @@ extern "C"
       std::string msg=std::string(procCmd->cmd)+" not found";
       DBG_print(DBG_LEVEL_FATAL, "%s", msg.c_str());
       gErrCount++;
-      strncpy(cmdResp.err, msg.c_str(), sizeof(cmdResp.err));
+      strncpy(cmdResp->err, msg.c_str(), sizeof(cmdResp->err));
       PROC_cmd_sockaddr(gProc->getProcessData(), CMD_EXEC_RESPONSE,
                         &cmdResp, sizeof(cmdResp), src);
       return;
@@ -194,14 +201,15 @@ extern "C"
     {
       std::string msg=pathToCmd+" - Unable to execute";
       DBG_print(DBG_LEVEL_FATAL, "%s", msg.c_str());
-      strncmp(cmdResp.err, msg.c_str(), sizeof(cmdResp.err));
+      strncmp(cmdResp->err, msg.c_str(), sizeof(cmdResp->err));
       PROC_cmd_sockaddr(gProc->getProcessData(), CMD_EXEC_RESPONSE,
                         &cmdResp, sizeof(cmdResp), src);
     }
     
-    CHLD_death_notice(childProc, childDoneCb, &doneStruct);
-    CHLD_stdout_reader(childProc, childStdOutCb, &cmdResp);
-    CHLD_stderr_reader(childProc, childStdErrCb, &cmdResp);
+    CHLD_death_notice(childProc, childDoneCb, doneStruct);
+    CHLD_stdout_reader(childProc, childStdOutCb, cmdResp);
+    CHLD_stderr_reader(childProc, childStdErrCb, cmdResp);
+    CHLD_close_stdin(childProc); 
   }
 }
 
@@ -210,13 +218,14 @@ extern "C"
  **/
 void usage(char *argv[])
 {
-  printf("Usage:  %s [options]\n\n", argv[0]);
-  printf("        Process commands from network using scripts/executables from\n");
-  printf("        cmd directory\n\n");
-  printf("Options:\n\n");
-  printf(" -D {cmd path} set the colon-separated directory path(s) to execute commands\n" );
-  printf(" -d {log level}     set log level\n");
-  printf("\n");
+  std::cout<<"Usage:  "<<argv[0]<<" [options]"
+           <<std::endl<<std::endl
+           <<"        Process commands from network using scripts/executables from"<<std::endl
+           <<"        one or more cmd directories"<<std::endl<<std::endl
+           <<"Options:"<<std::endl<<std::endl
+           <<" -D {dir}        add directory path to execute commands"<<std::endl
+           <<" -d {log level}  set log level"<<std::endl
+           <<std::endl;
   exit(1);
 }
 
@@ -226,28 +235,6 @@ static int sigint_handler(int signum, void *arg)
   EVT_exit_loop(PROC_evt(proc->getProcessData()));
   
   return EVENT_KEEP;
-}
-
-void parseDirectoryPaths(char *inPaths, std::vector<std::string> &dirs)
-{
-  char *ptr=inPaths;
-  char *item=NULL;
-
-  while (true)
-  {
-    // inittab uses ":" as separators, so allow ':' or ',' as delimiters.
-    item = strtok(ptr, ":,");
-    ptr=NULL;
-    if (item != NULL)
-    {
-      DBG_print(DBG_LEVEL_INFO, "Adding cmd directory:  %s", item);
-      dirs.push_back(item);
-    } else
-    {
-      DBG_print(DBG_LEVEL_DEBUG, "item is NULL");
-      break;
-    }
-  }
 }
 
 int main(int argc, char *argv[])
@@ -260,7 +247,7 @@ int main(int argc, char *argv[])
     switch (opt)
     {
     case 'D':
-      parseDirectoryPaths(optarg, gCmdDirectories);
+      gCmdDirectories.push_back(optarg);
       break;
     case 'd':
       logLevel=strtol(optarg, NULL, 10);

@@ -14,12 +14,18 @@
 TOOLCHAIN_VER=01.01.01
 TOOLCHAIN_ROOT=/opt/toolchain/toolchain-arm-linux
 TOOLCHAIN_DIR=$(TOOLCHAIN_ROOT)-$(TOOLCHAIN_VER)
+IRVINE_SW_INSTALL_DIR=$(HOME)/.irvine-01-sw
 
-all: build
+all: build installDir
 	$(MAKE) -C build
 
-all-arm: build-arm
+all-arm: build-arm installDir
 	$(MAKE) -C build-arm
+
+installDir:
+	mkdir -p $(IRVINE_SW_INSTALL_DIR)
+	cp -r scripts $(IRVINE_SW_INSTALL_DIR)
+	cp -r auth $(IRVINE_SW_INSTALL_DIR)
 
 initialize: $(TOOLCHAIN_DIR)
 

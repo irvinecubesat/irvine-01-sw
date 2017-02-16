@@ -1,0 +1,57 @@
+#!/bin/sh
+# In the absense of a clearly explained telemetry database, this exist
+
+instdir=$(cd $(dirname $0); pwd)
+. ${instdir}/log.sh
+log_init $0
+
+#
+usage() {
+	echo "PwrSens [-n]"
+	echo "-n removes old output"
+}
+
+outputFile=/var/log/"PwrSens$(date).output"
+
+removePreviousOutput() {
+	rm $outputFile
+}
+
+O=`getopt h "$@"` || exit 1
+eval set -- "$O"
+while true; do
+	case "$1" in
+ 	-h) 
+		usage
+ 		exit 0
+ 		;;
+	-n)
+		removePreviousOutput
+		break;
+		;;
+	--)
+ 		shift
+		break;
+		;;
+	*)
+ 		log "[E] unknown arg:  $1)"
+		exit 1
+		;;    
+	esac
+done
+
+#
+# Execute sys-status command, intercepting the output so we can filter it
+#
+sys-status >> $outputFile
+
+exitStatus=$?
+
+if [ $exitStatus -eq 0 ] 
+	then
+	echo "Success: Find output in $outputFile"
+else
+	log "[E] sys-status error"
+fi
+
+exit $exitStatus

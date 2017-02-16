@@ -25,7 +25,7 @@
  **/
 void usage(char *argv[])
 {
-  std::cout<<"Usage:  "<<argv[0]<<"<<%s [options]"<<std::endl
+  std::cout<<"Usage:  "<<argv[0]<<" [options]"<<std::endl
            <<"        Execute a command on the target cmdd"<<std::endl
            <<"        Command will be automatically prefixed with 'cmd'"<<std::endl
            <<std::endl
@@ -144,11 +144,11 @@ static int execCmd(const std::string &host, uint32_t cmdId, const std::string &c
   {
     if (strlen(resp.cmdResp.msg)>0)
 	{
-	  std::cout<<resp.cmdResp.msg;
+	  std::cout<<resp.cmdResp.msg<<std::endl;
 	} 
     if (strlen(resp.cmdResp.err)> 0)
 	{
-	  std::cerr<<resp.cmdResp.err;
+	  std::cerr<<resp.cmdResp.err<<std::endl;
 	}
   }
   else
@@ -159,11 +159,11 @@ static int execCmd(const std::string &host, uint32_t cmdId, const std::string &c
       
     if (strlen(resp.cmdResp.msg) > 0)
 	{
-	  std::cout<<"msg:  "<< resp.cmdResp.msg;
+	  std::cout<<"msg:  "<< resp.cmdResp.msg<<std::endl;
 	}
     if (strlen(resp.cmdResp.err)>0)
 	{
-	  std::cout<<"err:  "<<resp.cmdResp.err;
+	  std::cout<<"err:  "<<resp.cmdResp.err<<std::endl;
 	}
   }
   return status;
