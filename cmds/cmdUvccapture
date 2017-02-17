@@ -2,39 +2,53 @@
 #
 #  Command to capture a photo
 #
+startDir = $PWD
+cd /sdcard/
+
+aEcho() {
+	echo "$1" >> /data/cmds/uvcdebug
+}
+
+
 instdir=$(cd $(dirname $0); pwd)
 . ${instdir}/log.sh
 log_init $0
 
-#
+
 usage()
 {
     echo "uvvcapture {args}"
+
 }
 
-O=`getopt h "$@"` || exit 1
-eval set -- "$O"
-while true; do
-    case "$1" in
-        -h) 
-            usage
-            exit 0
-            ;;
-        --)
-            shift
-            break;
-            ;;
-        *)
-           log "[E] unknown arg:  $1)"
-           exit 1
-           ;;
-            
-    esac
-done
+#O=`getopt h "$@"` || exit 1
+#eval set -- "$O"
+#while true; do
+#    case "$1" in
+#        -h) 
+#           usage
+#            exit 0
+#            ;;
+#        --)
+#            aEcho option1
+#            #shift
+#            break;
+#           ;;
+#	   *)
+#           log "[E] unknown arg:  $1)"
+#           break;
+#           ;;
+#         
+#    esac
+#done
 
+#Loop causing multiple issues that could not be resolved after extensive testing. Temporary fix below for help system:
+if [ $1 = -h ]; then
+	usage
+fi 
 
 # shift the args beyond the getopt options
-shift "$((OPTIND-1))"
+# shift "$((OPTIND-1))" broken
 
 
 
@@ -42,31 +56,21 @@ shift "$((OPTIND-1))"
 # Validate input
 #
 
-args = "" 
 #
 # Execute rm command, intercepting the output so we can filter it
-# 
-flag = false; 
-for a in $@  
-do
- if["$flag" = false]; then 
-    flag = true; 
-    continue; 
- fi
- args+= " "
- args+= a
- args+= " "
-done 
-
-uvccapture $args
-
-exitStatus=$?
+#
+cd /sdcard/ 
+uvccapture $* >> /dev/null 
+ 
+exitStatus=0
 
 if [ $exitStatus -eq 0 ]; then
-  echo "uvccapture @args"
+  echo "uvccapture $*"
 else
   log "[E] uvccapture error:  $*"
 fi
+
+cd $startDir
 # Technically, the last command exit status will be used as the exit status.
 # However we want to be explicit to avoid  errors in status if anything else
 # gets executed (like logging) before the program exits
