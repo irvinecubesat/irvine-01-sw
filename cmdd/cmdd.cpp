@@ -56,15 +56,26 @@ extern "C"
     CmdProcessorResp *resp = doneStruct->resp;
 
     DBG_print(DBG_LEVEL_INFO, "Done executing cmd %s", resp->cmd);
-    
-    resp->status=htonl(WEXITSTATUS(child->exitStatus));
+
+    int exitStatus=WEXITSTATUS(child->exitStatus);
+    resp->status=htonl(exitStatus);
     gCmdCount++;
+    if (exitStatus != 0)
+    {
+      gErrCount++;
+    }
 
     //
     // Send the response
     //
     PROC_cmd_sockaddr(gProc->getProcessData(), CMD_EXEC_RESPONSE,
                       resp, sizeof(*resp), doneStruct->src);
+
+    //
+    // clean up
+    //
+    delete resp;
+    delete doneStruct;
   }
 
   /**
@@ -140,19 +151,18 @@ extern "C"
     DBG_print(DBG_LEVEL_INFO, "Executing cmd id %d:  %s %s", cmdId,
               procCmd->cmd, procCmd->arg);
 
-    CmdProcessorResp cmdResp;
+    CmdProcessorResp *cmdResp = new CmdProcessorResp;
+    ChildDoneStruct *doneStruct = new ChildDoneStruct;
+    doneStruct->resp=cmdResp;
+    doneStruct->src=src;
 
-    ChildDoneStruct doneStruct;
-    doneStruct.resp=&cmdResp;
-    doneStruct.src=src;
-
-    cmdResp.protocolId=procCmd->protocolId;
-    cmdResp.version=procCmd->version;
-    cmdResp.cmdId=procCmd->cmdId;
-    strncpy(cmdResp.cmd, procCmd->cmd, sizeof(cmdResp.cmd));
-    strcpy(cmdResp.msg, "");
-    strcpy(cmdResp.err, "");
-    cmdResp.status=htonl(1);
+    cmdResp->protocolId=procCmd->protocolId;
+    cmdResp->version=procCmd->version;
+    cmdResp->cmdId=procCmd->cmdId;
+    strncpy(cmdResp->cmd, procCmd->cmd, sizeof(cmdResp->cmd));
+    strcpy(cmdResp->msg, "");
+    strcpy(cmdResp->err, "");
+    cmdResp->status=htonl(1);
 
     std::string pathToCmd;
 
@@ -176,7 +186,7 @@ extern "C"
       std::string msg=std::string(procCmd->cmd)+" not found";
       DBG_print(DBG_LEVEL_FATAL, "%s", msg.c_str());
       gErrCount++;
-      strncpy(cmdResp.err, msg.c_str(), sizeof(cmdResp.err));
+      strncpy(cmdResp->err, msg.c_str(), sizeof(cmdResp->err));
       PROC_cmd_sockaddr(gProc->getProcessData(), CMD_EXEC_RESPONSE,
                         &cmdResp, sizeof(cmdResp), src);
       return;
@@ -191,14 +201,14 @@ extern "C"
     {
       std::string msg=pathToCmd+" - Unable to execute";
       DBG_print(DBG_LEVEL_FATAL, "%s", msg.c_str());
-      strncmp(cmdResp.err, msg.c_str(), sizeof(cmdResp.err));
+      strncmp(cmdResp->err, msg.c_str(), sizeof(cmdResp->err));
       PROC_cmd_sockaddr(gProc->getProcessData(), CMD_EXEC_RESPONSE,
                         &cmdResp, sizeof(cmdResp), src);
     }
     
-    CHLD_death_notice(childProc, childDoneCb, &doneStruct);
-    CHLD_stdout_reader(childProc, childStdOutCb, &cmdResp);
-    CHLD_stderr_reader(childProc, childStdErrCb, &cmdResp);
+    CHLD_death_notice(childProc, childDoneCb, doneStruct);
+    CHLD_stdout_reader(childProc, childStdOutCb, cmdResp);
+    CHLD_stderr_reader(childProc, childStdErrCb, cmdResp);
     CHLD_close_stdin(childProc); 
   }
 }
