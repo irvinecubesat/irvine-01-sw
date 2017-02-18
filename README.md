@@ -6,9 +6,10 @@ The irvine-01-sw project is the main entry point for irvine cubesat development
 # Development Machine OS
 
 The irvine-01-sw project should work on any modern Linux distribution, 64-bit or
-32-bit.  buildroot has only been built and tested on a 32-bit Ubuntu 14.04
-machine.  You may install Ubuntu on a new/repurposed PC or in a 
-virtual guest in [VirtualBox](https://www.virtualbox.org/).  The Ubuntu 14.04
+32-bit. buildroot succeeds on both 32 and 64 bit machines running 14.04.  Newer
+releases have not been tested. ARM host processors have not beeen able to compile
+any of the projects. You may install Ubuntu on a new/repurposed PC or 
+in a virtual guest in [VirtualBox](https://www.virtualbox.org/).  The Ubuntu 14.04
 ISO image may be downloaded from the [Ubuntu website](http://www.ubuntu.com/download/alternative-downloads)
 
 # Ubuntu 14.04 packages
@@ -33,7 +34,7 @@ make all-arm
 
 This will build the arm binaries and put them under the `build-arm` directory.
 
-You can type `make all ` to build x86 binaries under the `build` directory.
+You can type `make all` to build x86 binaries under the `build` directory.
 
 The first time you run the all or all-arm build, it will download and install
 the toolchain.
@@ -89,8 +90,9 @@ Make sure you have the necessary packages installed on your system:
 ```
 sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0
 ```
-Note: The above instructions did not work for me on 64bit Kubuntu 16.10. If
-you run into errors about apt-get being unable to locate the packages, 
+Note: The above instructions did not work for 64bit Kubuntu 16.10 (which
+at the moment is not a supported build host OS). If you run into errors 
+about apt-get being unable to locate the packages in the future, 
 follow these instructions instead
 ```
 sudo dpkg --add-architecture i386
