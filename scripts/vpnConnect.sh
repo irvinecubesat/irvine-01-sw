@@ -108,7 +108,7 @@ setupSshConfig()
 {
     chmod 700 "$keyDir"
     chmod 700 "$keyDir/*.key"
-    cat >$sshConfig <<EOF
+    cat >>$sshConfig <<EOF
 Host cubesatgateway
      HostName 10.133.33.2
      User vpnuser
