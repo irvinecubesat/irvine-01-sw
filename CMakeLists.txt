@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12.2)
 
 PROJECT(irvine-01)
 
+enable_testing()
+
 #
 # Set up cmake modules path.  cmake modules allow you to extend
 # cmake functionality.  We use it to automatically download
@@ -17,6 +19,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 # gmock provides add_gmock_test function add_gmock_test(<target> <sources>...)
 #
 include(gmock)
+
+#
+# allow inclusion of headers in the current directory
+#
+SET(MAKE_INCLUDE_CURRENT_DIR ON)
 
 #
 # DownloadProject gives you the ability to download external sources from a git
@@ -42,28 +49,22 @@ else (WITH_BUILDROOT)
   # eigen library for linear algebra.  Matricies, vectors, numerical solvers
   # and algorithms.
   #
-  download_project(PROJ                eigen
-    URL      http://bitbucket.org/eigen/eigen/get/3.2.10.tar.bz2
-    ${UPDATE_DISCONNECTED_IF_AVAILABLE})
+  #download_project(PROJ                eigen
+  #  URL      http://bitbucket.org/eigen/eigen/get/3.2.10.tar.bz2
+  #  ${UPDATE_DISCONNECTED_IF_AVAILABLE})
 
-endif(WITH_BUILDROOT)
-
-#
-# allow inclusion of headers in the current directory
-#
-SET(MAKE_INCLUDE_CURRENT_DIR ON)
-
-if (!WITH_BUILDROOT)
   #
   # Unit test framework
   #
   ADD_SUBDIRECTORY(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+
   #
   # matrix/linear algebra class library
   #
-  ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
-endif (!WITH_BUILDROOT)
-  
+  # ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
+
+endif(WITH_BUILDROOT)
+ 
 #
 # ADCS Sensor service
 #
@@ -83,6 +84,11 @@ ADD_SUBDIRECTORY(cmdd)
 # Remote commands
 #
 ADD_SUBDIRECTORY(cmds)
+
+#
+# C-Card controller
+#
+ADD_SUBDIRECTORY(ccardctl)
 
 #
 # Satcomm configuration file

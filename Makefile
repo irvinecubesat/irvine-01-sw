@@ -33,6 +33,9 @@ build: initialize
 	if [ ! -e build ]; then mkdir build; fi;
 	(cd build; cmake ../)
 
+test:
+	(cd build; make test CTEST_OUTPUT_ON_FAILURE=TRUE)
+
 build-arm: initialize
 	if [ ! -e build-arm ]; then mkdir build-arm; fi;
 	(cd build-arm; cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/arm-linux.cmake ../)
