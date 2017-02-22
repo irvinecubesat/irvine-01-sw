@@ -106,3 +106,7 @@ ADD_SUBDIRECTORY(datalogger)
 # the image gets built.
 #
 ADD_SUBDIRECTORY(version)
+#
+# Navigation scripts
+#
+ADD_SUBDIRECTORY(navigation)
