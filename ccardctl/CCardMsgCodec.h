@@ -1,23 +1,9 @@
-#ifndef __CCARD_CMD_CODEC_HH__
-#define __CCARD_CMD_CODEC_HH__
+#ifndef __CCARD_MSG_CODEC_HH__
+#define __CCARD_MSG_CODEC_HH__
 #include <stdint.h>
+#include "ccardDefs.h"
 namespace IrvCS
 {
-  enum DsaCmd
-  {
-    Release=1,
-    Deploy=2
-  };
-
-  /**
-   * DSA 1 and DSA 2 ID's
-   */
-  enum DsaId
-  {
-    DSA_1=0,
-    DSA_2=2
-  };
-  
   /**
    * Encoder/decoder for the C Card controller cmd messages.
    * Provides utilities to generate commands and process them.  
@@ -25,20 +11,19 @@ namespace IrvCS
    * Also provides utility functions to decode the results of queries into
    * human readable format.
    *
+   * The command is 8 bits, with the higher 4 bits containing the
+   * command and the lower bits containing the device id.
    **/
-  class CCardCmdCodec
+  class CCardMsgCodec
   {
   public:
-    CCardCmdCodec();
-    virtual ~CCardCmdCodec();
-
     /**
      * Create the DSA command data with programmer-friendly API.
      * @param cmd the DSA command to execute
      * @param id The ID of the DSA to execute the command on
      * @return 0 for success, nonzero otherwise
      **/
-    uint8_t encodeDsaCmd( const DsaCmd cmd, const DsaId id, uint8_t &data);
+    static uint8_t encodeMsgData( const uint8_t cmd, const uint8_t id, uint8_t &data);
 
     /**
      * Decode the DSA command data into programmer-friendly info.
@@ -46,7 +31,7 @@ namespace IrvCS
      * @param cmd the dsa command to extract
      * @param id the affected DSA ID
      **/
-    uint8_t decodeDsaCmd(const uint8_t data, DsaCmd &cmd, DsaId &id);
+    static uint8_t decodeMsgData(const uint8_t data, uint8_t &cmd, uint8_t &id);
     
   private:
   };

@@ -27,7 +27,7 @@ extern "C"
    * MT Command:
    *   - First 3 bits indicate the x, y, and z values of the magnetorquers.
    **/
-  struct CCardCmd
+  struct CCardMsg
   {
     uint8_t data;
   }__attribute__((packed));

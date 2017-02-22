@@ -33,8 +33,13 @@ build: initialize
 	if [ ! -e build ]; then mkdir build; fi;
 	(cd build; cmake ../)
 
-test:
-	(cd build; make test CTEST_OUTPUT_ON_FAILURE=TRUE)
+# Run unit tests with minimal messages unless we get an error
+check-v:
+	(cd build; ctest -V)
+
+# Run unit tests with verbose messages
+check:
+	(cd build; make test CTEST_OUTPUT_ON_FAILURE=1)
 
 build-arm: initialize
 	if [ ! -e build-arm ]; then mkdir build-arm; fi;

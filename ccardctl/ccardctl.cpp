@@ -33,7 +33,7 @@ extern "C"
   void ccard_cmd(int socket, unsigned char cmd, void *data, size_t dataLen,
                  struct sockaddr_in *src)
   {
-    CCardCmd cmd;
+    CCardMsg cmd;
 
     status.data=gOutputPinStatus;
 

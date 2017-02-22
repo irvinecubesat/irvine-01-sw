@@ -1,6 +1,6 @@
 file(GLOB SRCS "*.cpp")
-add_executable(cmdCodecTest ${SRCS})
+add_executable(msgCodecTest ${SRCS})
 
-target_link_libraries(cmdCodecTest ccardCmdCodec gtest gtest_main)
+target_link_libraries(msgCodecTest ccardCodec gtest gtest_main)
 
-add_test(CmdCodecTest cmdCodecTest)
+add_test(MsgCodecTest msgCodecTest)
