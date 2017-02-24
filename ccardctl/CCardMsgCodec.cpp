@@ -9,20 +9,22 @@ namespace IrvCS
    * @return 0 for success, nonzero otherwise
    **/
   uint8_t CCardMsgCodec::
-  encodeMsgData( const uint8_t id, const uint8_t cmd, uint8_t &data)
+  encodeMsgData(const uint8_t msgType, const uint8_t id, const uint8_t cmd,
+                uint32_t &data)
   {
     data = id;
-    data |= (cmd<<4);
-    
+    data |= (cmd<<MSG_CMD_OFFSET_BITS) | (msgType<<MSG_TYPE_OFFSET_BITS);
     return 0;
   }
 
 
   uint8_t CCardMsgCodec::
-  decodeMsgData(const uint8_t data, uint8_t &id, uint8_t &cmd)
+  decodeMsgData(const uint32_t data,
+                uint8_t &msgType, uint8_t &id, uint8_t &cmd)
   {
-    cmd = data>>4;              // command is in the higher bit
-    id = data & 0xF;            // filter out the higher bits
+    msgType = (data>>MSG_TYPE_OFFSET_BITS) & 0xFF;
+    cmd = (data>>MSG_CMD_OFFSET_BITS) & 0xFF; // command is in the higher bit
+    id = data & 0xFF;            // filter out the higher bits
 
     return 0;
   }

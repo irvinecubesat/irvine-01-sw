@@ -17,19 +17,13 @@ extern "C"
   }__attribute__((packed));
 
   /**
-   * Single command structure to hold either DSA or MT commands.
+   * Single command structure to hold commands 32-bits
    *
-   * DSA Command: 
-   *   - Upper 4 bits is reserved for cmd, release or deploy (0 or 1), 
-   *   - lowest bit holds which panel (0 or 1).  The timer is automatically
-   *     triggered for each command unless otherwise noted.
-   *
-   * MT Command:
-   *   - First 3 bits indicate the x, y, and z values of the magnetorquers.
+   * See CCardMsgCodec for the encoding/decoding details
    **/
   struct CCardMsg
   {
-    uint8_t data;
+    uint32_t data;
   }__attribute__((packed));
 
 }

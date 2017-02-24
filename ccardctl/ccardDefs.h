@@ -2,6 +2,17 @@
 #define __CCARD_DEFS_H__
 namespace IrvCS
 {
+#define MSG_TYPE_OFFSET_BITS 16
+#define MSG_ID_OFFSET_BITS 0
+#define MSG_CMD_OFFSET_BITS 8
+
+  enum MsgTypes
+  {
+    MsgDsa=0,
+    MsgMt=1,
+    MaxTypes
+  };
+  
   /**
    * DSA commands to release and deploy
    */

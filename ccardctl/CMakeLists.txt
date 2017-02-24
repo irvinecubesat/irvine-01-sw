@@ -1,3 +1,12 @@
+include(${CMAKE_SOURCE_DIR}/cmake/nativeCompile.cmake)
+
 add_library(ccardCodec CCardMsgCodec.cpp CCardMsgCodec.h CCardI2CPortState.cpp CCardI2CPortState.h ccardDefs.h)
 add_subdirectory(test)
 target_include_directories(ccardCodec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(ccardctl CCardCtl.cpp CCardI2CX.cpp CCardI2CX.h)
+target_link_libraries(ccardctl ccardCodec proc polydrivers m dl rt pthread)
+
+IF (PROJECT_COMPILE)
+# Include directories to search in
+target_include_directories(ccardctl PUBLIC /opt/toolchain/toolchain-arm-linux/include)
+ENDIF (PROJECT_COMPILE)
