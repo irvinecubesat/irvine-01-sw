@@ -23,7 +23,8 @@ namespace IrvCS
      * @param id The ID of the DSA to execute the command on
      * @return 0 for success, nonzero otherwise
      **/
-    static uint8_t encodeMsgData( const uint8_t cmd, const uint8_t id, uint8_t &data);
+    static uint8_t encodeMsgData( const uint8_t id, const uint8_t cmd,
+                                  uint8_t &data);
 
     /**
      * Decode the DSA command data into programmer-friendly info.
@@ -31,9 +32,9 @@ namespace IrvCS
      * @param cmd the dsa command to extract
      * @param id the affected DSA ID
      **/
-    static uint8_t decodeMsgData(const uint8_t data, uint8_t &cmd, uint8_t &id);
+    static uint8_t decodeMsgData(const uint8_t data,
+                                 uint8_t &id, uint8_t &cmd );
     
-  private:
   };
   
 }

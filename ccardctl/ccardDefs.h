@@ -7,8 +7,9 @@ namespace IrvCS
    */
   enum DsaCmd
   {
-    Release=1,
-    Deploy=2
+    Release=0,
+    Deploy=1,
+    Reset=2   // reset the DSA ports to initial value (1)
   };
 
   /**
@@ -25,9 +26,9 @@ namespace IrvCS
   };
 
   /**
-   * Magnetorquer Cmd bit is 0 for on and 1 for off
+   * Magnetorquer state bit is 0 for on and 1 for off
    **/
-  enum MtCmd
+  enum MtState
   {
     Off=0,
     On=1
