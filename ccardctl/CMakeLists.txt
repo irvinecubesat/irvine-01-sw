@@ -8,5 +8,5 @@ target_link_libraries(ccardctl ccardCodec proc polydrivers m dl rt pthread)
 
 IF (PROJECT_COMPILE)
 # Include directories to search in
-target_include_directories(ccardctl PUBLIC /opt/toolchain/toolchain-arm-linux/include)
+target_include_directories(ccardctl PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
 ENDIF (PROJECT_COMPILE)
