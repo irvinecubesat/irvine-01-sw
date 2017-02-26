@@ -19,60 +19,64 @@ static Process *gProc=NULL;
 static IrvCS::CCardI2CPortState *gPortState=NULL;
 static IrvCS::CCardI2CX *gI2cExpander=NULL;
 
-namespace IrvCS{
-  
 #define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
 
-  extern "C"
+extern "C"
+{
+  /**
+   * Process the status command.  Provide the cached values since
+   * this is called frequently by the watchdog.  We could periodically
+   * refresh the value here.
+   **/
+  void ccard_status(int socket, unsigned char cmd, void *data, size_t dataLen,
+                    struct sockaddr_in *src)
   {
-    /**
-     * Process the status command.  Provide the cached values since
-     * this is called frequently by the watchdog.  We could periodically
-     * refresh the value here.
-     **/
-    void ccard_status(int socket, unsigned char cmd, void *data, size_t dataLen,
-                      struct sockaddr_in *src)
+    CCardStatus status;
+    syslog(LOG_INFO, "Servicing status message");
+    if (NULL == gPortState)
     {
-      if (gPortState=NULL)
-      {
-        syslog(LOG_ERR, "%s gPortState is NULL", __FILENAME__);
-        return;
-      }
-      
-      CCardStatus status;
+      syslog(LOG_ERR, "%s gPortState is NULL", __FILENAME__);
+    } else
+    {
       status.portStatus=gPortState->getState();
-
-      PROC_cmd_sockaddr(gProc->getProcessData(), CMD_STATUS_RESPONSE,
-                        &status, sizeof(status), src);
     }
+    syslog(LOG_INFO, "Sending status message response");
 
-    /**
-     * Process the CCard cmd message
-     **/
-    void ccard_cmd(int socket, unsigned char cmd, void *data, size_t dataLen,
-                   struct sockaddr_in *src)
-    {
-      if (NULL==gI2cExpander)
-      {
-        syslog(LOG_ERR, "%s gI2cExpander is NULL", __FILENAME__);
-        return;
-      }
-      CCardMsg msg;
-      CCardStatus status;
-
-      uint8_t msgType=0;
-      uint8_t devId=0;
-      uint8_t msgCmd=0;
-      uint32_t hostData=ntohl(msg.data);
-      CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
-
-      status.portStatus=gPortState->update(msgType, devId, msgCmd);
-
-      PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
-                        &status, sizeof(status), src);
-    }
+    PROC_cmd_sockaddr(gProc->getProcessData(), CMD_STATUS_RESPONSE,
+                      &status, sizeof(status), src);
   }
 
+  /**
+   * Process the CCard cmd message
+   **/
+  void ccard_cmd(int socket, unsigned char cmd, void *data, size_t dataLen,
+                 struct sockaddr_in *src)
+  {
+    if (NULL == gI2cExpander)
+    {
+      syslog(LOG_ERR, "%s gI2cExpander is NULL", __FILENAME__);
+      return;
+    }
+    CCardMsg *msg=(CCardMsg *)data;
+    if (dataLen != sizeof(CCardMsg))
+    {
+      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)",
+                dataLen, sizeof(CCardMsg));
+      return;
+    }
+    CCardStatus status;
+
+    uint8_t msgType=0;
+    uint8_t devId=0;
+    uint8_t msgCmd=0;
+    uint32_t hostData=ntohl(msg->data);
+    IrvCS::CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
+
+    status.portStatus=gPortState->update(msgType, devId, msgCmd);
+
+    PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
+                      &status, sizeof(status), src);
+  }
 }
 
 /**
@@ -142,12 +146,15 @@ int main(int argc, char *argv[])
     syslog(LOG_ERR, "Unable to power on GPIO 103 for 3.3V Payload");
   }
   
-  gProc=new Process("ccardctl");
-  gPortState=&portState;
+  syslog(LOG_INFO, "%s New Process",__FILENAME__);
+  gProc = new Process("ccardctl");
+  gPortState = &portState;
   gI2cExpander = &i2cX;
 
+  syslog(LOG_INFO, "%s Add signal event",__FILENAME__);
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
 
+  syslog(LOG_INFO, "%s Event Mgr",__FILENAME__);
   EventManager *events=gProc->event_manager();
 
   syslog(LOG_INFO, "%s ready to process messages",__FILENAME__);
