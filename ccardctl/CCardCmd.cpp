@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 
 #include "CCardMsgCodec.h"
+#include "CCardI2CPortState.h"
 #include "cCardMessages.h"
 #include "ccardDefs.h"
 
@@ -79,8 +80,11 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
     return CMD_ERR_STATUS;
   }
 
-  std::cout<<"C-Card portStatus:  "<<std::hex<<resp.status.portStatus<<std::endl;
-  // TODO:  Decode it into human readable format
+  std::cout<<"C-Card portStatus:  "
+           <<IrvCS::CCardI2CPortState::stateToString(resp.status.portStatus)
+           <<"("<<std::hex<<(int)resp.status.portStatus<<")"
+           <<std::endl;
+
   return 0;
 }
 
@@ -118,6 +122,11 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
             <<" expected "<< CCARD_RESPONSE<<std::endl;
     return CMD_ERR_STATUS;
   }
+
+  std::cout<<"C-Card portStatus:  "
+           <<IrvCS::CCardI2CPortState::stateToString(resp.status.portStatus)
+           <<"("<<std::hex<<(int)resp.status.portStatus<<")"
+           <<std::endl;
 
   return status;
 }

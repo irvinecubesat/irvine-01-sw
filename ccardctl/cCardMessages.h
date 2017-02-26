@@ -14,6 +14,7 @@ extern "C"
   struct CCardStatus
   {
     uint8_t portStatus;
+    int8_t status;
   }__attribute__((packed));
 
   /**

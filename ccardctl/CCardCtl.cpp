@@ -19,8 +19,6 @@ static Process *gProc=NULL;
 static IrvCS::CCardI2CPortState *gPortState=NULL;
 static IrvCS::CCardI2CX *gI2cExpander=NULL;
 
-#define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
-
 extern "C"
 {
   /**
@@ -32,15 +30,17 @@ extern "C"
                     struct sockaddr_in *src)
   {
     CCardStatus status;
-    syslog(LOG_INFO, "Servicing status message");
+    status.status=0;
+    syslog(LOG_DEBUG, "Servicing status message");
     if (NULL == gPortState)
     {
       syslog(LOG_ERR, "%s gPortState is NULL", __FILENAME__);
+      status.status=1;
     } else
     {
       status.portStatus=gPortState->getState();
     }
-    syslog(LOG_INFO, "Sending status message response");
+    syslog(LOG_DEBUG, "Sending status message response");
 
     PROC_cmd_sockaddr(gProc->getProcessData(), CMD_STATUS_RESPONSE,
                       &status, sizeof(status), src);
@@ -65,6 +65,7 @@ extern "C"
       return;
     }
     CCardStatus status;
+    status.status=0;
 
     uint8_t msgType=0;
     uint8_t devId=0;
@@ -73,7 +74,16 @@ extern "C"
     IrvCS::CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
 
     status.portStatus=gPortState->update(msgType, devId, msgCmd);
-
+    
+    int setStatus=gI2cExpander->setState(status.portStatus);
+    if (0 != setStatus)
+    {
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status.portStatus);
+      status.status=setStatus;
+    } else
+    {
+      DBG_print(DBG_LEVEL_INFO, "Set expander value to %02x", status.portStatus);
+    }
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
                       &status, sizeof(status), src);
   }
@@ -133,9 +143,6 @@ int main(int argc, char *argv[])
 
   openlog("ccardctl", syslogOption, LOG_USER);
 
-  IrvCS::CCardI2CPortState portState;
-  IrvCS::CCardI2CX i2cX(portState.getState());
-
   //
   // Turn on payload power at GPIO 103
   //
@@ -143,21 +150,21 @@ int main(int argc, char *argv[])
   int exitStatus=WEXITSTATUS(sysStatus);
   if (exitStatus != 0)
   {
-    syslog(LOG_ERR, "Unable to power on GPIO 103 for 3.3V Payload");
-  }
-  
-  syslog(LOG_INFO, "%s New Process",__FILENAME__);
+    DBG_print(DBG_LEVEL_WARN, "Unable to power on GPIO 103 for 3.3V Payload");  }
+
+  IrvCS::CCardI2CPortState portState;
+  IrvCS::CCardI2CX i2cX(portState.getState());
+
+  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl");
   gProc = new Process("ccardctl");
   gPortState = &portState;
   gI2cExpander = &i2cX;
 
-  syslog(LOG_INFO, "%s Add signal event",__FILENAME__);
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
 
-  syslog(LOG_INFO, "%s Event Mgr",__FILENAME__);
   EventManager *events=gProc->event_manager();
 
-  syslog(LOG_INFO, "%s ready to process messages",__FILENAME__);
+  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages",__FILENAME__);
   
   events->EventLoop();
 

@@ -1,5 +1,7 @@
 #include "CCardI2CPortState.h"
 #include <syslog.h>
+#include <string>
+#include <sstream>
 
 /*
  * See header file for method documentation
@@ -120,5 +122,27 @@ namespace IrvCS
   uint8_t CCardI2CPortState::getMtState()
   {
     return (reg1State_&MT_MASK)>>MT_OFFSET;
+  }
+
+  static std::string printBinary(uint8_t data, uint8_t nbits)
+  {
+    std::stringstream stm;
+    for (int i=nbits-1; i >=0; i--)
+    {
+      stm<<((data>>i)&1);
+    }
+    return stm.str();
+  }
+  
+  std::string CCardI2CPortState::stateToString(const uint8_t state)
+  {
+    std::stringstream stm;
+    stm<<"D1:  R="<<(state&DSA1_RELEASE?1:0)
+       <<" D="<<(state&DSA1_DEPLOY?1:0)
+       <<" D2:  R="<<(state&DSA2_RELEASE?1:0)
+       <<" D="<<(state&DSA2_DEPLOY?1:0)
+       <<" DT="<<(state&DSA_ENABLE_TIMER?1:0)
+       <<" M="<<printBinary((state>>MT_OFFSET)&MT_MASK, 3);
+    return stm.str();
   }
 }

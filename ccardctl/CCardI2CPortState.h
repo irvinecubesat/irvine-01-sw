@@ -2,6 +2,7 @@
 #define __CCARD_I2C_PORT_STATE__
 
 #include <stdint.h>
+#include <string>
 
 #include "ccardDefs.h"
 
@@ -93,6 +94,11 @@ namespace IrvCS
      * @return only the MT bits
      **/
     uint8_t getMtState();
+
+    /**
+     * Convert data into a human readable string
+     **/
+    static std::string stateToString(const uint8_t data);
 
   private:
     uint8_t reg1State_;
