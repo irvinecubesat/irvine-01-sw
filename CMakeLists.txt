@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12.2)
 
 PROJECT(irvine-01)
 
+enable_testing()
+
 #
 # Set up cmake modules path.  cmake modules allow you to extend
 # cmake functionality.  We use it to automatically download
@@ -19,11 +21,25 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 include(gmock)
 
 #
+# allow inclusion of headers in the current directory
+#
+SET(MAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")
+
+#
 # DownloadProject gives you the ability to download external sources from a git
 # repository and build it during configure time so it is available for the 
 # build.
 #
 include(DownloadProject)
+include(ExternalProject)
+
+option(VERBOSE "Turn on Verbose" OFF)
+
+if (VERBOSE)
+  set (CMAKE_VERBOSE_MAKEFILE on)
+endif(VERBOSE)
 
 # WITH_BUILDROOT allows you to set whether we are compiling as part of the
 # build root environment or not.  
@@ -39,31 +55,36 @@ else (WITH_BUILDROOT)
                    GIT_TAG             release-1.8.0
                    ${UPDATE_DISCONNECTED_IF_AVAILABLE})
   #
-  # eigen library for linear algebra.  Matricies, vectors, numerical solvers
-  # and algorithms.
-  #
-  download_project(PROJ                eigen
-    URL      http://bitbucket.org/eigen/eigen/get/3.2.10.tar.bz2
-    ${UPDATE_DISCONNECTED_IF_AVAILABLE})
-
-endif(WITH_BUILDROOT)
-
-#
-# allow inclusion of headers in the current directory
-#
-SET(MAKE_INCLUDE_CURRENT_DIR ON)
-
-if (!WITH_BUILDROOT)
-  #
   # Unit test framework
   #
   ADD_SUBDIRECTORY(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+
+                 # i2ctest package
+  ExternalProject_Add(i2c-tools
+                   GIT_REPOSITORY https://github.com/groeck/i2c-tools.git
+                   GIT_TAG V3-1-0
+                   PREFIX ${CMAKE_BINARY_DIR}
+                   CONFIGURE_COMMAND ""
+                   SOURCE_DIR ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0
+                   BUILD_COMMAND make -C ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0
+                   INSTALL_COMMAND make -C ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0 install DESTDIR=${CMAKE_BINARY_DIR}/i2c-tools-3.1.0 )
+
+              
+  #
+  # eigen library for linear algebra.  Matricies, vectors, numerical solvers
+  # and algorithms.
+  #
+  #download_project(PROJ                eigen
+  #  URL      http://bitbucket.org/eigen/eigen/get/3.2.10.tar.bz2
+  #  ${UPDATE_DISCONNECTED_IF_AVAILABLE})
+
   #
   # matrix/linear algebra class library
   #
-  ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
-endif (!WITH_BUILDROOT)
-  
+  # ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
+
+endif(WITH_BUILDROOT)
+ 
 #
 # ADCS Sensor service
 #
@@ -83,6 +104,11 @@ ADD_SUBDIRECTORY(cmdd)
 # Remote commands
 #
 ADD_SUBDIRECTORY(cmds)
+
+#
+# C-Card controller
+#
+ADD_SUBDIRECTORY(ccardctl)
 
 #
 # Satcomm configuration file
