@@ -71,12 +71,11 @@ namespace IrvCS
     break;
     case MsgMt:
     {
-      MtState mtState=(cmd == Off?Off:On);
-      return setMt(id, mtState);
+      return setMt(id, cmd);
     }
     break;
     default:
-      syslog(LOG_WARNING, "%s Unknown msg type:  %d", __FILENAME__);
+      syslog(LOG_WARNING, "%s Unknown msg type:  %d", __FILENAME__, msgType);
     }
 
     return getState();
@@ -105,16 +104,11 @@ namespace IrvCS
     return reg1State_;
   }
 
-  uint8_t CCardI2CPortState::setMt(uint8_t idBits, MtState state)
+  uint8_t CCardI2CPortState::setMt(uint8_t idMask, uint8_t mtBits)
   {
-    if (On == state)
-    {
-      reg1State_ |= (idBits<<MT_OFFSET);
-    } else
-    {
-      reg1State_ &= ~(idBits<<MT_OFFSET);
-    }
-    
+    // flip all bits off, then assign the mtBits
+    reg1State_ &= ~(idMask<<MT_OFFSET);
+    reg1State_ |= ((mtBits&idMask)<<MT_OFFSET);
     return reg1State_;
   }
 

@@ -36,7 +36,7 @@ namespace IrvCS
      **/
     static uint8_t decodeMsgData(const uint32_t data,
                                  uint8_t &msgType, uint8_t &id, uint8_t &cmd );
-    
+
   };
   
 }

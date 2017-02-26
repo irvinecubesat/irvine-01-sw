@@ -42,14 +42,14 @@ TEST(MTStates, EnableMt1_2_3)
 {
   CCardI2CPortState portState;
   uint8_t expectedState=(uint8_t)0xFF; // 11111111b
-  ASSERT_EQ(expectedState, portState.setMt(0x7,On));
+  ASSERT_EQ(expectedState, portState.setMt(0x7,0x7));
 }
 
 TEST(MTStates, EnableMt1)
 {
   CCardI2CPortState portState;
   uint8_t expectedState=(uint8_t)0x9F; // 10011111b
-  ASSERT_EQ(expectedState, portState.setMt(0x1,On));
+  ASSERT_EQ(expectedState, portState.setMt(0x7,0x1));
 }
 
 /**
@@ -58,12 +58,14 @@ TEST(MTStates, EnableMt1)
 TEST(MTandDSAStates, DSA1Deploy_MT3)
 {
   CCardI2CPortState portState;
-  uint8_t expectedState=(uint8_t)0x4D; //01001101b
+
+  //01101101b - set 1st MT off and and 2d and 3rd MT on, 
+  uint8_t expectedState=(uint8_t)0x6D; 
   portState.setDsa(DSA_1,Deploy);
-  ASSERT_EQ(expectedState, portState.setMt(0x4, On));
-  expectedState=(uint8_t)0x0D; //00001101b
-  ASSERT_EQ(expectedState, portState.setMt(0x4, Off));
-  ASSERT_EQ(0, portState.getMtState());
+  ASSERT_EQ(expectedState, portState.setMt(0x7,0x06));
+  expectedState=(uint8_t)0x4D; //01001101b - turn off 2rd MT bit only
+  ASSERT_EQ(expectedState, portState.setMt(0x2,0x00));
+  ASSERT_EQ(0x4, portState.getMtState());
 }
 
 /**
@@ -78,6 +80,6 @@ TEST(UpdateAPI, DSA1DeployMT3On)
 
   uint8_t expectedState2=(uint8_t)0x4D; // 01001101b
 
-  ASSERT_EQ(expectedState2, portState.update(MsgMt, MT_3, 1));
+  ASSERT_EQ(expectedState2, portState.update(MsgMt, 0x7, 0x04));
   
 }

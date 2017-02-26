@@ -75,11 +75,12 @@ namespace IrvCS
      * Set the Magnetorquers' state.  
      * MT's are active high - set the state bit to 1 to enable.
      *
-     * @param idBits 3 bits with each bit corresponds to a magnetorquer.
-     * @param state the state to set the magnetorquers
+     * @param idMask Mask to apply the bits to.  This allows you to set only
+     *        one MT at a time without knowing the other's states.  
+     * @param mtBits 3 bits with each bit corresponds to a magnetorquer.
      * @return the computed expander register 1 value
      **/
-    uint8_t setMt(uint8_t idBits, MtState state);
+    uint8_t setMt(uint8_t idMask, uint8_t mtBits);
 
     /**
      * Gets the computed port state
