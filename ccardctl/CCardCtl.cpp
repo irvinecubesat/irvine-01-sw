@@ -132,6 +132,16 @@ int main(int argc, char *argv[])
   IrvCS::CCardI2CPortState portState;
   IrvCS::CCardI2CX i2cX(portState.getState());
 
+  //
+  // Turn on payload power at GPIO 103
+  //
+  int sysStatus=system("/usr/bin/gpiotest 103 o 1");
+  int exitStatus=WEXITSTATUS(sysStatus);
+  if (exitStatus != 0)
+  {
+    syslog(LOG_ERR, "Unable to power on GPIO 103 for 3.3V Payload");
+  }
+  
   gProc=new Process("ccardctl");
   gPortState=&portState;
   gI2cExpander = &i2cX;
