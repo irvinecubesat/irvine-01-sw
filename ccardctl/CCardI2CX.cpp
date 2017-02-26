@@ -65,13 +65,13 @@ namespace IrvCS
       syslog(LOG_ERR, "Unable to set the initial state");
     }
 
-    syslog(LOG_NOTICE, "%s Initialized", __FILE__);
+    syslog(LOG_NOTICE, "%s Initialized to %02x", __FILENAME__, state);
     initialized_=true;
   }
   
   CCardI2CX::~CCardI2CX()
   {
-    syslog(LOG_NOTICE, "%s Cleaning up", __FILE__);
+    syslog(LOG_NOTICE, "%s Cleaning up", __FILENAME__);
     // close any resources
     if (i2cdev_ >= 0)
     {

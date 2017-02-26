@@ -65,3 +65,19 @@ TEST(MTandDSAStates, DSA1Deploy_MT3)
   ASSERT_EQ(expectedState, portState.setMt(0x4, Off));
   ASSERT_EQ(0, portState.getMtState());
 }
+
+/**
+ * Test update API
+ **/
+TEST(UpdateAPI, DSA1DeployMT3On)
+{
+  CCardI2CPortState portState;
+  uint8_t expectedState=(uint8_t)0xD; // complement of 0x2 = 00001101b
+  
+  ASSERT_EQ(expectedState, portState.update(MsgDsa, DSA_1, Deploy));
+
+  uint8_t expectedState2=(uint8_t)0x4D; // 01001101b
+
+  ASSERT_EQ(expectedState2, portState.update(MsgMt, MT_3, 1));
+  
+}

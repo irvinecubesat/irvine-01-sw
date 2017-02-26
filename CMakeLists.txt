@@ -25,6 +25,8 @@ include(gmock)
 #
 SET(MAKE_INCLUDE_CURRENT_DIR ON)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")
+
 #
 # DownloadProject gives you the ability to download external sources from a git
 # repository and build it during configure time so it is available for the 
@@ -61,11 +63,11 @@ else (WITH_BUILDROOT)
   ExternalProject_Add(i2c-tools
                    GIT_REPOSITORY https://github.com/groeck/i2c-tools.git
                    GIT_TAG V3-1-0
-                   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/i2c-tools-3.1.0
+                   PREFIX ${CMAKE_BINARY_DIR}
                    CONFIGURE_COMMAND ""
-                   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/i2c-tools-3.1.0
-                   BUILD_COMMAND make -C ${CMAKE_CURRENT_SOURCE_DIR}/i2c-tools-3.1.0
-                   INSTALL_COMMAND make -C ${CMAKE_CURRENT_SOURCE_DIR}/i2c-tools-3.1.0 install DESTDIR=${CMAKE_CURRENT_BINARY_DIR}/i2c-tools-3.1.0 )
+                   SOURCE_DIR ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0
+                   BUILD_COMMAND make -C ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0
+                   INSTALL_COMMAND make -C ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0 install DESTDIR=${CMAKE_BINARY_DIR}/i2c-tools-3.1.0 )
 
               
   #

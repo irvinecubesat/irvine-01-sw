@@ -58,6 +58,11 @@ namespace IrvCS
     virtual ~CCardI2CPortState();
 
     /**
+     * Update the state based on the type of message coming in.
+     **/
+    uint8_t update(const uint8_t msgType, const uint8_t id, const uint8_t cmd);
+
+    /**
      * DSA values are active low - set the value to 0 to 
      * trigger the command.
      * @param id the DSA ID

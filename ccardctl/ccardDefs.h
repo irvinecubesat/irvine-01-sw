@@ -20,7 +20,8 @@ namespace IrvCS
   {
     Release=0,
     Deploy=1,
-    Reset=2   // reset the DSA ports to initial value (1)
+    Reset=2,   // reset the DSA ports to initial value (1)
+    CmdUnknown
   };
 
   /**
@@ -33,7 +34,8 @@ namespace IrvCS
   enum DsaId
   {
     DSA_1=0,
-    DSA_2=2
+    DSA_2=2,
+    DSA_UNKNOWN
   };
 
   /**
