@@ -50,6 +50,17 @@ void usage(char *argv[])
   exit(CMD_ERR_STATUS);
 }
 
+/**
+ * Print out the status
+ **/
+static void outputStatus(uint8_t status)
+{
+  std::cout<<std::hex<<(int)status
+           <<" -> "
+           <<IrvCS::CCardI2CPortState::stateToString(status)
+           <<std::endl;
+}
+
 static int getCCardStatus(const std::string &host, uint32_t timeout)
 {
   struct
@@ -81,13 +92,11 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
     return CMD_ERR_STATUS;
   }
 
-  std::cout<<"C-Card portStatus - "<<std::hex<<(int)resp.status.portStatus
-           <<": "
-           <<IrvCS::CCardI2CPortState::stateToString(resp.status.portStatus)
-           <<std::endl;
+  outputStatus(resp.status.portStatus);
 
   return 0;
 }
+
 
 static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout)
 {
@@ -124,10 +133,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
     return CMD_ERR_STATUS;
   }
 
-  std::cout<<"C-Card portStatus:  "
-           <<IrvCS::CCardI2CPortState::stateToString(resp.status.portStatus)
-           <<"("<<std::hex<<(int)resp.status.portStatus<<")"
-           <<std::endl;
+  outputStatus(resp.status.portStatus);
 
   return status;
 }
