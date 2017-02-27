@@ -41,6 +41,7 @@ void usage(char *argv[])
            <<" -s                 get C-Card status"<<std::endl
            <<" -D {DSA id}        Execute DSA Deploy for {DSA id}"<<std::endl
            <<" -R {DSA id}        Execute DSA Release for {DSA id}"<<std::endl
+           <<" -T {DSA id}        Reset Timer and DSA state for {DSA id}"<<std::endl
            <<" -M {MT id}-{0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m                 Change all mt values (use mask 0x7)"<<std::endl
            <<" -t {timeout ms}    Timeout in ms. (Default "<< WAIT_MS<<")"<<std::endl
@@ -206,7 +207,7 @@ int main(int argc, char *argv[])
   uint8_t mtBits=0;
   uint8_t mtMask=0;
 
-  while ((opt=getopt(argc,argv,"d:h:sD:R:M:mt:H")) != -1)
+  while ((opt=getopt(argc,argv,"d:h:sD:R:T:M:mt:H")) != -1)
   {
     switch (opt)
     {
@@ -215,22 +216,17 @@ int main(int argc, char *argv[])
       break;
     case 'D':
       dsaId=parseDsaId(optarg);
-      if (IrvCS::DSA_UNKNOWN == dsaId)
-      {
-        printf("Unsupported ID:  %s\n", optarg);
-        exit(CMD_ERR_STATUS);
-      }
       dsaCmd=IrvCS::Deploy;
       action=DsaCommand;
       break;
     case 'R':
       dsaId=parseDsaId(optarg);
-      if (IrvCS::DSA_UNKNOWN == dsaId)
-      {
-        printf("Unsupported ID:  %s\n", optarg);
-        exit(CMD_ERR_STATUS);
-      }
       dsaCmd=IrvCS::Release;
+      action=DsaCommand;
+      break;
+    case 'T':
+      dsaId=parseDsaId(optarg);
+      dsaCmd=IrvCS::ResetTimer;      // Reset timer
       action=DsaCommand;
       break;
     case 'M':
@@ -257,7 +253,13 @@ int main(int argc, char *argv[])
       break;
     }
   }
-  
+
+  if (DsaCommand == action && IrvCS::DSA_UNKNOWN == dsaId)
+  {
+    printf("Unsupported DSA ID:  %s\n", optarg);
+    usage(argv);
+  }
+
   DBG_setLevel(logLevel);
 
   int status=0;

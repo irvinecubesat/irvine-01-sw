@@ -14,7 +14,7 @@ TEST(Initialization,InitialPortState)
   ASSERT_EQ(0, portState.getMtState());
 }
 
-TEST(DSAStates,DSA1Release)
+TEST(DSACommand,DSA1Release)
 {
   CCardI2CPortState portState;
   uint8_t expectedState=(uint8_t)0xE; // complement of 0x1 = 1110b
@@ -22,7 +22,7 @@ TEST(DSAStates,DSA1Release)
   ASSERT_EQ(expectedState, portState.setDsa(DSA_1, Release));
 }
 
-TEST(DSAStates, DSA1Deploy)
+TEST(DSACommand, DSA1Deploy)
 {
   CCardI2CPortState portState;
   uint8_t expectedState=(uint8_t)0xD; // complement of 0x2 = 1101b
@@ -30,12 +30,24 @@ TEST(DSAStates, DSA1Deploy)
   ASSERT_EQ(expectedState, portState.setDsa(DSA_1, Deploy));
 }
 
-TEST(DSAStates, DSA2Release)
+TEST(DSACommand, DSA2Release)
 {
   CCardI2CPortState portState;
   uint8_t expectedState=(uint8_t)0xB; // complement of 0x4 = 1011b
   
   ASSERT_EQ(expectedState, portState.setDsa(DSA_2, Release));
+}
+
+/**
+ * Test reseting DSA1.  First set DSA1 to Release, then reset it
+ **/
+TEST(DSACommand, DSA1ReleaseThenReset)
+{
+  CCardI2CPortState portState;
+  const uint8_t expectedState=(uint8_t)0xE;   // complement of 0x1 = 1100b
+  const uint8_t originalState=(uint8_t)0x8F; // 10001111b - original state
+  ASSERT_EQ(expectedState, portState.setDsa(DSA_1, Release));
+  ASSERT_EQ(originalState, portState.setDsa(DSA_1, ResetTimer));
 }
 
 TEST(MTStates, EnableMt1_2_3)
@@ -55,7 +67,7 @@ TEST(MTStates, EnableMt1)
 /**
  * Set DSA1 Deploy and MT 3 to On, then turn MT3 off
  **/
-TEST(MTandDSAStates, DSA1Deploy_MT3)
+TEST(MTandDSACommand, DSA1Deploy_MT3)
 {
   CCardI2CPortState portState;
 

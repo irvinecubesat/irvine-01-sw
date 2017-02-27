@@ -91,7 +91,7 @@ namespace IrvCS
     // int the offset
     uint8_t dsaOffset = id;
     uint8_t dsaCmdBits=cmd;
-    if (cmd == Reset) 
+    if (cmd == ResetTimer) 
     {
       // set command bits for dsaID to 1 plus timer bit
       // TODO:  Determine if this is the correct action for reset

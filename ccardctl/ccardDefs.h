@@ -20,7 +20,7 @@ namespace IrvCS
   {
     Release=0,
     Deploy=1,
-    Reset=2,   // reset the DSA ports to initial value (1)
+    ResetTimer=2,   // reset DSA port and timer to initial value (1)
     CmdUnknown
   };
 
