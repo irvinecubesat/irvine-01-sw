@@ -100,6 +100,11 @@ namespace IrvCS
      **/
     static std::string stateToString(const uint8_t data);
 
+    /**
+     * Print number to binary format string
+     **/
+    static std::string printBinary(const uint8_t data, const uint8_t nbits);
+
   private:
     uint8_t reg1State_;
   };

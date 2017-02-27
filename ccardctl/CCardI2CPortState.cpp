@@ -124,7 +124,7 @@ namespace IrvCS
     return (reg1State_&MT_MASK)>>MT_OFFSET;
   }
 
-  static std::string printBinary(uint8_t data, uint8_t nbits)
+  std::string CCardI2CPortState::printBinary(const uint8_t data, const uint8_t nbits)
   {
     std::stringstream stm;
     for (int i=nbits-1; i >=0; i--)
@@ -142,7 +142,7 @@ namespace IrvCS
        <<" D2:  R="<<(state&DSA2_RELEASE?1:0)
        <<" D="<<(state&DSA2_DEPLOY?1:0)
        <<" DT="<<(state&DSA_ENABLE_TIMER?1:0)
-       <<" M="<<printBinary((state&MT_MASK>>MT_OFFSET), 3);
+       <<" M="<<printBinary((state&MT_MASK)>>MT_OFFSET, 3);
     return stm.str();
   }
 }

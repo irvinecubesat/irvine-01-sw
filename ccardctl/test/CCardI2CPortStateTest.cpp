@@ -83,3 +83,14 @@ TEST(UpdateAPI, DSA1DeployMT3On)
   ASSERT_EQ(expectedState2, portState.update(MsgMt, 0x7, 0x04));
   
 }
+
+TEST(PrintBinary, MTValues)
+{
+  CCardI2CPortState portState;
+  ASSERT_EQ(CCardI2CPortState::printBinary(7,3), "111");
+  ASSERT_EQ(CCardI2CPortState::printBinary(6,3), "110");
+  ASSERT_EQ(CCardI2CPortState::printBinary(4,3), "100");
+  ASSERT_EQ(CCardI2CPortState::printBinary(3,3), "011");
+  ASSERT_EQ(CCardI2CPortState::printBinary(2,3), "010");
+  ASSERT_EQ(CCardI2CPortState::printBinary(1,3), "001");
+}
