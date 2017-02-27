@@ -39,12 +39,21 @@ namespace IrvCS
   static DsaCmd cmd2DsaCmd(uint8_t cmd)
   {
     DsaCmd dsaCmd=CmdUnknown;
+    //
+    // convert uint8_t to enumeration
+    //
     if (Deploy == cmd)
     {
       dsaCmd = Deploy;
     } else if (Release == cmd)
     {
       dsaCmd = Release;
+    } else if (ResetTimer == cmd)
+    {
+      dsaCmd = ResetTimer;
+    } else
+    {
+      syslog(LOG_ERR, "Unsupported cmd:  %d", cmd);
     }
     return dsaCmd;
   }
@@ -137,12 +146,12 @@ namespace IrvCS
   std::string CCardI2CPortState::stateToString(const uint8_t state)
   {
     std::stringstream stm;
-    stm<<"D1:  R="<<(state&DSA1_RELEASE?1:0)
-       <<" D="<<(state&DSA1_DEPLOY?1:0)
-       <<" D2:  R="<<(state&DSA2_RELEASE?1:0)
-       <<" D="<<(state&DSA2_DEPLOY?1:0)
-       <<" DT="<<(state&DSA_ENABLE_TIMER?1:0)
-       <<" M="<<printBinary((state&MT_MASK)>>MT_OFFSET, 3);
+    stm<<"D1("<<(state&DSA1_RELEASE?1:0)
+       <<","<<(state&DSA1_DEPLOY?1:0)
+       <<") D2("<<(state&DSA2_RELEASE?1:0)
+       <<","<<(state&DSA2_DEPLOY?1:0)
+       <<") DT("<<(state&DSA_ENABLE_TIMER?1:0)
+       <<") M("<<printBinary((state&MT_MASK)>>MT_OFFSET, 3)<<")";
     return stm.str();
   }
 }

@@ -64,3 +64,21 @@ TEST(EncodeAndDecodeMsg, MT_2_and_3_on)
   ASSERT_EQ(decodedCmd, On);
   ASSERT_EQ(decodedId, MT_2|MT_3);
 }
+
+/**
+ * Test Encode and decode MT command
+ **/
+TEST(EncodeAndDecodeMsg, DsaResetDSA1)
+{
+  uint32_t data;
+  uint8_t decodedType=0;
+  uint8_t decodedCmd=0;
+  uint8_t decodedId=0;
+  
+  ASSERT_EQ(0, CCardMsgCodec::encodeMsgData(MsgDsa, DSA_1, ResetTimer, data));
+  ASSERT_EQ(0, CCardMsgCodec::decodeMsgData(data,
+                                            decodedType, decodedId, decodedCmd));
+  ASSERT_EQ(decodedType, MsgDsa);
+  ASSERT_EQ(decodedCmd, ResetTimer);
+  ASSERT_EQ(decodedId, DSA_1);
+}

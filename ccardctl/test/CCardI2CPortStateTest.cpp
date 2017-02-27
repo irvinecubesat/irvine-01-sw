@@ -46,8 +46,8 @@ TEST(DSACommand, DSA1ReleaseThenReset)
   CCardI2CPortState portState;
   const uint8_t expectedState=(uint8_t)0xE;   // complement of 0x1 = 1100b
   const uint8_t originalState=(uint8_t)0x8F; // 10001111b - original state
-  ASSERT_EQ(expectedState, portState.setDsa(DSA_1, Release));
-  ASSERT_EQ(originalState, portState.setDsa(DSA_1, ResetTimer));
+  ASSERT_EQ(expectedState, portState.update(MsgDsa, DSA_1, Release));
+  ASSERT_EQ(originalState, portState.update(MsgDsa, DSA_1, ResetTimer));
 }
 
 TEST(MTStates, EnableMt1_2_3)

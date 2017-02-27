@@ -81,9 +81,9 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
     return CMD_ERR_STATUS;
   }
 
-  std::cout<<"C-Card portStatus:  "
+  std::cout<<"C-Card portStatus - "<<std::hex<<(int)resp.status.portStatus
+           <<": "
            <<IrvCS::CCardI2CPortState::stateToString(resp.status.portStatus)
-           <<"("<<std::hex<<(int)resp.status.portStatus<<")"
            <<std::endl;
 
   return 0;
