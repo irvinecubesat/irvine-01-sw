@@ -151,13 +151,13 @@ int addMtBits(const char *arg, uint8_t &mtMask, uint8_t &mtBits)
   int onOrOff=0;
   if (!strncmp("M1", arg, 2))
   {
-    bit=1;
+    bit=0;
   } else if (!strncmp("M2", arg, 2))
   {
-    bit=2;
+    bit=1;
   } else if (!strncmp("M3", arg, 2))
   {
-    bit=3;
+    bit=2;
   } else
   {
     printf("Unrecognized argument format:  %s\n", arg);
@@ -268,14 +268,18 @@ int main(int argc, char *argv[])
     status=getCCardStatus(host, timeout);
     break;
   case DsaCommand:
-    IrvCS::CCardMsgCodec::encodeMsgData((uint8_t)IrvCS::MsgDsa, (uint8_t)dsaId, (uint8_t)dsaCmd, msgData);
+    IrvCS::CCardMsgCodec::encodeMsgData((uint8_t)IrvCS::MsgDsa, 
+                                        (uint8_t)dsaId, (uint8_t)dsaCmd, 
+                                        msgData);
     
     break;
   case MtCommand:
-    IrvCS::CCardMsgCodec::encodeMsgData((uint8_t)IrvCS::MsgMt, (uint8_t)0x7, (uint8_t)mtBits, msgData);
+    IrvCS::CCardMsgCodec::encodeMsgData((uint8_t)IrvCS::MsgMt, 
+                                        (uint8_t)mtMask, (uint8_t)mtBits, 
+                                        msgData);
     break;
   }
-  if (msgData != 0)
+  if (action != GetStatus)
   {
     int sendStatus = sendCcardMsg(host, msgData, timeout);
     if (sendStatus != 0)

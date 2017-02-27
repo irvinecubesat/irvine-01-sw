@@ -142,7 +142,7 @@ namespace IrvCS
        <<" D2:  R="<<(state&DSA2_RELEASE?1:0)
        <<" D="<<(state&DSA2_DEPLOY?1:0)
        <<" DT="<<(state&DSA_ENABLE_TIMER?1:0)
-       <<" M="<<printBinary((state>>MT_OFFSET)&MT_MASK, 3);
+       <<" M="<<printBinary((state&MT_MASK>>MT_OFFSET), 3);
     return stm.str();
   }
 }
