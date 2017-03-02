@@ -18,9 +18,10 @@ namespace IrvCS
    */
   enum DsaCmd
   {
-    Release=0,
+    Release=0,     
     Deploy=1,
-    ResetTimer=2,   // reset DSA port and timer to initial value (1)
+    SetTimer=2,    // Set the timer bit
+    ResetTimer=3,  // reset timer and DSA to initial value (1)
     CmdUnknown
   };
 
@@ -30,11 +31,13 @@ namespace IrvCS
    * time
    * 
    * Used as the shift offset.
+   *
+   * Note:  Original slide documentation had DSA1 and DSA2 reversed.
    */
   enum DsaId
   {
-    DSA_1=0,
-    DSA_2=2,
+    DSA_2=0,
+    DSA_1=2,
     DSA_UNKNOWN
   };
 

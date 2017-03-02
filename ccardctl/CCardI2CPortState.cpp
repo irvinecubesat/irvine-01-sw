@@ -51,6 +51,9 @@ namespace IrvCS
     } else if (ResetTimer == cmd)
     {
       dsaCmd = ResetTimer;
+    } else if (SetTimer == cmd)
+    {
+      dsaCmd=SetTimer;
     } else
     {
       syslog(LOG_ERR, "Unsupported cmd:  %d", cmd);
@@ -100,15 +103,25 @@ namespace IrvCS
     // int the offset
     uint8_t dsaOffset = id;
     uint8_t dsaCmdBits=cmd;
+
     if (cmd == ResetTimer) 
     {
       // set command bits for dsaID to 1 plus timer bit
       // TODO:  Determine if this is the correct action for reset
       reg1State_|=(3<<dsaOffset)|DSA_ENABLE_TIMER; // 3 is 11 in binary
+    } else if (cmd == SetTimer)
+    {
+      // turn on timer
+      reg1State_&= ~(DSA_ENABLE_TIMER); // enable timer
+      printf("%02x\n", reg1State_);      
     } else
     {
+      uint8_t dsaBits=(1<<(dsaOffset|dsaCmdBits));
+      printf("Dsa bits:  %02x\n", dsaBits);
+      // First to turn timer and DSA's off
+      reg1State_|= DSA_MASK;
+      // set only the DSA bit (no timer).
       // active low, so we need the complement of the bits
-      uint8_t dsaBits=(1<<(dsaOffset+dsaCmdBits))|DSA_ENABLE_TIMER;
       reg1State_&=~dsaBits;
     }
 

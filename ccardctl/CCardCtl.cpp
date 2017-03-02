@@ -46,6 +46,7 @@ extern "C"
                       &status, sizeof(status), src);
   }
 
+  
   /**
    * Process the CCard cmd message
    **/
@@ -83,6 +84,25 @@ extern "C"
     } else
     {
       DBG_print(DBG_LEVEL_INFO, "Set expander value to %02x", status.portStatus);
+    }
+
+    //
+    // Automatically set timer for Deploy annd Release DSA commands.
+    //
+    if ((msgType == IrvCS::MsgDsa) &&
+        (msgCmd == IrvCS::Deploy || msgCmd == IrvCS::Release))
+    {
+      status.portStatus=gPortState->update(IrvCS::MsgDsa, devId,
+                                           IrvCS::SetTimer);
+      int setStatus=gI2cExpander->setState(status.portStatus);
+      if (0 != setStatus)
+      {
+        DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status.portStatus);
+        status.status=setStatus;
+      } else
+      {
+        DBG_print(DBG_LEVEL_INFO, "Set expander value to %02x", status.portStatus);
+      }
     }
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
                       &status, sizeof(status), src);
