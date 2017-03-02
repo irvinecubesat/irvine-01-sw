@@ -113,11 +113,9 @@ namespace IrvCS
     {
       // turn on timer
       reg1State_&= ~(DSA_ENABLE_TIMER); // enable timer
-      printf("%02x\n", reg1State_);      
     } else
     {
       uint8_t dsaBits=(1<<(dsaOffset|dsaCmdBits));
-      printf("Dsa bits:  %02x\n", dsaBits);
       // First to turn timer and DSA's off
       reg1State_|= DSA_MASK;
       // set only the DSA bit (no timer).

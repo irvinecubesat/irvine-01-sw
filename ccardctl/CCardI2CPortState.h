@@ -10,11 +10,12 @@ namespace IrvCS
 {
   /**
    * Define the port bits of the tca9554.  
+   * NOTE:  DSA1 and DS2 ports swapped from original design doc
    **/
-#define DSA1_RELEASE  1<<0
-#define DSA1_DEPLOY   1<<1
-#define DSA2_RELEASE  1<<2
-#define DSA2_DEPLOY   1<<3
+#define DSA2_RELEASE  1<<0
+#define DSA2_DEPLOY   1<<1
+#define DSA1_RELEASE  1<<2
+#define DSA1_DEPLOY   1<<3
 #define MT01_ENABLE   1<<4
 #define MT02_ENABLE   1<<5
 #define MT03_ENABLE   1<<6
