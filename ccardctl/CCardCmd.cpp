@@ -3,6 +3,7 @@
  */
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <string.h>
 #include <stdio.h>
 #include <polysat/polysat.h>
@@ -55,7 +56,7 @@ void usage(char *argv[])
  **/
 static void outputStatus(uint8_t status)
 {
-  std::cout<<std::hex<<(int)status
+  std::cout<<"0x"<<std::setfill('0')<<std::setw(2)<<std::hex<<(int)status
            <<" -> "
            <<IrvCS::CCardI2CPortState::stateToString(status)
            <<std::endl;
