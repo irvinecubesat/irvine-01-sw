@@ -14,7 +14,7 @@ namespace IrvCS
     // Initial state should be DSA bits on (active low),
     // MT bits off (active high)
     // 
-    reg1State_= DSA_MASK & ~MT_MASK;
+    (void)reset();
   }
 
   CCardI2CPortState::~CCardI2CPortState()
@@ -22,79 +22,13 @@ namespace IrvCS
     // not much to do here yet...
   }
 
-  static DsaId id2DsaId(uint8_t id)
+
+  uint8_t CCardI2CPortState::reset()
   {
-    DsaId dsaId=DSA_UNKNOWN;
-    if (id == DSA_1)
-    {
-      dsaId=DSA_1;
-    } else if (id == DSA_2)
-    {
-      dsaId=DSA_2;
-    }
-
-    return dsaId;
+    reg1State_= DSA_MASK & ~MT_MASK;
+    return reg1State_;
   }
-
-  static DsaCmd cmd2DsaCmd(uint8_t cmd)
-  {
-    DsaCmd dsaCmd=CmdUnknown;
-    //
-    // convert uint8_t to enumeration
-    //
-    if (Deploy == cmd)
-    {
-      dsaCmd = Deploy;
-    } else if (Release == cmd)
-    {
-      dsaCmd = Release;
-    } else if (ResetTimer == cmd)
-    {
-      dsaCmd = ResetTimer;
-    } else if (SetTimer == cmd)
-    {
-      dsaCmd=SetTimer;
-    } else
-    {
-      syslog(LOG_ERR, "Unsupported cmd:  %d", cmd);
-    }
-    return dsaCmd;
-  }
-    
-  uint8_t CCardI2CPortState::
-  update(const uint8_t msgType, const uint8_t id, const uint8_t cmd)
-  {
-    switch(msgType)
-    {
-    case MsgDsa:
-    {
-      DsaId dsaId = id2DsaId(id);
-      if (DSA_UNKNOWN == dsaId)
-      {
-        syslog(LOG_ERR, "Unknown DSA ID:  %d", id);
-        return reg1State_;
-      }
-      DsaCmd dsaCmd = cmd2DsaCmd(cmd);
-      if (CmdUnknown == dsaCmd)
-      {
-        syslog(LOG_ERR, "Uknown DSA Cmd:  %d", cmd);
-        return reg1State_;
-      }
-      return setDsa(dsaId, dsaCmd);
-    }
-    break;
-    case MsgMt:
-    {
-      return setMt(id, cmd);
-    }
-    break;
-    default:
-      syslog(LOG_WARNING, "%s Unknown msg type:  %d", __FILENAME__, msgType);
-    }
-
-    return getState();
-  }
-
+  
   uint8_t CCardI2CPortState::setDsa(DsaId id, DsaCmd cmd)
   {
     // since we defined the id and DsaCmd values appropriately, we

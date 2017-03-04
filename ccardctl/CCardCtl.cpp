@@ -8,16 +8,57 @@
 #include <stdlib.h>
 #include <polysat/polysat.h>
 #include "cCardMessages.h"
-#include "CCardI2CPortState.h"
 #include "CCardMsgCodec.h"
+#include "ccardDefs.h"
 #include "CCardI2CX.h"
 
 #define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
 
 static Process *gProc=NULL;
 
-static IrvCS::CCardI2CPortState *gPortState=NULL;
+static uint8_t gPortState=0;
 static IrvCS::CCardI2CX *gI2cExpander=NULL;
+
+using namespace IrvCS;
+
+static DsaId id2DsaId(uint8_t id)
+{
+  DsaId dsaId=DSA_UNKNOWN;
+  if (id == DSA_1)
+  {
+    dsaId=DSA_1;
+  } else if (id == DSA_2)
+  {
+    dsaId=DSA_2;
+  }
+
+  return dsaId;
+}
+
+static DsaCmd cmd2DsaCmd(uint8_t cmd)
+{
+  DsaCmd dsaCmd=CmdUnknown;
+  //
+  // convert uint8_t to enumeration
+  //
+  if (Deploy == cmd)
+  {
+    dsaCmd = Deploy;
+  } else if (Release == cmd)
+  {
+    dsaCmd = Release;
+  } else if (ResetTimer == cmd)
+  {
+    dsaCmd = ResetTimer;
+  } else if (SetTimer == cmd)
+  {
+    dsaCmd=SetTimer;
+  } else
+  {
+    syslog(LOG_ERR, "Unsupported cmd:  %d", cmd);
+  }
+  return dsaCmd;
+}
 
 extern "C"
 {
@@ -29,16 +70,29 @@ extern "C"
   void ccard_status(int socket, unsigned char cmd, void *data, size_t dataLen,
                     struct sockaddr_in *src)
   {
+    
     CCardStatus status;
+    static int counter=0;
     status.status=0;
-    syslog(LOG_DEBUG, "Servicing status message");
-    if (NULL == gPortState)
+    if (NULL == gI2cExpander)
     {
-      syslog(LOG_ERR, "%s gPortState is NULL", __FILENAME__);
-      status.status=1;
+      DBG_print(LOG_ERR, "%s gI2cExpander is NULL", __FILENAME__);
+      status.status=-1;
     } else
     {
-      status.portStatus=gPortState->getState();
+      int getStatus=0;
+      // refresh state every 100 polls
+      if (0==(counter % 100))
+      {
+        getStatus=gPortState=gI2cExpander->getState(gPortState);
+      }
+      if (getStatus=0)
+      {
+        status.portStatus=gPortState;
+      } else
+      {
+        status.status=getStatus;
+      }
     }
     syslog(LOG_DEBUG, "Sending status message response");
 
@@ -46,7 +100,6 @@ extern "C"
                       &status, sizeof(status), src);
   }
 
-  
   /**
    * Process the CCard cmd message
    **/
@@ -68,42 +121,53 @@ extern "C"
     CCardStatus status;
     status.status=0;
 
+    int setStatus=0;
     uint8_t msgType=0;
     uint8_t devId=0;
     uint8_t msgCmd=0;
     uint32_t hostData=ntohl(msg->data);
     IrvCS::CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
-
-    status.portStatus=gPortState->update(msgType, devId, msgCmd);
-    
-    int setStatus=gI2cExpander->setState(status.portStatus);
-    if (0 != setStatus)
+    DsaId dsaId=DSA_UNKNOWN;
+    DsaCmd dsaCmd=CmdUnknown;
+    switch (msgType)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status.portStatus);
-      status.status=setStatus;
-    } else
-    {
-      DBG_print(DBG_LEVEL_INFO, "Set expander value to %02x", status.portStatus);
-    }
-
-    //
-    // Automatically set timer for Deploy annd Release DSA commands.
-    //
-    if ((msgType == IrvCS::MsgDsa) &&
-        (msgCmd == IrvCS::Deploy || msgCmd == IrvCS::Release))
-    {
-      status.portStatus=gPortState->update(IrvCS::MsgDsa, devId,
-                                           IrvCS::SetTimer);
-      int setStatus=gI2cExpander->setState(status.portStatus);
-      if (0 != setStatus)
+    case IrvCS::MsgDsa:
+      dsaId = id2DsaId(devId);
+      if (DSA_UNKNOWN == dsaId)
       {
-        DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status.portStatus);
+        syslog(LOG_ERR, "Unknown DSA ID:  %d", devId);
+        status.status=-1;
+      }
+      dsaCmd = cmd2DsaCmd(msgCmd);
+      if (CmdUnknown == dsaCmd)
+      {
+        syslog(LOG_ERR, "Uknown DSA Cmd:  %d", cmd);
+        status.status=-1;
+      }
+
+      setStatus=gI2cExpander->dsaPerform(dsaId, dsaCmd);
+      if (setStatus < 0)
+      {
         status.status=setStatus;
       } else
       {
-        DBG_print(DBG_LEVEL_INFO, "Set expander value to %02x", status.portStatus);
+        status.portStatus=gPortState=(uint8_t)setStatus;
       }
+      break;
+    case IrvCS::MsgMt:
+      setStatus=gI2cExpander->mtPerform(devId, msgCmd);
+      if (setStatus < 0)
+      {
+        status.status=setStatus;
+      } else
+      {
+        status.portStatus=gPortState=(uint8_t)setStatus;
+      }
+      break;
+    default:
+      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d", __FILENAME__, msgType);
     }
+
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
                       &status, sizeof(status), src);
   }
@@ -172,12 +236,10 @@ int main(int argc, char *argv[])
   {
     DBG_print(DBG_LEVEL_WARN, "Unable to power on GPIO 103 for 3.3V Payload");  }
 
-  IrvCS::CCardI2CPortState portState;
-  IrvCS::CCardI2CX i2cX(portState.getState());
+  IrvCS::CCardI2CX i2cX;
 
   DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl");
   gProc = new Process("ccardctl");
-  gPortState = &portState;
   gI2cExpander = &i2cX;
 
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
@@ -189,7 +251,6 @@ int main(int argc, char *argv[])
   events->EventLoop();
 
   delete gProc;
-  gPortState=NULL;
   gI2cExpander=NULL;
   return status;
 }

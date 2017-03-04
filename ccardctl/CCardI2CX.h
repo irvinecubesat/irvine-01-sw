@@ -1,8 +1,15 @@
 #ifndef __CCARDI2CX_HH__
 #define __CCARDI2CX_HH__
+extern "C"
+{
+#include <gpioapi.h>
+}
+
+#include "CCardI2CPortState.h"
 
 namespace IrvCS
 {
+  
   /**
    * Manage I2C expander state.  @see https://www.kernel.org/doc/Documentation/i2c/dev-interface
    **/
@@ -12,12 +19,12 @@ namespace IrvCS
     /**
      * Initialize the I2C expander state
      **/
-    CCardI2CX(uint8_t state);
+    CCardI2CX();
     
     ~CCardI2CX();
 
     /**
-     * Set the state
+     * Set the state directly
      * @return 0 if successful,
      * @return < 0 if error
      **/
@@ -35,10 +42,32 @@ namespace IrvCS
      **/
     bool isOk();
 
+    /**
+     * Reset state to initial conditions
+     **/
+    int reset();
+    
+    /**
+     * Perform operation for DSA with given timeout
+     * @param id the id of the DSA
+     * @param cmd the command to perform
+     * @param timeoutSec the timeout in seconds
+     **/
+    int dsaPerform(DsaId id, DsaCmd cmd, int timeoutSec=20);
+
+    /**
+     * Perform operation for MT
+     **/
+    int mtPerform(uint8_t idBits, uint8_t cmd);
+
   private:
+    CCardI2CPortState portState_;
     int i2cdev_;
     int addr_;
     bool initialized_;
+    gpio pl5VGpio_;
+    gpio dsa1SenseGpio_[2];
+    gpio dsa2SenseGpio_[2];
   };
 }
 

@@ -7,6 +7,7 @@
 #include <string.h>
 #include <syslog.h>
 #include <linux/i2c-dev.h>
+#include <polysat/debug.h>
 
 #include "CCardI2CX.h"
 
@@ -17,10 +18,43 @@
 #define REG_OUTPUT_PORT 0x01
 #define REG_CONFIG      0x03
 
+#define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
+
 namespace IrvCS
 {
-  CCardI2CX::CCardI2CX(uint8_t state):addr_(0x38), initialized_(false)
+  CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false)
   {
+
+    // initialize GPIO's
+    const int pl5Vpin=103;
+    if (0 != initGPIO(PIO_C, pl5Vpin, &pl5VGpio_))
+    {
+      DBG_print(LOG_ERR, "Unable to initialize 5V PL Power gpio %d\n", pl5Vpin);
+    }
+
+    //
+    // power on 5V payload
+    //
+    if (0 != setGPIO(&pl5VGpio_, OUT, 1))
+    {
+      DBG_print(LOG_ERR, "Unable to turn on 5V PL Power\n", pl5Vpin);
+    }
+    
+    const int dsa1SensePin[2]={58,59}; // HW gpio 0, 1
+    const int dsa2SensePin[2]={60,62}; // HW gpio 2,4
+    for (int i = 0; i < 2; i++)
+    {
+      if (0 != initGPIO(PIO_A, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
+      {
+        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
+      }
+          
+      if (0 != initGPIO(PIO_A, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
+      {
+        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
+      }
+    }
+
     const char *i2cbus="/dev/i2c-1"; 
 
     // initialize i2c bus
@@ -60,12 +94,13 @@ namespace IrvCS
       return;
     }
 
-    if (setState(state))
+    if (reset() < 0)
     {
-      syslog(LOG_ERR, "Unable to set the initial state");
+      DBG_print(LOG_ERR, "Unable to initialize state");
+      return;
     }
-
-    syslog(LOG_NOTICE, "%s Initialized to %02x", __FILENAME__, state);
+    
+    syslog(LOG_NOTICE, "%s Initialized", __FILENAME__);
     initialized_=true;
   }
   
@@ -85,19 +120,22 @@ namespace IrvCS
     int result=i2c_smbus_write_byte_data(i2cdev_, REG_OUTPUT_PORT, state);
     if (result < 0)
     {
-      syslog(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
-             REG_OUTPUT_PORT, state, strerror(result*-1), result);
+      DBG_print(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
+                REG_OUTPUT_PORT, state, strerror(result*-1), result);
+    } else
+    {
+      DBG_print(LOG_INFO, "CCardI2CX SET --> %02x", state);
     }
     return result;
   }
 
   int CCardI2CX::getState(uint8_t &state)
   {
-    // set the initial output states
+    // get output register state
     int result=i2c_smbus_read_byte_data(i2cdev_, REG_OUTPUT_PORT);
     if (result < 0)
     {
-      syslog(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
+      syslog(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)",
              REG_OUTPUT_PORT, state, strerror(result*-1), result);
       return result;
     }
@@ -109,5 +147,58 @@ namespace IrvCS
   bool CCardI2CX::isOk()
   {
     return initialized_;
+  }
+
+  int CCardI2CX::reset()
+  {
+    return setState(portState_.reset());
+  }
+
+  int CCardI2CX::mtPerform(uint8_t idBits, uint8_t cmd)
+  {
+    uint8_t status=portState_.setMt(idBits, cmd);
+    
+    int setStatus=setState(status);
+    if (0 != setStatus)
+    {
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x",
+                status);
+      return setStatus;
+    }
+    return status;
+  }
+  
+  int CCardI2CX::dsaPerform(DsaId id, DsaCmd cmd, int timeoutSec)
+  {
+    int status=-1;
+    int dsaIndex=0;
+    if (id == DSA_1)
+    {
+      dsaIndex=0;
+    } else if (id == DSA_2)
+    {
+      dsaIndex=1;
+    }
+
+    status=portState_.setDsa(id, cmd);
+    
+    status=setState(status);
+    if (0 != status)
+    {
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
+      return status;
+    }
+
+    portState_.setDsa(id, SetTimer);
+
+    status=portState_.setDsa(id,SetTimer);
+    int setStatus=setState(status);
+    if (0 > setStatus)
+    {
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
+      return setStatus;
+    }
+
+    return status;
   }
 }

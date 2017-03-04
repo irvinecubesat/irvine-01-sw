@@ -47,7 +47,8 @@
   - [X] C-Card initialization
   - [X] Payload Power On [1/1]
     - [X] 3V3_PL_Enable (GPIO 103)
-* I2C Expander TCA9554A Kernel Driver [2/3]
+* I2C Expander TCA9554A [2/3]
+** Kernel Driver (descoped)
   - [X] Add Driver to kernel
   - [X] Driver setup module
   - [-] Testing
@@ -58,6 +59,26 @@
     - [ ] gpio 300-302 come up Low
     - [ ] gpio 296-299, 303 come up High
     - [ ] Can set gpio's 300-303
+** I2C Controller [1/2]
+   - [-] ccardctl server [1/2]
+     - [X] DSA Deploy/Release
+       - DSA1 is on P1, DSA2 is on P0 (change from original design)
+     - [ ] Software Timer
+       - In testing, hardware timer triggered by P7 does not take effect
+         Maximum duration is 20 seconds.  Test exceeded 44 sec
+         and could have damaged the board.
+       - DSA Sensing GPIO's DSA1 [0(PA26), 1(PA27)], DSA2[2(PA28), 4(PA30)] correspond to linux kernel mapped
+         gpio's [58, 59] and [60, 62].
+         - Part of Linux board initialization for polysat board.  GPIO's start
+           at 32 with Block A starting at 32, B at 64, and C at 96, etc.
+           So PA26 = GPIO 32+26=58, etc
+       - Use DSA Sensing GPIO's to turn off Deploy/Release
+   - [X] ccardcmd command client
+** Testing [0/0]
+   - [ ] DSA Deploy
+   - [ ] DSA Release
+** Testing Magetorquer [0/0]
+   - [ ] Measure fields
 * DSA Deployment [0/2]
   Create dsa_deployer utility script to initiate DSA release and deployment.
   | Operation       | GPIO |

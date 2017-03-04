@@ -104,9 +104,9 @@ TEST(DSACommand, DSA1ReleaseThenReset)
   const uint8_t expectedState=(uint8_t)0x8b;   // complement of 0x0100 = 1011
   const uint8_t expectedState2=(uint8_t)0x0b;   // complement of 0x0100 = 1011
   const uint8_t originalState=(uint8_t)0x8F; // 10001111b - original state
-  ASSERT_EQ(expectedState, portState.update(MsgDsa, DSA_1, Release));
-  ASSERT_EQ(expectedState2, portState.update(MsgDsa, DSA_1, SetTimer));
-  ASSERT_EQ(originalState, portState.update(MsgDsa, DSA_1, ResetTimer));
+  ASSERT_EQ(expectedState, portState.setDsa(DSA_1, Release));
+  ASSERT_EQ(expectedState2, portState.setDsa(DSA_1, SetTimer));
+  ASSERT_EQ(originalState, portState.setDsa(DSA_1, ResetTimer));
 }
 
 TEST(MTStates, EnableMt1_2_3)
@@ -141,20 +141,20 @@ TEST(MTandDSACommand, DSA1Deploy_MT3)
 }
 
 /**
- * Test update API
+ * Test DSA and MT ops
  **/
-TEST(UpdateAPI, DSA2DeployMT3On)
+TEST(DSAandMT, DSA2DeployMT3On)
 {
   CCardI2CPortState portState;
   uint8_t expectedState=(uint8_t)0x8D; // 10001101b
   uint8_t expectedState2=(uint8_t)0xD; // 00001101b
   
-  ASSERT_EQ(expectedState, portState.update(MsgDsa, DSA_2, Deploy));
-  ASSERT_EQ(expectedState2, portState.update(MsgDsa, DSA_2, SetTimer));
+  ASSERT_EQ(expectedState, portState.setDsa(DSA_2, Deploy));
+  ASSERT_EQ(expectedState2, portState.setDsa(DSA_2, SetTimer));
 
   uint8_t expectedState3=(uint8_t)0x4D; // 01001101b
 
-  ASSERT_EQ(expectedState3, portState.update(MsgMt, 0x7, 0x04));
+  ASSERT_EQ(expectedState3, portState.setMt(0x7, 0x04));
   
 }
 
