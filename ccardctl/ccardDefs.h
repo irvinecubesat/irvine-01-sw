@@ -60,5 +60,11 @@ namespace IrvCS
     MT_2=2,
     MT_3=4
   };
+
+  enum CCardError
+  {
+    CC_OK=0,
+    CC_Timeout=-122
+  };
 }
 #endif  

@@ -9,7 +9,6 @@ extern "C"
 
 namespace IrvCS
 {
-  
   /**
    * Manage I2C expander state.  @see https://www.kernel.org/doc/Documentation/i2c/dev-interface
    **/

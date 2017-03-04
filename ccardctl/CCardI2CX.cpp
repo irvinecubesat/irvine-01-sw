@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <syslog.h>
+#include <unistd.h>
 #include <linux/i2c-dev.h>
 #include <polysat/debug.h>
 
@@ -48,11 +49,20 @@ namespace IrvCS
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
       }
+      if (0 != setGPIO(&(dsa1SenseGpio_[i]), IN, 0))
+      {
+        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa1SensePin[i]);
+      }   
           
       if (0 != initGPIO(PIO_A, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
       }
+
+      if (0 != setGPIO(&(dsa2SenseGpio_[i]), IN, 0))
+      {
+        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa2SensePin[i]);
+      }   
     }
 
     const char *i2cbus="/dev/i2c-1"; 
@@ -170,15 +180,9 @@ namespace IrvCS
   
   int CCardI2CX::dsaPerform(DsaId id, DsaCmd cmd, int timeoutSec)
   {
-    int status=-1;
+    int status=CC_OK;
     int dsaIndex=0;
-    if (id == DSA_1)
-    {
-      dsaIndex=0;
-    } else if (id == DSA_2)
-    {
-      dsaIndex=1;
-    }
+    int timeCount=0;            // incremented every second we wait
 
     status=portState_.setDsa(id, cmd);
     
@@ -189,16 +193,62 @@ namespace IrvCS
       return status;
     }
 
-    portState_.setDsa(id, SetTimer);
-
-    status=portState_.setDsa(id,SetTimer);
-    int setStatus=setState(status);
-    if (0 > setStatus)
+    if (cmd == Deploy || cmd == Release)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
-      return setStatus;
-    }
+      portState_.setDsa(id, SetTimer);
 
+      status=portState_.setDsa(id,SetTimer);
+      int setStatus=setState(status);
+      if (0 > setStatus)
+      {
+        DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
+        return setStatus;
+      }
+      //
+      // Wait for DSA sense to change
+      //
+      const char *dsaIdStr=NULL;
+      gpio *senseArray=NULL;
+      if (id == DSA_1)
+      {
+        senseArray=dsa1SenseGpio_;
+        dsaIdStr="DSA_1";
+      } else if (id == DSA_2)
+      {
+        senseArray=dsa2SenseGpio_;
+        dsaIdStr="DSA_2";
+      } else
+      {
+        DBG_print(LOG_ERR, "Invalid DSA ID:  %d", id);
+        return -1;
+      }
+
+      DBG_print(LOG_INFO, "Waiting for %s Sensor to change", dsaIdStr);
+
+      while (true)
+      {
+        int gpioRelease=readGPIO(&(senseArray[0]));
+        int gpioDeploy=readGPIO(&(senseArray[1]));
+        // check both for now since we're not sure which pin is which
+        if (cmd == Release && (gpioRelease==1 || gpioDeploy==1))
+        {
+          DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)", dsaIdStr, timeCount+1,
+                    gpioRelease, gpioDeploy);
+          break;
+        } else if (gpioRelease==1 && gpioDeploy==1)
+        {
+          DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr, timeCount+1);
+          break;
+        } else if (timeCount++ > timeoutSec)
+        {
+          DBG_print(LOG_WARNING, "%s operation timed out after %d sec (%d,%d)",
+                    dsaIdStr, timeCount, gpioRelease, gpioDeploy);
+          break;
+        }
+        sleep(1);
+      }
+      reset();
+    }
     return status;
   }
 }
