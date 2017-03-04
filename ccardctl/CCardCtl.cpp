@@ -84,9 +84,9 @@ extern "C"
       // refresh state every 100 polls
       if (0==(counter % 100))
       {
-        getStatus=gPortState=gI2cExpander->getState(gPortState);
+        getStatus=gI2cExpander->getState(gPortState);
       }
-      if (getStatus=0)
+      if (getStatus==0)
       {
         status.portStatus=gPortState;
       } else
@@ -94,7 +94,7 @@ extern "C"
         status.status=getStatus;
       }
     }
-    syslog(LOG_DEBUG, "Sending status message response");
+    syslog(LOG_DEBUG, "Sending status message response %02x", status.portStatus);
 
     PROC_cmd_sockaddr(gProc->getProcessData(), CMD_STATUS_RESPONSE,
                       &status, sizeof(status), src);

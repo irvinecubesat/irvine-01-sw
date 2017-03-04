@@ -28,7 +28,7 @@ namespace IrvCS
 
     // initialize GPIO's
     const int pl5Vpin=103;
-    if (0 != initGPIO(PIO_C, pl5Vpin, &pl5VGpio_))
+    if (0 != initGPIO(0, pl5Vpin, &pl5VGpio_))
     {
       DBG_print(LOG_ERR, "Unable to initialize 5V PL Power gpio %d\n", pl5Vpin);
     }
@@ -45,7 +45,7 @@ namespace IrvCS
     const int dsa2SensePin[2]={60,62}; // HW gpio 2,4
     for (int i = 0; i < 2; i++)
     {
-      if (0 != initGPIO(PIO_A, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
+      if (0 != initGPIO(0, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
       }
@@ -54,7 +54,7 @@ namespace IrvCS
         DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa1SensePin[i]);
       }   
           
-      if (0 != initGPIO(PIO_A, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
+      if (0 != initGPIO(0, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
       }
@@ -230,12 +230,12 @@ namespace IrvCS
         int gpioRelease=readGPIO(&(senseArray[0]));
         int gpioDeploy=readGPIO(&(senseArray[1]));
         // check both for now since we're not sure which pin is which
-        if (cmd == Release && (gpioRelease==1 || gpioDeploy==1))
+        if (cmd == Release && (gpioRelease>0 || gpioDeploy>1))
         {
           DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)", dsaIdStr, timeCount+1,
                     gpioRelease, gpioDeploy);
           break;
-        } else if (gpioRelease==1 && gpioDeploy==1)
+        } else if (gpioRelease>0 && gpioDeploy>0)
         {
           DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr, timeCount+1);
           break;
