@@ -207,13 +207,15 @@ namespace IrvCS
     int dsaIndex=0;
     int timeCount=0;            // incremented every second we wait
 
+    // first reset everything
+    portState_.reset();
     status=portState_.setDsa(id, cmd);
     
-    status=setState(status);
-    if (0 != status)
+    int setStatus=setState(status);
+    if (0 < setStatus)
     {
       DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
-      return status;
+      return setStatus;
     }
 
     if (cmd == SetTimerOn)
@@ -237,7 +239,8 @@ namespace IrvCS
         if (0 > setStatus)
         {
           DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
-          return setStatus;
+          status=setStatus;
+          goto cleanup;
         }
       }
       //
@@ -256,7 +259,8 @@ namespace IrvCS
       } else
       {
         DBG_print(LOG_ERR, "Invalid DSA ID:  %d", id);
-        return -1;
+        status=-1;
+        goto cleanup;
       }
 
       DBG_print(LOG_INFO, "Waiting for %s Sensor to change", dsaIdStr);
@@ -285,7 +289,7 @@ namespace IrvCS
       }
       reset();
     }
-  powerOff:
+  cleanup:
     enable3VPayload(0);
 
     return status;
