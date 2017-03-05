@@ -207,6 +207,17 @@ namespace IrvCS
     int dsaIndex=0;
     int timeCount=0;            // incremented every second we wait
 
+    if (cmd == SetTimerOn)
+    {
+      DBG_print(LOG_INFO, "Enabling Timer");
+      enableTimer_=true;
+      return portState_.getState();
+    } else if (cmd == SetTimerOff)
+    {
+      DBG_print(LOG_INFO, "Disabling Timer");
+      enableTimer_=false;
+      return portState_.getState();
+    }
     // first reset everything
     portState_.reset();
     status=portState_.setDsa(id, cmd);
@@ -218,17 +229,6 @@ namespace IrvCS
       return setStatus;
     }
 
-    if (cmd == SetTimerOn)
-    {
-      DBG_print(LOG_INFO, "Enabling Timer");
-      enableTimer_=true;
-      return 0;
-    } else if (cmd == SetTimerOff)
-    {
-      DBG_print(LOG_INFO, "Disabling Timer");
-      enableTimer_=false;
-      return 0;
-    }
     if (cmd == Deploy || cmd == Release)
     {
       enable3VPayload(1);
