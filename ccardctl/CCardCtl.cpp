@@ -53,6 +53,12 @@ static DsaCmd cmd2DsaCmd(uint8_t cmd)
   } else if (SetTimer == cmd)
   {
     dsaCmd=SetTimer;
+  } else if (SetTimerOn == cmd)
+  {
+    dsaCmd=SetTimerOn;
+  }else if (SetTimerOff == cmd)
+  {
+    dsaCmd=SetTimerOff;
   } else
   {
     syslog(LOG_ERR, "Unsupported cmd:  %d", cmd);

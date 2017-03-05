@@ -20,8 +20,10 @@ namespace IrvCS
   {
     Release=0,     
     Deploy=1,
-    SetTimer=2,    // Set the timer bit
-    ResetTimer=3,  // reset timer and DSA to initial value (1)
+    SetTimer=2,      // set timer bit
+    SetTimerOn=3,    // enable timer use
+    SetTimerOff=4,   // disable timer use
+    ResetTimer=5,  // reset timer and DSA to initial value (1)
     CmdUnknown
   };
 

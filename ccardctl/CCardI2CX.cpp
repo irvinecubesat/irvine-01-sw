@@ -220,20 +220,18 @@ namespace IrvCS
     {
       DBG_print(LOG_INFO, "Enabling Timer");
       enableTimer_=true;
-      return portState_.getState();
+      return 0;
     } else if (cmd == SetTimerOff)
     {
       DBG_print(LOG_INFO, "Disabling Timer");
       enableTimer_=false;
-      return portState_.getState();
+      return 0;
     }
     if (cmd == Deploy || cmd == Release)
     {
       enable3VPayload(1);
       if (enableTimer_)
       {
-        portState_.setDsa(id, SetTimer);
-        
         status=portState_.setDsa(id,SetTimer);
         int setStatus=setState(status);
         if (0 > setStatus)
