@@ -23,6 +23,14 @@ namespace IrvCS
     ~CCardI2CX();
 
     /**
+     * Turn on or off the 3V payload power
+     * @param onOrOff 1 or 0
+     * @return 0 if successful
+     * @return <0 if failed
+     **/
+    int enable3VPayload(int onOrOff);
+
+    /**
      * Set the state directly
      * @return 0 if successful,
      * @return < 0 if error
@@ -64,9 +72,11 @@ namespace IrvCS
     int i2cdev_;
     int addr_;
     bool initialized_;
+    gpio pl3VGpio_;
     gpio pl5VGpio_;
     gpio dsa1SenseGpio_[2];
     gpio dsa2SenseGpio_[2];
+    bool enableTimer_;
   };
 }
 

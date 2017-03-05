@@ -42,7 +42,7 @@ void usage(char *argv[])
            <<" -s                 get C-Card status"<<std::endl
            <<" -D {DSA id}        Execute DSA Deploy for {DSA id}"<<std::endl
            <<" -R {DSA id}        Execute DSA Release for {DSA id}"<<std::endl
-           <<" -T {DSA id}        Reset Timer and DSA state for {DSA id}"<<std::endl
+           <<" -T {0 or 1}        Disable or enable timer"<<std::endl
            <<" -M {MT id}-{0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m                 Change all mt values (use mask 0x7)"<<std::endl
            <<" -t {timeout ms}    Timeout in ms. (Default "<< WAIT_MS<<")"<<std::endl
@@ -134,7 +134,13 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
     return CMD_ERR_STATUS;
   }
 
-  outputStatus(resp.status.portStatus);
+  if (resp.status.status==0)
+  {
+    outputStatus(resp.status.portStatus);
+  } else
+  {
+    std::cerr<<"Status "<<resp.status.status<<" executing command"<<std::endl;
+  }
 
   return status;
 }
@@ -232,8 +238,13 @@ int main(int argc, char *argv[])
       action=DsaCommand;
       break;
     case 'T':
-      dsaId=parseDsaId(optarg);
-      dsaCmd=IrvCS::ResetTimer;      // Reset timer
+      if (!strcmp(optarg, "0"))
+      {
+        dsaCmd=IrvCS::SetTimerOff;
+      } else
+      {
+        dsaCmd=IrvCS::SetTimerOn;      // Reset timer
+      }
       action=DsaCommand;
       break;
     case 'M':

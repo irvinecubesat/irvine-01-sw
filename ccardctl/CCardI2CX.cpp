@@ -23,10 +23,16 @@
 
 namespace IrvCS
 {
-  CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false)
+  CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(true)
   {
-
     // initialize GPIO's
+    const int pl3Vpin=102;
+
+    if (0 != initGPIO(0, pl3Vpin, &pl3VGpio_))
+    {
+      DBG_print(LOG_ERR, "Unable to initialize 3V PL Power gpio %d\n", pl3Vpin);
+    }
+    
     const int pl5Vpin=103;
     if (0 != initGPIO(0, pl5Vpin, &pl5VGpio_))
     {
@@ -34,13 +40,18 @@ namespace IrvCS
     }
 
     //
-    // power on 5V payload
+    // power on 5V payload for C-Card
     //
     if (0 != setGPIO(&pl5VGpio_, OUT, 1))
     {
       DBG_print(LOG_ERR, "Unable to turn on 5V PL Power\n", pl5Vpin);
     }
-    
+
+    if (0 != enable3VPayload(0))
+    {
+      DBG_print(LOG_ERR, "Unable to power off 3V PL Power\n");
+    }
+
     const int dsa1SensePin[2]={58,59}; // HW gpio 0, 1
     const int dsa2SensePin[2]={60,62}; // HW gpio 2,4
     for (int i = 0; i < 2; i++)
@@ -113,7 +124,7 @@ namespace IrvCS
     syslog(LOG_NOTICE, "%s Initialized", __FILENAME__);
     initialized_=true;
   }
-  
+
   CCardI2CX::~CCardI2CX()
   {
     syslog(LOG_NOTICE, "%s Cleaning up", __FILENAME__);
@@ -122,6 +133,18 @@ namespace IrvCS
     {
       close(i2cdev_);
     }
+  }
+
+  int CCardI2CX::enable3VPayload(int onOrOff)
+  {
+    int retVal=0;
+    retVal=setGPIO(&pl3VGpio_, OUT, onOrOff);
+    if (retVal != 0)
+    {
+      DBG_print(LOG_ERR, "Unable to set 3V power to %d - status ", onOrOff, 
+                retVal);
+    }
+    return retVal;
   }
 
   int CCardI2CX::setState(uint8_t state)
@@ -193,16 +216,31 @@ namespace IrvCS
       return status;
     }
 
+    if (cmd == SetTimerOn)
+    {
+      DBG_print(LOG_INFO, "Enabling Timer");
+      enableTimer_=true;
+      return portState_.getState();
+    } else if (cmd == SetTimerOff)
+    {
+      DBG_print(LOG_INFO, "Disabling Timer");
+      enableTimer_=false;
+      return portState_.getState();
+    }
     if (cmd == Deploy || cmd == Release)
     {
-      portState_.setDsa(id, SetTimer);
-
-      status=portState_.setDsa(id,SetTimer);
-      int setStatus=setState(status);
-      if (0 > setStatus)
+      enable3VPayload(1);
+      if (enableTimer_)
       {
-        DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
-        return setStatus;
+        portState_.setDsa(id, SetTimer);
+        
+        status=portState_.setDsa(id,SetTimer);
+        int setStatus=setState(status);
+        if (0 > setStatus)
+        {
+          DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
+          return setStatus;
+        }
       }
       //
       // Wait for DSA sense to change
@@ -249,6 +287,9 @@ namespace IrvCS
       }
       reset();
     }
+  powerOff:
+    enable3VPayload(0);
+
     return status;
   }
 }
