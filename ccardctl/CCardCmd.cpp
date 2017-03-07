@@ -42,7 +42,7 @@ void usage(char *argv[])
            <<" -s                 get C-Card status"<<std::endl
            <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<TIMEOUT_DEPLOY<<" sec"<<std::endl
            <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<TIMEOUT_RELEASE<<" sec"<<std::endl
-           <<" -T {0 or 1}        Disable or enable timer.  Value is sticky"<<std::endl
+           <<" -T {0 or 1}        Disable or enable HW timer.  Value is sticky"<<std::endl
            <<" -M {MT id}={0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m                 Change all mt values (use mask 0x7)"<<std::endl
            <<" -t {timeout ms}    Timeout in ms. (Default "<< WAIT_MS<<")"<<std::endl
@@ -139,7 +139,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
     outputStatus(resp.status.portStatus);
   } else
   {
-    std::cerr<<"Status "<<resp.status.status<<" executing command"<<std::endl;
+    std::cerr<<"Status "<<(int)resp.status.status<<" executing command"<<std::endl;
   }
 
   return status;
@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
   };
   Action action=GetStatus;
 
-  IrvCS::DsaId dsaId;
+  IrvCS::DsaId dsaId=IrvCS::DSA_UNKNOWN;
   IrvCS::DsaCmd dsaCmd;
   uint8_t mtBits=0;
   uint8_t mtMask=0;
@@ -245,12 +245,13 @@ int main(int argc, char *argv[])
       timeout=TIMEOUT_RELEASE*1000;
       break;
     case 'T':
+      dsaId=IrvCS::DSA_2; // Not significant, operation is for either
       if (!strcmp(optarg, "0"))
       {
         dsaCmd=IrvCS::SetTimerOff;
       } else
       {
-        dsaCmd=IrvCS::SetTimerOn;      // turn on timer
+        dsaCmd=IrvCS::SetTimerOn;      // turn on HW timer
       }
       action=DsaCommand;
       break;
