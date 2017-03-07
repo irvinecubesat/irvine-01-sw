@@ -219,7 +219,8 @@ int main(void)
   void *beacon_evt;
 
   DBG_setLevel(DBG_LEVEL_INFO);
-
+  DBG_print(DBG_LEVEL_INFO, "Initializing: %s\n", BEACON_MESSAGE);
+  printf("Test\n");
 // Initialize the process
   gProc = PROC_init("beacon");
   if (!gProc)
