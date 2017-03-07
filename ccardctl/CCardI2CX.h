@@ -60,7 +60,7 @@ namespace IrvCS
      * @param cmd the command to perform
      * @param timeoutSec the timeout in seconds
      **/
-    int dsaPerform(DsaId id, DsaCmd cmd, int timeoutSec=20);
+    int dsaPerform(DsaId id, DsaCmd cmd, int timeoutSec=5);
 
     /**
      * Perform operation for MT

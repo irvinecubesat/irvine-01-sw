@@ -59,14 +59,13 @@
     - [ ] gpio 300-302 come up Low
     - [ ] gpio 296-299, 303 come up High
     - [ ] Can set gpio's 300-303
-** I2C Controller [1/2]
-   - [-] ccardctl server [1/2]
+** I2C Controller [2/2]
+   - [X] ccardctl server [2/2]
      - [X] DSA Deploy/Release
        - DSA1 is on P1, DSA2 is on P0 (change from original design)
-     - [ ] Software Timer
-       - In testing, hardware timer triggered by P7 does not take effect
-         Maximum duration is 20 seconds.  Test exceeded 44 sec
-         and could have damaged the board.
+     - [X] Software Timer
+       - In testing, hardware timer triggered by P7 is unpredictable.
+         Maximum duration is 45 seconds for Release, 10 seconds for Deploy, 
        - DSA Sensing GPIO's DSA1 [0(PA26), 1(PA27)], DSA2[2(PA28), 4(PA30)] correspond to linux kernel mapped
          gpio's [58, 59] and [60, 62].
          - Part of Linux board initialization for polysat board.  GPIO's start
