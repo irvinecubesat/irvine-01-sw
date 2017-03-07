@@ -137,11 +137,15 @@ namespace IrvCS
   int CCardI2CX::enable3VPayload(int onOrOff)
   {
     int retVal=0;
+    const char *opString=(onOrOff==0?"Disabled":"Enabled");
     retVal=setGPIO(&pl3VGpio_, OUT, onOrOff);
     if (retVal != 0)
     {
       DBG_print(LOG_ERR, "Unable to set 3V power to %d - status\n", onOrOff, 
                 retVal);
+    } else
+    {
+      DBG_print(LOG_INFO, "3.3V Payload --> %s", opString);
     }
     return retVal;
   }
@@ -208,12 +212,12 @@ namespace IrvCS
 
     if (cmd == SetTimerOn)
     {
-      DBG_print(LOG_INFO, "Enabling Timer");
+      DBG_print(LOG_INFO, "Timer --> Enabled");
       enableTimer_=true;
       return portState_.getState();
     } else if (cmd == SetTimerOff)
     {
-      DBG_print(LOG_INFO, "Disabling Timer");
+      DBG_print(LOG_INFO, "Timer --> Disabled");
       enableTimer_=false;
       return portState_.getState();
     }
@@ -262,7 +266,8 @@ namespace IrvCS
         goto cleanup;
       }
 
-      DBG_print(LOG_INFO, "Waiting for %s Sensor to change\n", dsaIdStr);
+      DBG_print(LOG_INFO, "Waiting %d sec for %s Sensor to change\n", 
+                timeoutSec, dsaIdStr);
 
       while (true)
       {
