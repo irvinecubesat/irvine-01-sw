@@ -6,6 +6,15 @@ namespace IrvCS
 #define MSG_ID_OFFSET_BITS 0
 #define MSG_CMD_OFFSET_BITS 8
 
+/**
+ * Timeout for Release operation in seconds
+ **/  
+#define TIMEOUT_RELEASE 45
+/**
+ * Timeout for Deploy operation in seconds
+ **/
+#define TIMEOUT_DEPLOY 10
+
   enum MsgTypes
   {
     MsgDsa=0,

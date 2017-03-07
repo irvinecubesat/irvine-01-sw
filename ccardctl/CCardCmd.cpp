@@ -15,9 +15,9 @@
 #include "ccardDefs.h"
 
 /**
- * Wait at most 15 sec for commands to execute
+ * Wait at most 5 sec for commands to execute
  **/
-#define WAIT_MS 15000
+#define WAIT_MS 5000
 
 /**
  * Status returned if there is a cmd execution error
@@ -40,10 +40,10 @@ void usage(char *argv[])
            <<" -d {log level}     set log level"<<std::endl
            <<" -h {host IP}       target host IP"<<std::endl
            <<" -s                 get C-Card status"<<std::endl
-           <<" -D {DSA id}        Execute DSA Deploy for {DSA id}"<<std::endl
-           <<" -R {DSA id}        Execute DSA Release for {DSA id}"<<std::endl
-           <<" -T {0 or 1}        Disable or enable timer"<<std::endl
-           <<" -M {MT id}-{0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
+           <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<TIMEOUT_DEPLOY<<" sec"<<std::endl
+           <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<TIMEOUT_RELEASE<<" sec"<<std::endl
+           <<" -T {0 or 1}        Disable or enable timer.  Value is sticky"<<std::endl
+           <<" -M {MT id}={0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m                 Change all mt values (use mask 0x7)"<<std::endl
            <<" -t {timeout ms}    Timeout in ms. (Default "<< WAIT_MS<<")"<<std::endl
            <<" -H                 This message"
@@ -181,6 +181,10 @@ int addMtBits(const char *arg, uint8_t &mtMask, uint8_t &mtBits)
   if (strlen(arg) >= 4)
   {
     onOrOff=strtol(&arg[3], NULL, 10);
+  } else
+  {
+    printf("No On or Off set for MT\n");
+    return CMD_ERR_STATUS;
   }
   if (0 == onOrOff)
   {
@@ -205,7 +209,8 @@ int main(int argc, char *argv[])
   std::string cmd;
   std::string args;
   uint32_t cmdId=0;
-  uint32_t timeout=5000;
+  uint32_t timeout=WAIT_MS;
+  int status=0;
 
   enum Action
   {
@@ -231,11 +236,13 @@ int main(int argc, char *argv[])
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Deploy;
       action=DsaCommand;
+      timeout=TIMEOUT_DEPLOY*1000;
       break;
     case 'R':
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Release;
       action=DsaCommand;
+      timeout=TIMEOUT_RELEASE*1000;
       break;
     case 'T':
       if (!strcmp(optarg, "0"))
@@ -243,12 +250,16 @@ int main(int argc, char *argv[])
         dsaCmd=IrvCS::SetTimerOff;
       } else
       {
-        dsaCmd=IrvCS::SetTimerOn;      // Reset timer
+        dsaCmd=IrvCS::SetTimerOn;      // turn on timer
       }
       action=DsaCommand;
       break;
     case 'M':
-      addMtBits(optarg, mtMask, mtBits);
+      status=addMtBits(optarg, mtMask, mtBits);
+      if (status < 0)
+      {
+        usage(argv);
+      }
       action=MtCommand;
       break;
     case 'm':
@@ -280,7 +291,6 @@ int main(int argc, char *argv[])
 
   DBG_setLevel(logLevel);
 
-  int status=0;
   uint32_t msgData=0;
   switch(action)
   {

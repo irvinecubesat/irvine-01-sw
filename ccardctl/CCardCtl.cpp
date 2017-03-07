@@ -37,33 +37,12 @@ static DsaId id2DsaId(uint8_t id)
 
 static DsaCmd cmd2DsaCmd(uint8_t cmd)
 {
-  DsaCmd dsaCmd=CmdUnknown;
-  //
-  // convert uint8_t to enumeration
-  //
-  if (Deploy == cmd)
+  if (cmd > ResetTimer)
   {
-    dsaCmd = Deploy;
-  } else if (Release == cmd)
-  {
-    dsaCmd = Release;
-  } else if (ResetTimer == cmd)
-  {
-    dsaCmd = ResetTimer;
-  } else if (SetTimer == cmd)
-  {
-    dsaCmd=SetTimer;
-  } else if (SetTimerOn == cmd)
-  {
-    dsaCmd=SetTimerOn;
-  }else if (SetTimerOff == cmd)
-  {
-    dsaCmd=SetTimerOff;
-  } else
-  {
-    syslog(LOG_ERR, "Unsupported cmd:  %d", cmd);
+    return CmdUnknown;
   }
-  return dsaCmd;
+  
+  return static_cast<DsaCmd>(cmd);
 }
 
 extern "C"
@@ -82,7 +61,7 @@ extern "C"
     status.status=0;
     if (NULL == gI2cExpander)
     {
-      DBG_print(LOG_ERR, "%s gI2cExpander is NULL", __FILENAME__);
+      DBG_print(LOG_ERR, "%s gI2cExpander is NULL\n", __FILENAME__);
       status.status=-1;
     } else
     {
@@ -120,7 +99,7 @@ extern "C"
     CCardMsg *msg=(CCardMsg *)data;
     if (dataLen != sizeof(CCardMsg))
     {
-      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)",
+      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)\n",
                 dataLen, sizeof(CCardMsg));
       return;
     }
@@ -131,6 +110,7 @@ extern "C"
     uint8_t msgType=0;
     uint8_t devId=0;
     uint8_t msgCmd=0;
+    int timeout=5;
     uint32_t hostData=ntohl(msg->data);
     IrvCS::CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
     DsaId dsaId=DSA_UNKNOWN;
@@ -141,17 +121,25 @@ extern "C"
       dsaId = id2DsaId(devId);
       if (DSA_UNKNOWN == dsaId)
       {
-        syslog(LOG_ERR, "Unknown DSA ID:  %d", devId);
+        DBG_print(LOG_ERR, "Unknown DSA ID:  %d\n", devId);
         status.status=-1;
+        break;
       }
       dsaCmd = cmd2DsaCmd(msgCmd);
       if (CmdUnknown == dsaCmd)
       {
-        syslog(LOG_ERR, "Uknown DSA Cmd:  %d", cmd);
+        DBG_print(LOG_ERR, "Uknown DSA Cmd:  %d\n", cmd);
         status.status=-1;
+        break;
       }
-
-      setStatus=gI2cExpander->dsaPerform(dsaId, dsaCmd);
+      if (dsaCmd == Release)
+      {
+        timeout=TIMEOUT_RELEASE;
+      } else if (dsaCmd == Deploy)
+      {
+        timeout=TIMEOUT_DEPLOY;
+      }
+      setStatus=gI2cExpander->dsaPerform(dsaId, dsaCmd, timeout);
       if (setStatus < 0)
       {
         status.status=setStatus;
@@ -171,7 +159,8 @@ extern "C"
       }
       break;
     default:
-      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d", __FILENAME__, msgType);
+      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d\n",
+                __FILENAME__, msgType);
     }
 
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
@@ -217,6 +206,7 @@ int main(int argc, char *argv[])
     {
     case 's':
       syslogOption=LOG_PERROR;
+      openlog("ccardctl", syslogOption, LOG_USER);
       break;
     case 'd':
       logLevel=strtol(optarg, NULL, 10);
@@ -231,20 +221,9 @@ int main(int argc, char *argv[])
 
   DBG_setLevel(logLevel);
 
-  openlog("ccardctl", syslogOption, LOG_USER);
-
-  //
-  // Turn on payload power at GPIO 103
-  //
-  int sysStatus=system("/usr/bin/gpiotest 103 o 1");
-  int exitStatus=WEXITSTATUS(sysStatus);
-  if (exitStatus != 0)
-  {
-    DBG_print(DBG_LEVEL_WARN, "Unable to power on GPIO 103 for 3.3V Payload");  }
-
   IrvCS::CCardI2CX i2cX;
 
-  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl");
+  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl\n");
   gProc = new Process("ccardctl");
   gI2cExpander = &i2cX;
 
@@ -252,7 +231,7 @@ int main(int argc, char *argv[])
 
   EventManager *events=gProc->event_manager();
 
-  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages",__FILENAME__);
+  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages\n",__FILENAME__);
   
   events->EventLoop();
 

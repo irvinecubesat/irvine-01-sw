@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include <stdint.h>
 #include <string.h>
-#include <syslog.h>
 #include <unistd.h>
 #include <linux/i2c-dev.h>
 #include <polysat/debug.h>
@@ -58,41 +57,41 @@ namespace IrvCS
     {
       if (0 != initGPIO(0, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
       {
-        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to initialize GPIO %d\n", dsa1SensePin[i]);
       }
       if (0 != setGPIO(&(dsa1SenseGpio_[i]), IN, 0))
       {
-        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa1SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to set GPIO %d as input\n", dsa1SensePin[i]);
       }   
           
       if (0 != initGPIO(0, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
       {
-        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to initialize GPIO %d\n", dsa2SensePin[i]);
       }
 
       if (0 != setGPIO(&(dsa2SenseGpio_[i]), IN, 0))
       {
-        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa2SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to set GPIO %d as input\n", dsa2SensePin[i]);
       }   
     }
 
     const char *i2cbus="/dev/i2c-1"; 
 
     // initialize i2c bus
-    syslog(LOG_INFO, "Initializing %s",i2cbus);
+    DBG_print(LOG_INFO, "Initializing %s\n",i2cbus);
     i2cdev_=open(i2cbus, O_RDWR);
 
     if (i2cdev_<0)
     {
-      syslog(LOG_ERR, "Unable to open i2c device %s:  %s (%d)",
-             i2cbus, strerror(errno), errno);
+      DBG_print(LOG_ERR, "Unable to open i2c device %s:  %s (%d)\n",
+                i2cbus, strerror(errno), errno);
       return;
     }
       
     if (ioctl(i2cdev_, I2C_SLAVE, addr_) < 0)
     {
-      syslog(LOG_ERR, "Unable to initialize %02x on %s:  %s (%d)",
-             addr_, i2cbus, strerror(errno), errno);
+      DBG_print(LOG_ERR, "Unable to initialize %02x on %s:  %s (%d)\n",
+                addr_, i2cbus, strerror(errno), errno);
       return;
     }
 
@@ -101,8 +100,8 @@ namespace IrvCS
 
     if (data < 0)
     {
-      syslog(LOG_ERR, "Unable to read data from register %02x:  %s (%d)",
-             REG_INPUT_PORT,strerror(data*-1), data);
+      DBG_print(LOG_ERR, "Unable to read data from register %02x:  %s (%d)\n",
+                REG_INPUT_PORT,strerror(data*-1), data);
       return;
     }
 
@@ -110,24 +109,24 @@ namespace IrvCS
     __s32 result=i2c_smbus_write_byte_data(i2cdev_, REG_CONFIG, 0x00);
     if (result < 0)
     {
-      syslog(LOG_ERR, "Unable to write data to register %02x:  %s (%d)",
-             REG_CONFIG, strerror(result*-1), result);
+      DBG_print(LOG_ERR, "Unable to write data to register %02x:  %s (%d)\n",
+                REG_CONFIG, strerror(result*-1), result);
       return;
     }
 
     if (reset() < 0)
     {
-      DBG_print(LOG_ERR, "Unable to initialize state");
+      DBG_print(LOG_ERR, "Unable to initialize state\n");
       return;
     }
     
-    syslog(LOG_NOTICE, "%s Initialized", __FILENAME__);
+    DBG_print(LOG_NOTICE, "%s Initialized\n", __FILENAME__);
     initialized_=true;
   }
 
   CCardI2CX::~CCardI2CX()
   {
-    syslog(LOG_NOTICE, "%s Cleaning up", __FILENAME__);
+    DBG_print(LOG_NOTICE, "%s Cleaning up\n", __FILENAME__);
     // close any resources
     if (i2cdev_ >= 0)
     {
@@ -141,7 +140,7 @@ namespace IrvCS
     retVal=setGPIO(&pl3VGpio_, OUT, onOrOff);
     if (retVal != 0)
     {
-      DBG_print(LOG_ERR, "Unable to set 3V power to %d - status ", onOrOff, 
+      DBG_print(LOG_ERR, "Unable to set 3V power to %d - status\n", onOrOff, 
                 retVal);
     }
     return retVal;
@@ -153,11 +152,11 @@ namespace IrvCS
     int result=i2c_smbus_write_byte_data(i2cdev_, REG_OUTPUT_PORT, state);
     if (result < 0)
     {
-      DBG_print(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
+      DBG_print(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)\n",
                 REG_OUTPUT_PORT, state, strerror(result*-1), result);
     } else
     {
-      DBG_print(LOG_INFO, "CCardI2CX SET --> %02x", state);
+      DBG_print(LOG_INFO, "CCardI2CX SET --> %02x\n", state);
     }
     return result;
   }
@@ -168,8 +167,8 @@ namespace IrvCS
     int result=i2c_smbus_read_byte_data(i2cdev_, REG_OUTPUT_PORT);
     if (result < 0)
     {
-      syslog(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)",
-             REG_OUTPUT_PORT, state, strerror(result*-1), result);
+      DBG_print(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)\n",
+                REG_OUTPUT_PORT, state, strerror(result*-1), result);
       return result;
     }
 
@@ -194,7 +193,7 @@ namespace IrvCS
     int setStatus=setState(status);
     if (0 != setStatus)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x",
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x\n",
                 status);
       return setStatus;
     }
@@ -238,7 +237,7 @@ namespace IrvCS
         int setStatus=setState(status);
         if (0 > setStatus)
         {
-          DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
+          DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x\n", status);
           status=setStatus;
           goto cleanup;
         }
@@ -258,12 +257,12 @@ namespace IrvCS
         dsaIdStr="DSA_2";
       } else
       {
-        DBG_print(LOG_ERR, "Invalid DSA ID:  %d", id);
+        DBG_print(LOG_ERR, "Invalid DSA ID:  %d\n", id);
         status=-1;
         goto cleanup;
       }
 
-      DBG_print(LOG_INFO, "Waiting for %s Sensor to change", dsaIdStr);
+      DBG_print(LOG_INFO, "Waiting for %s Sensor to change\n", dsaIdStr);
 
       while (true)
       {
@@ -272,16 +271,16 @@ namespace IrvCS
         // check both for now since we're not sure which pin is which
         if (cmd == Release && (gpioRelease>0 || gpioDeploy>1))
         {
-          DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)", dsaIdStr, timeCount+1,
+          DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)\n", dsaIdStr, timeCount+1,
                     gpioRelease, gpioDeploy);
           break;
         } else if (gpioRelease>0 && gpioDeploy>0)
         {
-          DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr, timeCount+1);
+          DBG_print(LOG_INFO, "Deployed %s at %d sec\n", dsaIdStr, timeCount+1);
           break;
         } else if (timeCount++ > timeoutSec)
         {
-          DBG_print(LOG_WARNING, "%s operation timed out after %d sec (%d,%d)",
+          DBG_print(LOG_WARNING, "%s operation timed out after %d sec (%d,%d)\n",
                     dsaIdStr, timeCount, gpioRelease, gpioDeploy);
           break;
         }
