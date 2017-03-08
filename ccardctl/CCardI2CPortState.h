@@ -99,7 +99,7 @@ namespace IrvCS
     /**
      * Convert data into a human readable string
      **/
-    static std::string stateToString(const uint8_t data);
+    static std::string stateToString(const uint8_t data, const uint8_t dsaDeployState);
 
     /**
      * Print number to binary format string

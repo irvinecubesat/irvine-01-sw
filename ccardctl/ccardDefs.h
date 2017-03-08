@@ -6,6 +6,11 @@ namespace IrvCS
 #define MSG_ID_OFFSET_BITS 0
 #define MSG_CMD_OFFSET_BITS 8
 
+#define DSA1_RELEASE_STATUS_BIT 0
+#define DSA1_DEPLOY_STATUS_BIT  1
+#define DSA2_RELEASE_STATUS_BIT 2
+#define DSA2_DEPLOY_STATUS_BIT  3
+
 /**
  * Timeout for Release operation in seconds
  **/  

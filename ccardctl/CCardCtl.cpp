@@ -78,6 +78,7 @@ extern "C"
       {
         status.status=getStatus;
       }
+      status.dsaDeployState=gI2cExpander->getDsaDeployState();
     }
     syslog(LOG_DEBUG, "Sending status message response %02x", status.portStatus);
 
@@ -162,6 +163,8 @@ extern "C"
       DBG_print(LOG_WARNING, "%s Unknown msg type:  %d\n",
                 __FILENAME__, msgType);
     }
+
+    status.dsaDeployState=gI2cExpander->getDsaDeployState();
 
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
                       &status, sizeof(status), src);

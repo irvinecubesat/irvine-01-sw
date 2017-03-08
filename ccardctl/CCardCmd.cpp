@@ -54,11 +54,10 @@ void usage(char *argv[])
 /**
  * Print out the status
  **/
-static void outputStatus(uint8_t status)
+static void outputStatus(uint8_t status, uint8_t dsaDeployState)
 {
-  std::cout<<"0x"<<std::setfill('0')<<std::setw(2)<<std::hex<<(int)status
-           <<" -> "
-           <<IrvCS::CCardI2CPortState::stateToString(status)
+  std::cout<<"0x"<<std::setfill('0')<<std::setw(2)<<std::hex<<(int)status<<" -> "
+           <<IrvCS::CCardI2CPortState::stateToString(status, dsaDeployState)
            <<std::endl;
 }
 
@@ -93,7 +92,7 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
     return CMD_ERR_STATUS;
   }
 
-  outputStatus(resp.status.portStatus);
+  outputStatus(resp.status.portStatus, resp.status.dsaDeployState);
 
   return 0;
 }
@@ -136,7 +135,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
 
   if (resp.status.status==0)
   {
-    outputStatus(resp.status.portStatus);
+    outputStatus(resp.status.portStatus, resp.status.dsaDeployState);
   } else
   {
     std::cerr<<"Status "<<(int)resp.status.status<<" executing command"<<std::endl;

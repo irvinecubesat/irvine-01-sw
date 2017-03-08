@@ -43,6 +43,15 @@ namespace IrvCS
      * @return < 0 if error
      **/
     int getState(uint8_t &state);
+
+    /**
+     * Get the DSA deploy state.  
+     * Use the lower 4 bits to represent DSA1 Release/Deploy state and 
+     * the DSA2 Release/Deploy states.  Use the upper 4 bits to flag error bits.
+     * @return the dsa deploy state in the lower 4 bits
+     * @return <0 if error
+     **/
+    uint8_t getDsaDeployState();
     
     /**
      * Determine if our expander is ok.

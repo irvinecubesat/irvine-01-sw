@@ -88,13 +88,18 @@ namespace IrvCS
     return stm.str();
   }
   
-  std::string CCardI2CPortState::stateToString(const uint8_t state)
+  std::string CCardI2CPortState::stateToString(const uint8_t state, uint8_t dsaDeployState)
   {
+    const char* okMarker="*";
+    const char* dsa1Released=(dsaDeployState & (1<<DSA1_RELEASE_STATUS_BIT))?okMarker:"";
+    const char* dsa1Deployed=(dsaDeployState & (1<<DSA1_DEPLOY_STATUS_BIT))?okMarker:"";
+    const char *dsa2Released=(dsaDeployState & (1<<DSA2_RELEASE_STATUS_BIT))?okMarker:"";
+    const char *dsa2Deployed=(dsaDeployState & (1<<DSA2_DEPLOY_STATUS_BIT))?okMarker:"";
     std::stringstream stm;
-    stm<<"D1("<<(state&DSA1_RELEASE?1:0)
-       <<","<<(state&DSA1_DEPLOY?1:0)
-       <<") D2("<<(state&DSA2_RELEASE?1:0)
-       <<","<<(state&DSA2_DEPLOY?1:0)
+    stm<<"D1("<<(state&DSA1_RELEASE?1:0)<<dsa1Released
+       <<","<<(state&DSA1_DEPLOY?1:0)<<dsa1Deployed
+       <<") D2("<<(state&DSA2_RELEASE?1:0)<<dsa2Released
+       <<","<<(state&DSA2_DEPLOY?1:0)<<dsa2Deployed
        <<") DT("<<(state&DSA_ENABLE_TIMER?1:0)
        <<") M("<<printBinary((state&MT_MASK)>>MT_OFFSET, 3)<<")";
     return stm.str();
