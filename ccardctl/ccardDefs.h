@@ -14,7 +14,7 @@ namespace IrvCS
 /**
  * Timeout for Release operation in seconds
  **/  
-#define TIMEOUT_RELEASE 45
+#define TIMEOUT_RELEASE 60
 /**
  * Timeout for Deploy operation in seconds
  **/
