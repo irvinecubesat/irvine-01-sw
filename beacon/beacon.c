@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "../adcs-sensors/adcs-telemetry.h"
+#include "beacon.h"
 
 #define BEACON_PKT_ID 1
 #define BEACON_DST_PORT 2
@@ -17,24 +18,6 @@
 #define BEACON_MESSAGE "IRVINE-01"
 
 static ProcessData *gProc=NULL;
-
-#define ID_LEN 7
-typedef struct {
-  char id[ID_LEN]; /* "irv-01" To make it easy recognize */
-  uint16_t ldc; /* Long Duration Timer (about 4min 20 sec/tick) */
-
-  uint8_t gyro[3];
-  uint8_t mag[3];
-
-/* TODO: fill in GPS values when we get the gps card service running */
-
-  uint16_t daughter_aTmpSensor;
-  uint16_t threeV_plTmpSensor;
-  uint16_t tempNz;
-
-  struct PowerData threeV_plPwrSensor;
-
-} __attribute__((packed)) BeaconData;
 
 /**
  * Retrieve data from system manager and populate the
@@ -82,8 +65,10 @@ int retrieveSystemStatus(const char *ip, BeaconData *data)
   data->threeV_plTmpSensor = resp.sms.threeV_plTmpSensor.temp;
   data->tempNz = resp.sms.tempNz.temp;
 
-  data->threeV_plPwrSensor.volt = resp.sms.threeV_plPwrSensor.volt;
-  data->threeV_plPwrSensor.current = resp.sms.threeV_plPwrSensor.current;
+  data->threeVPwrSensor.volt=resp.sms.threeVPwrSensor.volt;
+  data->threeVPwrSensor.current=resp.sms.threeVPwrSensor.current;
+  data->fiveV_plPwrSensor.volt = resp.sms.fiveV_plPwrSensor.volt;
+  data->fiveV_plPwrSensor.current = resp.sms.fiveV_plPwrSensor.current;
 
   return 0;
 }
@@ -180,6 +165,8 @@ static int send_beacon(void *arg)
   BeaconData beaconData; /* struct to send in beacon */
   if (proc)
   {
+    strcpy(beaconData.id, BEACON_ID);
+    
 // Fill in Beacon Data
     int stat = retrieveSystemStatus("127.0.0.1", &beaconData);
 
