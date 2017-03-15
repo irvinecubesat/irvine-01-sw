@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   int numChars=0;
 
   
-  (void)freopen(NULL, "rb", stdin);
+  FILE *fp=freopen(NULL, "rb", stdin);
 
   numChars=read(0, buf, sizeof(buf));
   if (numChars == sizeof(buf) || numChars > 227 )
@@ -30,6 +30,11 @@ int main(int argc, char *argv[])
   {
     BeaconStatus beaconStatus((const BeaconData *)buf);
     std::cout << beaconStatus<<std::endl;
+  }
+
+  if (NULL != fp)
+  {
+    fclose(fp);
   }
 
   return status;
