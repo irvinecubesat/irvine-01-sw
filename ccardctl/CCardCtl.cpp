@@ -222,12 +222,11 @@ int main(int argc, char *argv[])
     }
   }
 
+  gProc = new Process("ccardctl");
   DBG_setLevel(logLevel);
-
+  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl\n");
   IrvCS::CCardI2CX i2cX;
 
-  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl\n");
-  gProc = new Process("ccardctl");
   gI2cExpander = &i2cX;
 
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
