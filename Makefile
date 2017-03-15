@@ -33,6 +33,14 @@ build: initialize
 	if [ ! -e build ]; then mkdir build; fi;
 	(cd build; cmake ../)
 
+# Run unit tests with minimal messages unless we get an error
+check-v:
+	(cd build; ctest -V)
+
+# Run unit tests with verbose messages
+check:
+	(cd build; make test CTEST_OUTPUT_ON_FAILURE=1)
+
 build-arm: initialize
 	if [ ! -e build-arm ]; then mkdir build-arm; fi;
 	(cd build-arm; cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/arm-linux.cmake ../)

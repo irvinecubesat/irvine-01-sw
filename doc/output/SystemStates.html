@@ -91,47 +91,53 @@ tooltip.style.display = "none";
 </script>
 
 <div class="tooltip" id="n0">In stowed mode, solar panels and antenna are stowed and the reset_satellite.sh script is executed to clear all persistent data.</div>
-<div class="tooltip" id="n1">- Antenna is released, <br>- DSA is released and deployed. <br>- ADCS is set to detumble to get the satellite stabilized.</div>
+<div class="tooltip" id="n1">@+30 min<br>- Antenna is released<br>- DSA is released and deployed. <br>@+45min<br>- Satcomm enabled<br>- Beacon transmits<br>- ADCS is set to detumble to get the satellite stabilized.</div>
 <div class="tooltip" id="n2">Capture N images at specified intervals, <br>Create thumbnails, store images and associated metadata.<br>Register thumbnails for offload queue</div>
 <div class="tooltip" id="n3">When Charging:<br>  - ADCS orients the satellite to point toward the Sun<br>  - shuts down payload power to minimize power usage.</div>
-<div class="tooltip" id="n4">ADCS orients the satellite for maximum friction.<br>Thrusters oriented appropriately to slow down and deorbit.</div>
-<div class="tooltip" id="n5">Use Magetorquers to orient -Z axis toward target.</div>
-<div class="tooltip" id="n6">Target is in clear view.  <br>Trigger image capture for specified time window and interval</div>
-<div class="tooltip" id="n7">Camera is pointing at the target, but not in clear view.<br>Magnetorquers used to maintain attitude.</div>
-<div class="tooltip" id="n8">Targeting States</div>
+<div class="tooltip" id="n4">- Collect all remaining data<br>- ADCS orients the satellite for maximum friction.</div>
+<div class="tooltip" id="n5">Targeting States</div>
+<div class="tooltip" id="n6">Use Magetorquers to orient -Z axis toward target.</div>
+<div class="tooltip" id="n7">Target is in clear view.  <br>Trigger image capture for specified time window and interval</div>
+<div class="tooltip" id="n8"> - Star Tracker used to determine orientation<br> - Magnetorquers used to maintain or adjust attitude.</div>
 <div class="tooltip" id="n9">ADCS orients the platform to point the camera in the direction of a designated target</div>
-<div class="tooltip" id="n10">Offload Telemetry Data, Thumbnails, Images.<br>Automatic offload includes thumbnails and telemetry.<br>Commanded offload for individual images.</div>
+<div class="tooltip" id="n10"> - Collect data for offload<br> - Offload Telemetry Data, Thumbnails, Images.<br> - arsftp commands</div>
 <div class="tooltip" id="n11">Satcomm initialized and beacons transmitting<br>Manual Deployment commands if necessary</div>
 <div class="tooltip" id="n12">Start</div>
 <div class="tooltip" id="n13">End</div>
-<div class="tooltip" id="e2">gs cmd: Capture</div>
-<div class="tooltip" id="e3">gs cmd:  Target</div>
-<div class="tooltip" id="e5">gs cmd:  Offload</div>
-<div class="tooltip" id="e6">gs cmd:  DeOrbit</div>
-<div class="tooltip" id="e7">gs cmd: Charge</div>
+<div class="tooltip" id="n14">Satcomm initialized and beacons transmitting<br>Manual Deployment commands if necessary</div>
+<div class="tooltip" id="e0">cmd: Orient</div>
+<div class="tooltip" id="e2">cmd: Capture</div>
+<div class="tooltip" id="e3">cmd:  Target</div>
+<div class="tooltip" id="e5">cmd:  Offload, arsftp</div>
+<div class="tooltip" id="e6">cmd:  DeOrbit</div>
+<div class="tooltip" id="e7">cmd: Charge</div>
+<div class="tooltip" id="e8">cmd:  ClockSync</div>
 <div class="tooltip" id="e11">Trigger to capture <br>pictures of deployment</div>
-<div class="tooltip" id="e15">gnd cmd:  Deploy</div>
+<div class="tooltip" id="e15">cmd:  DeployDSA</div>
 
 <map name="image1_1">
   <area shape="poly" coords="475,89,432,116,435,120,438,116,404,93,398,101,432,124,435,126,437,124,480,97,475,89,475,89" alt="" onmouseover="showTooltip('e15')" onmouseout="hideTooltip()"/>
-  <area shape="poly" coords="324,105,214,295,213,297,214,300,237,340,246,335,223,295,219,297,223,300,333,110,324,105,324,105" alt="" onmouseover="showTooltip('e11')" onmouseout="hideTooltip()"/>
-  <area shape="poly" coords="455,226,560,225,560,215,455,216,455,226,455,226" alt="" onmouseover="showTooltip('e7')" onmouseout="hideTooltip()"/>
-  <area shape="poly" coords="655,186,713,123,706,117,648,179,655,186,655,186" alt="" onmouseover="showTooltip('e6')" onmouseout="hideTooltip()"/>
-  <area shape="poly" coords="305,352,371,268,363,262,297,346,305,352,305,352" alt="" onmouseover="showTooltip('e5')" onmouseout="hideTooltip()"/>
-  <area shape="poly" coords="637,265,674,334,683,329,646,260,637,265,637,265" alt="" onmouseover="showTooltip('e3')" onmouseout="hideTooltip()"/>
-  <area shape="poly" coords="411,524,314,425,307,432,404,531,411,524,411,524" alt="" onmouseover="showTooltip('e2')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="324,105,214,295,214,296,214,296,211,310,221,311,223,298,219,297,223,300,333,110,324,105,324,105" alt="" onmouseover="showTooltip('e11')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="552,103,589,137,596,130,559,96,552,103,552,103" alt="" onmouseover="showTooltip('e8')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="511,285,652,298,653,288,512,275,511,285,511,285" alt="" onmouseover="showTooltip('e7')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="723,251,744,135,734,134,714,249,723,251,723,251" alt="" onmouseover="showTooltip('e6')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="255,355,409,297,406,288,251,345,255,355,255,355" alt="" onmouseover="showTooltip('e5')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="709,348,713,397,723,396,719,348,709,348,709,348" alt="" onmouseover="showTooltip('e3')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="408,527,254,400,248,408,402,534,408,527,408,527" alt="" onmouseover="showTooltip('e2')" onmouseout="hideTooltip()"/>
+  <area shape="poly" coords="708,502,702,535,707,536,706,531,571,540,572,550,707,541,711,540,712,537,718,503,708,502,708,502" alt="" onmouseover="showTooltip('e0')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="557,119,718,218" alt="" onmouseover="showTooltip('n14')" onmouseout="hideTooltip()"/>
   <area shape="rect" coords="927,59,1007,99" alt="" onmouseover="showTooltip('n13')" onmouseout="hideTooltip()"/>
   <area shape="rect" coords="15,39,95,79" alt="" onmouseover="showTooltip('n12')" onmouseout="hideTooltip()"/>
   <area shape="rect" coords="439,17,600,116" alt="" onmouseover="showTooltip('n11')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="325,173,486,272" alt="" onmouseover="showTooltip('n10')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="626,332,787,431" alt="" onmouseover="showTooltip('n9')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="414,603,560,664" alt="" onmouseover="showTooltip('n7')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="356,519,502,580" alt="" onmouseover="showTooltip('n6')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="460,517,606,578" alt="" onmouseover="showTooltip('n5')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="341,481,621,679" alt="" onmouseover="showTooltip('n8')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="382,226,543,325" alt="" onmouseover="showTooltip('n10')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="642,404,803,503" alt="" onmouseover="showTooltip('n9')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="414,603,560,664" alt="" onmouseover="showTooltip('n8')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="356,519,502,580" alt="" onmouseover="showTooltip('n7')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="460,517,606,578" alt="" onmouseover="showTooltip('n6')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="341,481,621,679" alt="" onmouseover="showTooltip('n5')" onmouseout="hideTooltip()"/>
   <area shape="rect" coords="668,28,829,127" alt="" onmouseover="showTooltip('n4')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="537,170,698,269" alt="" onmouseover="showTooltip('n3')" onmouseout="hideTooltip()"/>
-  <area shape="rect" coords="190,338,351,437" alt="" onmouseover="showTooltip('n2')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="629,249,790,348" alt="" onmouseover="showTooltip('n3')" onmouseout="hideTooltip()"/>
+  <area shape="rect" coords="126,318,287,417" alt="" onmouseover="showTooltip('n2')" onmouseout="hideTooltip()"/>
   <area shape="rect" coords="273,15,434,114" alt="" onmouseover="showTooltip('n1')" onmouseout="hideTooltip()"/>
   <area shape="rect" coords="100,19,278,110" alt="" onmouseover="showTooltip('n0')" onmouseout="hideTooltip()"/>
 </map>

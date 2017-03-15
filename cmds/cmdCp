@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  Command to capture a photo
+#  Command to copy a file
 #
 
 
@@ -12,7 +12,7 @@ log_init $0
 
 usage()
 {
-    echo "rm {args}"
+    echo "cp {args}"
 
 }
 
@@ -52,17 +52,17 @@ fi
 #
 
 #
-# Execute rm command, intercepting the output so we can filter it
+# Execute cp command, intercepting the output so we can filter it
 #
 
-rm $* >> /dev/null 
+cp $* >> /dev/null 
  
 exitStatus=0
 
 if [ $exitStatus -eq 0 ]; then
-  echo "rm $*"
+  echo "cp $*"
 else
-  log "[E] rm error:  $*"
+  log "[E] cp error:  $*"
 fi
 
 # Technically, the last command exit status will be used as the exit status.
