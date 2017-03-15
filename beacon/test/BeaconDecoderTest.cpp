@@ -78,3 +78,13 @@ TEST(BeaconDecode, DecodePower)
   // @TODO
   FAIL()<<"Implement me";                       
 }
+
+/**
+ * Test the ostream output.  You can output the stream to a string, then compare
+ * the file against expected string output (or use a file).
+ **/
+TEST(BeaconDecode, HumanReadableOutput)
+{
+  // @TODO
+  FAIL()<<"Implement me";
+}
