@@ -274,6 +274,7 @@ int main(int argc, char *argv[])
       break;
     case 'm':
       mtMask=0x7;               // set all bits
+      action=MtCommand;
       // single digit input should be 0-7
       if (strlen(optarg) == 1)
       {
