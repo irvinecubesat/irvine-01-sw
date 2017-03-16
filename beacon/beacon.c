@@ -15,7 +15,6 @@
 #define BEACON_PKT_ID 1
 #define BEACON_DST_PORT 2
 #define BEACON_DST_IP_STR "224.0.0.1"
-#define BEACON_MESSAGE "IRVINE-01"
 
 static ProcessData *gProc=NULL;
 
@@ -49,8 +48,8 @@ int retrieveSystemStatus(const char *ip, BeaconData *data)
 
   if (resp.cmd != cmd_resp)
   {
-    printf("response code incorrect. Got 0x%02X expected 0x%02X\n",
-           resp.cmd, cmd_resp);
+    DBG_print(LOG_ERR, "response code incorrect. Got 0x%02X expected 0x%02X",
+              resp.cmd, cmd_resp);
     return 5;
   }
 
@@ -104,8 +103,8 @@ int retrieveAdcsSensorsInfo(const char *ip, BeaconData *data)
 
   if (resp.cmd != cmd_resp)
   {
-    printf("response code incorrect. Got 0x%02X expected 0x%02X\n",
-           resp.cmd, cmd_resp);
+    DBG_print(LOG_ERR, "response code incorrect. Got 0x%02X expected 0x%02X\n",
+              resp.cmd, cmd_resp);
     return 5;
   }
 
@@ -182,7 +181,8 @@ static int send_beacon(void *arg)
       DBG_print(DBG_LEVEL_INFO, "There were problems retrieving system status\n");
     }
 
-    DBG_print(DBG_LEVEL_INFO, "Sending beacon: %s\n", BEACON_MESSAGE);
+    DBG_print(LOG_DEBUG, "Sending beacon for %s\n", BEACON_ID);
+
     send_beacon_packet(proc, &beaconData , sizeof(BeaconData));
   }
 
@@ -210,7 +210,7 @@ int main(void)
   DBG_setLevel(DBG_LEVEL_INFO);
   if (!gProc)
     return -1;
-  DBG_print(DBG_LEVEL_INFO, "Beacon starting: %s\n", BEACON_MESSAGE);
+  DBG_print(DBG_LEVEL_INFO, "Beacon starting: %s\n", BEACON_ID);
 
 // Schedule an event to run periodically. The event generates the
 // beacon.
