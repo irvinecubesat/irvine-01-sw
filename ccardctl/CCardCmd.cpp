@@ -44,7 +44,8 @@ void usage(char *argv[])
            <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<TIMEOUT_RELEASE<<" sec"<<std::endl
            <<" -T {0 or 1}        Disable or enable HW timer.  Value is sticky"<<std::endl
            <<" -M {MT id}={0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
-           <<" -m                 Change all mt values (use mask 0x7)"<<std::endl
+           <<" -m {ZYX}|{0-7}     Set all mt values with either binary or decimal"<<std::endl
+           <<"                    e.g. -m 111 to turn all MT's on"<<std::endl
            <<" -t {timeout ms}    Timeout in ms. (Default "<< WAIT_MS<<")"<<std::endl
            <<" -H                 This message"
            <<std::endl<<std::endl;
@@ -157,6 +158,20 @@ static IrvCS::DsaId parseDsaId(const char *arg)
   return dsaId;
 }
 
+/**
+ * Set the respective bit for the MT.
+ **/
+static void setMtBit(const int bit, const int onOrOff, uint8_t &mtBits)
+{
+  if (0 == onOrOff)
+  {
+    mtBits &= ~(1<<bit);
+  } else
+  {
+    mtBits |= 1<<bit;
+  }
+}
+
 int addMtBits(const char *arg, uint8_t &mtMask, uint8_t &mtBits)
 {
   int status=0;
@@ -185,18 +200,13 @@ int addMtBits(const char *arg, uint8_t &mtMask, uint8_t &mtBits)
     printf("No On or Off set for MT\n");
     return CMD_ERR_STATUS;
   }
-  if (0 == onOrOff)
-  {
-    mtBits &= ~(1<<bit);
-  } else
-  {
-    mtBits |= 1<<bit;
-  }
+  setMtBit(bit, onOrOff, mtBits);
 
   mtMask |= 1<<bit;
 
   return 0;
 }
+
 /**
  * Main function
  **/
@@ -224,7 +234,7 @@ int main(int argc, char *argv[])
   uint8_t mtBits=0;
   uint8_t mtMask=0;
 
-  while ((opt=getopt(argc,argv,"d:h:sD:R:T:M:mt:H")) != -1)
+  while ((opt=getopt(argc,argv,"d:h:sD:R:T:M:m:t:H")) != -1)
   {
     switch (opt)
     {
@@ -263,7 +273,26 @@ int main(int argc, char *argv[])
       action=MtCommand;
       break;
     case 'm':
-      mtMask=0x7;               // 
+      mtMask=0x7;               // set all bits
+      // single digit input should be 0-7
+      if (strlen(optarg) == 1)
+      {
+        // convert decimal number
+        mtBits=strtoul(optarg, NULL, 10);
+        if (mtBits > 7)
+        {
+          printf("Invalid input.  Must be 0-7:  %s\n\n", optarg);
+          usage(argv);
+        }
+      } else if (strlen(optarg) == 3) // binary input
+      {
+        // convert binary number
+        mtBits=strtoul(optarg, NULL, 2);
+      } else // unrecognized
+      {
+        printf("Unrecognized input:  %s\n\n", optarg);
+        usage(argv);
+      }
       break;
     case 't':
       timeout=strtol(optarg,NULL, 10);

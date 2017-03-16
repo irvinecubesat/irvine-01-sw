@@ -12,9 +12,20 @@ namespace IrvCS
 #define DSA2_DEPLOY_STATUS_BIT  3
 
 /**
- * Timeout for Release operation in seconds
+ * Timeout for each release operation in seconds
  **/  
-#define TIMEOUT_RELEASE 60
+#define TIMEOUT_RELEASE 45
+
+/**
+ * Timeout for Emergency Release
+ **/
+#define TIMEOUT_EMERGENCY_RELEASE 15
+
+/**
+ * Wait in seconds between Release retries
+ **/
+#define RELEASE_WAIT 5
+  
 /**
  * Timeout for Deploy operation in seconds
  **/

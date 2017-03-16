@@ -51,8 +51,12 @@ namespace IrvCS
       DBG_print(LOG_ERR, "Unable to power off 3V PL Power\n");
     }
 
+    //
+    // GPIO 0-2 -> PA26-28 -> offset by PIO_A_BASE 32 ---> 58, 59, 60
+    // GPIO 4   -> PB16    -> offset by PIO_B_BASE 64 ---> 80
+    //
     const int dsa1SensePin[2]={58,59}; // HW gpio 0, 1
-    const int dsa2SensePin[2]={60,62}; // HW gpio 2,4
+    const int dsa2SensePin[2]={60,80}; // HW gpio 2, 4
     for (int i = 0; i < 2; i++)
     {
       if (0 != initGPIO(0, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
@@ -302,18 +306,18 @@ namespace IrvCS
         int gpioRelease=readGPIO(&(senseArray[0]));
         int gpioDeploy=readGPIO(&(senseArray[1]));
         // check both for now since we're not sure which pin is which
-        if (cmd == Release && (gpioRelease>0 || gpioDeploy>1))
+        if (cmd == Release && (gpioRelease>0))
         {
-          DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)\n", dsaIdStr, timeCount+1,
+          DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)", dsaIdStr, timeCount+1,
                     gpioRelease, gpioDeploy);
           break;
-        } else if (gpioRelease>0 && gpioDeploy>0)
+        } else if (Deploy>0)
         {
-          DBG_print(LOG_INFO, "Deployed %s at %d sec\n", dsaIdStr, timeCount+1);
+          DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr, timeCount+1);
           break;
         } else if (timeCount++ > timeoutSec)
         {
-          DBG_print(LOG_WARNING, "%s operation timed out after %d sec (%d,%d)\n",
+          DBG_print(LOG_WARNING, "%s operation timed out after %d sec (%d,%d)",
                     dsaIdStr, timeCount, gpioRelease, gpioDeploy);
           break;
         }
