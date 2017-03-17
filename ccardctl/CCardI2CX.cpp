@@ -201,10 +201,10 @@ namespace IrvCS
   uint8_t CCardI2CX::getDsaDeployState()
   {
     uint8_t deployState=0;
-    int gpioDsa1Release=readGPIO(&(dsa1SenseGpio_[0]));
-    int gpioDsa1Deploy= readGPIO(&(dsa1SenseGpio_[1]));
-    int gpioDsa2Release=readGPIO(&(dsa2SenseGpio_[0]));
-    int gpioDsa2Deploy= readGPIO(&(dsa2SenseGpio_[1]));
+    int gpioDsa1Release=readGPIO(&(dsa1SenseGpio_[0]))&1;
+    int gpioDsa1Deploy= readGPIO(&(dsa1SenseGpio_[1]))&1;
+    int gpioDsa2Release=readGPIO(&(dsa2SenseGpio_[0]))&1;
+    int gpioDsa2Deploy= readGPIO(&(dsa2SenseGpio_[1]))&1;
     setDeployState(DSA1_RELEASE_STATUS_BIT, gpioDsa1Release, deployState);
     setDeployState(DSA1_DEPLOY_STATUS_BIT, gpioDsa1Deploy, deployState);
     setDeployState(DSA2_RELEASE_STATUS_BIT, gpioDsa2Release, deployState);
@@ -303,15 +303,15 @@ namespace IrvCS
 
       while (true)
       {
-        int gpioRelease=readGPIO(&(senseArray[0]));
-        int gpioDeploy=readGPIO(&(senseArray[1]));
-        // check both for now since we're not sure which pin is which
-        if (cmd == Release && (gpioRelease>0))
+        int gpioRelease=readGPIO(&(senseArray[0]))&1;
+        int gpioDeploy=readGPIO(&(senseArray[1]))&1;
+
+        if (cmd == Release && (gpioRelease==1))
         {
           DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)", dsaIdStr, timeCount+1,
                     gpioRelease, gpioDeploy);
           break;
-        } else if (Deploy>0)
+        } else if (cmd == Deploy && (gpioDeploy==1))
         {
           DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr, timeCount+1);
           break;
