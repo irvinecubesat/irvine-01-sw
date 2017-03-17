@@ -18,7 +18,7 @@ using namespace IrvCS;
  *
  *          MSB             LSB
  * Bit   ->   7 6 5 4 3 2 1 0
- * Op    ->   T M M M R D R D
+ * Op    ->   T M M M D R D R
  * id    ->     3 2 1 1 1 2 2
  *
  *            1 0 0 0 1 1 1 1       <---  Binary     All "Off"
