@@ -6,11 +6,13 @@
 #include <iostream>
 #include <syslog.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <polysat/polysat.h>
 #include "cCardMessages.h"
 #include "CCardMsgCodec.h"
 #include "ccardDefs.h"
 #include "CCardI2CX.h"
+#include "InitialDeployOp.h"
 
 #define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
 
@@ -37,7 +39,7 @@ static DsaId id2DsaId(uint8_t id)
 
 static DsaCmd cmd2DsaCmd(uint8_t cmd)
 {
-  if (cmd > ResetTimer)
+  if (cmd >= CmdUnknown)
   {
     return CmdUnknown;
   }
@@ -61,7 +63,7 @@ extern "C"
     status.status=0;
     if (NULL == gI2cExpander)
     {
-      DBG_print(LOG_ERR, "%s gI2cExpander is NULL\n", __FILENAME__);
+      DBG_print(LOG_ERR, "%s gI2cExpander is NULL", __FILENAME__);
       status.status=-1;
     } else
     {
@@ -100,7 +102,7 @@ extern "C"
     CCardMsg *msg=(CCardMsg *)data;
     if (dataLen != sizeof(CCardMsg))
     {
-      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)\n",
+      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)",
                 dataLen, sizeof(CCardMsg));
       return;
     }
@@ -122,14 +124,14 @@ extern "C"
       dsaId = id2DsaId(devId);
       if (DSA_UNKNOWN == dsaId)
       {
-        DBG_print(LOG_ERR, "Unknown DSA ID:  %d\n", devId);
+        DBG_print(LOG_ERR, "Unknown DSA ID:  %d", devId);
         status.status=-1;
         break;
       }
       dsaCmd = cmd2DsaCmd(msgCmd);
       if (CmdUnknown == dsaCmd)
       {
-        DBG_print(LOG_ERR, "Uknown DSA Cmd:  %d\n", cmd);
+        DBG_print(LOG_ERR, "Uknown DSA Cmd:  %d", cmd);
         status.status=-1;
         break;
       }
@@ -160,7 +162,7 @@ extern "C"
       }
       break;
     default:
-      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d\n",
+      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d",
                 __FILENAME__, msgType);
     }
 
@@ -169,6 +171,18 @@ extern "C"
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
                       &status, sizeof(status), src);
   }
+}
+
+static int executeInitialDeploymentOp(void *arg)
+{
+  IrvCS::DsaController *dsaController=static_cast<IrvCS::DsaController *>(arg);
+
+  DBG_print(LOG_NOTICE, "Performing Initial Deployment Operation");
+  IrvCS::InitialDeployOp deployOp(dsaController);
+
+  deployOp.execute();
+
+  return EVENT_REMOVE;
 }
 
 /**
@@ -180,6 +194,10 @@ void usage(char *argv[])
            <<std::endl<<std::endl
            <<"        C-card controller daemon"<<std::endl<<std::endl
            <<"Options:"<<std::endl<<std::endl
+           <<" -D {file}       Set the initial deploy operation flag file."<<std::endl
+           <<"                 If file exists, skip initial deployment op."<<std::endl
+           <<"                 Must be in persistent location which is cleared before launch."<<std::endl
+           <<" -T {seconds}    Set the initial deploy time in seconds"<<std::endl
            <<" -d {log level}  set log level"<<std::endl
            <<" -s              syslog output to stderr"<<std::endl
            <<" -h              this message"<<std::endl
@@ -200,6 +218,9 @@ int main(int argc, char *argv[])
   int status=0;
   int syslogOption=0;
   int opt;
+  int initDeployDelayTime=-1;
+  bool initDeployFlag=false;
+  struct stat statBuf;
   
   int logLevel=DBG_LEVEL_INFO;
 
@@ -207,6 +228,21 @@ int main(int argc, char *argv[])
   {
     switch (opt)
     {
+    case 'D':
+      // @TODO we could register a ppod deployment event callback
+      // which would then make this file unnecessary.
+      // Not sure how to test it to see if it works.
+      if (0 == stat(optarg, &statBuf))
+      {
+        initDeployFlag = false;
+      } else
+      {
+        initDeployFlag = true;
+      }
+      break;
+    case 'T':
+      initDeployDelayTime=strtol(optarg, NULL, 10);
+      break;
     case 's':
       syslogOption=LOG_PERROR;
       openlog("ccardctl", syslogOption, LOG_USER);
@@ -224,20 +260,42 @@ int main(int argc, char *argv[])
 
   gProc = new Process("ccardctl");
   DBG_setLevel(logLevel);
-  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl\n");
+
+  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl");
   IrvCS::CCardI2CX i2cX;
 
   gI2cExpander = &i2cX;
 
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
 
+  void *initDeployEvt=NULL;
   EventManager *events=gProc->event_manager();
 
-  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages\n",__FILENAME__);
+  if (initDeployFlag)
+  {
+    DBG_print(LOG_NOTICE, "Scheduling Initial Deployment in %d seconds",
+              initDeployDelayTime);
+    initDeployEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
+                                EVT_ms2tv(initDeployDelayTime*1000),
+                                executeInitialDeploymentOp,
+                                &i2cX);
+
+  }
+
+  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages",__FILENAME__);
   
   events->EventLoop();
 
+  //
+  // Cleanup
+  //
+  if (initDeployEvt)
+  {
+    EVT_sched_remove(PROC_evt(gProc->getProcessData()), initDeployEvt);
+  }
+
   delete gProc;
   gI2cExpander=NULL;
+
   return status;
 }

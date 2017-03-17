@@ -5,6 +5,7 @@ extern "C"
 #include <gpioapi.h>
 }
 
+#include "DsaController.h"
 #include "CCardI2CPortState.h"
 
 namespace IrvCS
@@ -12,7 +13,7 @@ namespace IrvCS
   /**
    * Manage I2C expander state.  @see https://www.kernel.org/doc/Documentation/i2c/dev-interface
    **/
-  class CCardI2CX
+  class CCardI2CX:public DsaController
   {
   public:
     /**
@@ -22,6 +23,34 @@ namespace IrvCS
     
     ~CCardI2CX();
 
+    //
+    // DsaController interface methods
+    //
+    /**
+     * Perform the specified DSA operation.
+     * @param id the id of the DSA
+     * @param cmd the command to perform (Release or Deploy)
+     * @param timeoutSec the timeout in seconds
+     * @return the current register value (>=0) if successful
+     * @return OpStatus (<0)
+     */
+    OpStatus performDsaOperation(DsaId id, DsaCmd cmd, int timeoutSec);
+
+    /**
+     * Get the sensor status for the given DSA/Cmd
+     *
+     * @param id the id of the DSA
+     * @param cmd the command to perform (Release or Deploy)
+     * @return 0 if off
+     * @return 1 if on
+     * @return <0 if error
+     **/
+    virtual int getSensorStatus(DsaId id, DsaCmd cmd);
+
+    //
+    // lower level methods not for CCardCtl use only
+    //
+    
     /**
      * Turn on or off the 3V payload power
      * @param onOrOff 1 or 0
@@ -62,12 +91,14 @@ namespace IrvCS
      * Reset state to initial conditions
      **/
     int reset();
-    
+
     /**
      * Perform operation for DSA with given timeout
      * @param id the id of the DSA
      * @param cmd the command to perform
      * @param timeoutSec the timeout in seconds
+     * @return the current register value (>=0) if successful
+     * @return OpStatus (<0)
      **/
     int dsaPerform(DsaId id, DsaCmd cmd, int timeoutSec=5);
 

@@ -6,10 +6,11 @@ namespace IrvCS
 #define MSG_ID_OFFSET_BITS 0
 #define MSG_CMD_OFFSET_BITS 8
 
-#define DSA1_RELEASE_STATUS_BIT 0
-#define DSA1_DEPLOY_STATUS_BIT  1
-#define DSA2_RELEASE_STATUS_BIT 2
-#define DSA2_DEPLOY_STATUS_BIT  3
+// 2 and 1 reversed intentionally to match the pin offset on expander  
+#define DSA2_RELEASE_STATUS_BIT 0
+#define DSA2_DEPLOY_STATUS_BIT  1
+#define DSA1_RELEASE_STATUS_BIT 2
+#define DSA1_DEPLOY_STATUS_BIT  3
 
 /**
  * Timeout for each release operation in seconds
@@ -31,6 +32,18 @@ namespace IrvCS
  **/
 #define TIMEOUT_DEPLOY 10
 
+  /**
+   * Operation Status Codes.  Value <0 indicates an error status
+   **/
+  enum OpStatus
+  {
+    StatTimeOut=-10,
+    StatDeviceAccess=-3,        /* Problems accessing the device */
+    StatInvalidInput=-2,        /* Invalid function parameters */
+    StatErr=-1,
+    StatOk=0
+  };
+  
   enum MsgTypes
   {
     MsgDsa=0,

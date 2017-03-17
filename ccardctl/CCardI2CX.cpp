@@ -29,13 +29,13 @@ namespace IrvCS
 
     if (0 != initGPIO(0, pl3Vpin, &pl3VGpio_))
     {
-      DBG_print(LOG_ERR, "Unable to initialize 3V PL Power gpio %d\n", pl3Vpin);
+      DBG_print(LOG_ERR, "Unable to initialize 3V PL Power gpio %d", pl3Vpin);
     }
     
     const int pl5Vpin=103;
     if (0 != initGPIO(0, pl5Vpin, &pl5VGpio_))
     {
-      DBG_print(LOG_ERR, "Unable to initialize 5V PL Power gpio %d\n", pl5Vpin);
+      DBG_print(LOG_ERR, "Unable to initialize 5V PL Power gpio %d", pl5Vpin);
     }
 
     //
@@ -43,12 +43,12 @@ namespace IrvCS
     //
     if (0 != setGPIO(&pl5VGpio_, OUT, 1))
     {
-      DBG_print(LOG_ERR, "Unable to turn on 5V PL Power\n", pl5Vpin);
+      DBG_print(LOG_ERR, "Unable to turn on 5V PL Power", pl5Vpin);
     }
 
     if (0 != enable3VPayload(0))
     {
-      DBG_print(LOG_ERR, "Unable to power off 3V PL Power\n");
+      DBG_print(LOG_ERR, "Unable to power off 3V PL Power");
     }
 
     //
@@ -61,40 +61,40 @@ namespace IrvCS
     {
       if (0 != initGPIO(0, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
       {
-        DBG_print(LOG_ERR, "Unable to initialize GPIO %d\n", dsa1SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
       }
       if (0 != setGPIO(&(dsa1SenseGpio_[i]), IN, 0))
       {
-        DBG_print(LOG_ERR, "Unable to set GPIO %d as input\n", dsa1SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa1SensePin[i]);
       }   
           
       if (0 != initGPIO(0, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
       {
-        DBG_print(LOG_ERR, "Unable to initialize GPIO %d\n", dsa2SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
       }
 
       if (0 != setGPIO(&(dsa2SenseGpio_[i]), IN, 0))
       {
-        DBG_print(LOG_ERR, "Unable to set GPIO %d as input\n", dsa2SensePin[i]);
+        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa2SensePin[i]);
       }   
     }
 
     const char *i2cbus="/dev/i2c-1"; 
 
     // initialize i2c bus
-    DBG_print(LOG_INFO, "Initializing %s\n",i2cbus);
+    DBG_print(LOG_INFO, "Initializing %s",i2cbus);
     i2cdev_=open(i2cbus, O_RDWR);
 
     if (i2cdev_<0)
     {
-      DBG_print(LOG_ERR, "Unable to open i2c device %s:  %s (%d)\n",
+      DBG_print(LOG_ERR, "Unable to open i2c device %s:  %s (%d)",
                 i2cbus, strerror(errno), errno);
       return;
     }
       
     if (ioctl(i2cdev_, I2C_SLAVE, addr_) < 0)
     {
-      DBG_print(LOG_ERR, "Unable to initialize %02x on %s:  %s (%d)\n",
+      DBG_print(LOG_ERR, "Unable to initialize %02x on %s:  %s (%d)",
                 addr_, i2cbus, strerror(errno), errno);
       return;
     }
@@ -104,7 +104,7 @@ namespace IrvCS
 
     if (data < 0)
     {
-      DBG_print(LOG_ERR, "Unable to read data from register %02x:  %s (%d)\n",
+      DBG_print(LOG_ERR, "Unable to read data from register %02x:  %s (%d)",
                 REG_INPUT_PORT,strerror(data*-1), data);
       return;
     }
@@ -113,29 +113,89 @@ namespace IrvCS
     __s32 result=i2c_smbus_write_byte_data(i2cdev_, REG_CONFIG, 0x00);
     if (result < 0)
     {
-      DBG_print(LOG_ERR, "Unable to write data to register %02x:  %s (%d)\n",
+      DBG_print(LOG_ERR, "Unable to write data to register %02x:  %s (%d)",
                 REG_CONFIG, strerror(result*-1), result);
       return;
     }
 
     if (reset() < 0)
     {
-      DBG_print(LOG_ERR, "Unable to initialize state\n");
+      DBG_print(LOG_ERR, "Unable to initialize state");
       return;
     }
     
-    DBG_print(LOG_NOTICE, "%s Initialized\n", __FILENAME__);
+    DBG_print(LOG_NOTICE, "%s Initialized", __FILENAME__);
     initialized_=true;
   }
 
   CCardI2CX::~CCardI2CX()
   {
-    DBG_print(LOG_NOTICE, "%s Cleaning up\n", __FILENAME__);
+    DBG_print(LOG_NOTICE, "%s Cleaning up", __FILENAME__);
     // close any resources
     if (i2cdev_ >= 0)
     {
       close(i2cdev_);
     }
+  }
+
+  /**
+   * Perform the specified DSA command/operation.
+   * @param id the id of the DSA
+   * @param cmd the command to perform (Release or Deploy)
+   * @param timeoutSec the timeout in seconds
+   * @return StatOk if successful
+   * @return OpStatus (<0)
+   */
+  OpStatus CCardI2CX::performDsaOperation(DsaId id, DsaCmd cmd, int timeoutSec)
+  {
+    if (cmd != Deploy || cmd != Release)
+    {
+      return StatInvalidInput;
+    }
+    
+    int status=dsaPerform(id, cmd, timeoutSec);
+    
+    if (status < 0)
+    {
+      return static_cast<OpStatus>(status);
+    }
+    
+    return StatOk;
+  }
+
+  /**
+   * Get the sensor status for the given DSA/Cmd
+   *
+   * @param id the id of the DSA
+   * @param cmd the command to perform (Release or Deploy)
+   * @return 0 if off
+   * @return 1 if on
+   * @return <0 if error
+   **/
+  int CCardI2CX::getSensorStatus(DsaId id, DsaCmd cmd)
+  {
+    bool successful=false;
+
+    gpio *senseArray=NULL;
+    if (id == DSA_1)
+    {
+      senseArray=dsa1SenseGpio_;
+    } else if (id == DSA_2)
+    {
+      senseArray=dsa2SenseGpio_;
+    } else                      // invalid/unknown dsa value
+    {
+      DBG_print(LOG_WARNING, "Uknown DSA Id:  %d", id);
+      return StatInvalidInput;
+    }
+    int gpioVal=readGPIO(&(senseArray[cmd]));
+    if (gpioVal < 0)
+    {
+      return gpioVal;
+    }
+    
+    // Odd == 1, even == 0
+    return gpioVal&1;
   }
 
   int CCardI2CX::enable3VPayload(int onOrOff)
@@ -145,7 +205,7 @@ namespace IrvCS
     retVal=setGPIO(&pl3VGpio_, OUT, onOrOff);
     if (retVal != 0)
     {
-      DBG_print(LOG_ERR, "Unable to set 3V power to %d - status\n", onOrOff, 
+      DBG_print(LOG_ERR, "Unable to set 3V power to %d - status", onOrOff, 
                 retVal);
     } else
     {
@@ -160,11 +220,11 @@ namespace IrvCS
     int result=i2c_smbus_write_byte_data(i2cdev_, REG_OUTPUT_PORT, state);
     if (result < 0)
     {
-      DBG_print(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)\n",
+      DBG_print(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
                 REG_OUTPUT_PORT, state, strerror(result*-1), result);
     } else
     {
-      DBG_print(LOG_INFO, "CCardI2CX SET --> %02x\n", state);
+      DBG_print(LOG_INFO, "CCardI2CX SET --> %02x", state);
     }
     return result;
   }
@@ -175,7 +235,7 @@ namespace IrvCS
     int result=i2c_smbus_read_byte_data(i2cdev_, REG_OUTPUT_PORT);
     if (result < 0)
     {
-      DBG_print(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)\n",
+      DBG_print(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)",
                 REG_OUTPUT_PORT, state, strerror(result*-1), result);
       return result;
     }
@@ -229,7 +289,7 @@ namespace IrvCS
     int setStatus=setState(status);
     if (0 != setStatus)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x\n",
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x",
                 status);
       return setStatus;
     }
@@ -260,72 +320,67 @@ namespace IrvCS
     int setStatus=setState(status);
     if (0 < setStatus)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x", status);
+      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x",
+                status);
       return setStatus;
     }
 
-    if (cmd == Deploy || cmd == Release)
+    if (cmd != Deploy || cmd != Release)
     {
-      enable3VPayload(1);
-      if (enableTimer_)
+      return StatInvalidInput;
+    }
+    
+    // make sure this matches the DsaId enumeration
+    const char *dsaIdStr[]={
+      "DSA_2",
+      "",
+      "DSA_1",
+      "DSA_Unknown"
+    };
+
+    enable3VPayload(1);
+    if (enableTimer_)
+    {
+      status=portState_.setDsa(id,SetTimer);
+      int setStatus=setState(status);
+      if (0 > setStatus)
       {
-        status=portState_.setDsa(id,SetTimer);
-        int setStatus=setState(status);
-        if (0 > setStatus)
-        {
-          DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x\n", status);
-          status=setStatus;
-          goto cleanup;
-        }
-      }
-      //
-      // Wait for DSA sense to change
-      //
-      const char *dsaIdStr=NULL;
-      gpio *senseArray=NULL;
-      if (id == DSA_1)
-      {
-        senseArray=dsa1SenseGpio_;
-        dsaIdStr="DSA_1";
-      } else if (id == DSA_2)
-      {
-        senseArray=dsa2SenseGpio_;
-        dsaIdStr="DSA_2";
-      } else
-      {
-        DBG_print(LOG_ERR, "Invalid DSA ID:  %d\n", id);
-        status=-1;
+        DBG_print(DBG_LEVEL_WARN,
+                  "%s Unable to set timer bit (%02x)", status);
+        status=StatDeviceAccess;
         goto cleanup;
       }
+    }
 
-      DBG_print(LOG_INFO, "Waiting %d sec for %s Sensor to change\n", 
-                timeoutSec, dsaIdStr);
+    //
+    // Wait for DSA sense to change
+    //
+    DBG_print(LOG_INFO, "Waiting %d sec for %s Sensor to change", 
+              timeoutSec, dsaIdStr[id]);
 
-      while (true)
+    while (true)
+    {
+      int sensorStatus = getSensorStatus(id, cmd);
+
+      if (cmd == Release && sensorStatus == 1)
       {
-        int gpioRelease=readGPIO(&(senseArray[0]))&1;
-        int gpioDeploy=readGPIO(&(senseArray[1]))&1;
-
-        if (cmd == Release && (gpioRelease==1))
-        {
-          DBG_print(LOG_INFO, "Released %s at %d sec (%d,%d)", dsaIdStr, timeCount+1,
-                    gpioRelease, gpioDeploy);
-          break;
-        } else if (cmd == Deploy && (gpioDeploy==1))
-        {
-          DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr, timeCount+1);
-          break;
-        } else if (timeCount++ > timeoutSec)
-        {
-          DBG_print(LOG_WARNING, "%s operation timed out after %d sec (%d,%d)",
-                    dsaIdStr, timeCount, gpioRelease, gpioDeploy);
-          break;
-        }
-        sleep(1);
+        DBG_print(LOG_INFO, "Released %s at %d sec", dsaIdStr[id], timeCount+1);
+        break;
+      } else if (cmd == Deploy && sensorStatus == 1)
+      {
+        DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr[id], timeCount+1);
+        break;
+      } else if (timeCount++ > timeoutSec)
+      {
+        DBG_print(LOG_WARNING, "%s operation timed out after %d sec",
+                  dsaIdStr, timeCount);
+        status=StatTimeOut;
+        break;
       }
-      reset();
+      sleep(1);
     }
   cleanup:
+    reset();
     enable3VPayload(0);
 
     return status;
