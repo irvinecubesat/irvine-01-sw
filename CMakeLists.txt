@@ -84,7 +84,9 @@ else (WITH_BUILDROOT)
   # ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
 
 endif(WITH_BUILDROOT)
- 
+
+ADD_SUBDIRECTORY(gpiocpp)
+
 #
 # ADCS Sensor service
 #

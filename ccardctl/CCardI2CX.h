@@ -1,10 +1,7 @@
 #ifndef __CCARDI2CX_HH__
 #define __CCARDI2CX_HH__
-extern "C"
-{
-#include <gpioapi.h>
-}
 
+#include <Gpio.h>
 #include "DsaController.h"
 #include "CCardI2CPortState.h"
 
@@ -57,7 +54,7 @@ namespace IrvCS
      * @return 0 if successful
      * @return <0 if failed
      **/
-    int enable3VPayload(int onOrOff);
+    int enable3VPayload(uint8_t onOrOff);
 
     /**
      * Set the state directly
@@ -112,10 +109,10 @@ namespace IrvCS
     int i2cdev_;
     int addr_;
     bool initialized_;
-    gpio pl3VGpio_;
-    gpio pl5VGpio_;
-    gpio dsa1SenseGpio_[2];
-    gpio dsa2SenseGpio_[2];
+    Gpio pl3VGpio_;
+    Gpio pl5VGpio_;
+    Gpio dsa1SenseGpio_[2];
+    Gpio dsa2SenseGpio_[2];
     bool enableTimer_;
   };
 }

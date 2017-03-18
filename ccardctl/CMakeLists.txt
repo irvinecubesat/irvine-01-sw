@@ -4,7 +4,7 @@ add_library(ccardCodec CCardMsgCodec.cpp CCardMsgCodec.h CCardI2CPortState.cpp C
 target_include_directories(ccardCodec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(ccardctl CCardCtl.cpp CCardI2CX.cpp CCardI2CX.h DsaController.h InitialDeployOp.cpp InitialDeployOp.h)
-target_link_libraries(ccardctl ccardCodec gpio proc pthread)
+target_link_libraries(ccardctl ccardCodec gpioCpp proc pthread)
 
 add_executable(ccardcmd CCardCmd.cpp)
 target_link_libraries(ccardcmd ccardCodec proc pthread)

@@ -3,7 +3,10 @@
  */
 #include <getopt.h>
 #include <string>
+#include <string.h>
+#include <errno.h>
 #include <iostream>
+#include <fstream>
 #include <syslog.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -20,6 +23,7 @@ static Process *gProc=NULL;
 
 static uint8_t gPortState=0;
 static IrvCS::CCardI2CX *gI2cExpander=NULL;
+static std::string gInitDeployFile;
 
 using namespace IrvCS;
 
@@ -182,6 +186,15 @@ static int executeInitialDeploymentOp(void *arg)
 
   deployOp.execute();
 
+  // create the deploy file
+  std::ofstream ofs(gInitDeployFile.c_str(), std::ios::out);
+  ofs<<"1";
+  if (ofs.fail())
+  {
+    DBG_print(LOG_ERR, "Unable to create %s:  %s (%d)", gInitDeployFile.c_str(),
+              strerror(errno), errno);
+  }
+  
   return EVENT_REMOVE;
 }
 
@@ -219,9 +232,9 @@ int main(int argc, char *argv[])
   int syslogOption=0;
   int opt;
   int initDeployDelayTime=-1;
-  bool initDeployFlag=false;
   struct stat statBuf;
-  
+  bool initDeployFlag;
+
   int logLevel=DBG_LEVEL_INFO;
 
   while ((opt=getopt(argc,argv,"sd:h")) != -1)
@@ -232,6 +245,7 @@ int main(int argc, char *argv[])
       // @TODO we could register a ppod deployment event callback
       // which would then make this file unnecessary.
       // Not sure how to test it to see if it works.
+      gInitDeployFile=optarg;
       if (0 == stat(optarg, &statBuf))
       {
         initDeployFlag = false;

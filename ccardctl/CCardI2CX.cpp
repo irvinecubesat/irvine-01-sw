@@ -24,26 +24,21 @@ namespace IrvCS
 {
   CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(true)
   {
-    // initialize GPIO's
-    const int pl3Vpin=102;
-
-    if (0 != initGPIO(0, pl3Vpin, &pl3VGpio_))
+    if (0 != pl3VGpio_.initialize(102))
     {
-      DBG_print(LOG_ERR, "Unable to initialize 3V PL Power gpio %d", pl3Vpin);
-    }
-    
-    const int pl5Vpin=103;
-    if (0 != initGPIO(0, pl5Vpin, &pl5VGpio_))
-    {
-      DBG_print(LOG_ERR, "Unable to initialize 5V PL Power gpio %d", pl5Vpin);
+      DBG_print(LOG_ERR, "Unable to initialize 3V PL GPIO)");
     }
 
+    if (0 != pl5VGpio_.initialize(103))
+    {
+      DBG_print(LOG_ERR, "Unable to initialize 5V PL GPIO)");
+    }
     //
     // power on 5V payload for C-Card
     //
-    if (0 != setGPIO(&pl5VGpio_, OUT, 1))
+    if (0 != pl5VGpio_.set(1))
     {
-      DBG_print(LOG_ERR, "Unable to turn on 5V PL Power", pl5Vpin);
+      DBG_print(LOG_ERR, "Unable to turn on 5V PL Power");
     }
 
     if (0 != enable3VPayload(0))
@@ -59,24 +54,15 @@ namespace IrvCS
     const int dsa2SensePin[2]={60,80}; // HW gpio 2, 4
     for (int i = 0; i < 2; i++)
     {
-      if (0 != initGPIO(0, dsa1SensePin[i], &(dsa1SenseGpio_[i])))
+      if (0 != dsa1SenseGpio_[i].initialize(dsa1SensePin[i]))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
       }
-      if (0 != setGPIO(&(dsa1SenseGpio_[i]), IN, 0))
-      {
-        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa1SensePin[i]);
-      }   
-          
-      if (0 != initGPIO(0, dsa2SensePin[i], &(dsa2SenseGpio_[i])))
+
+      if (0 != dsa2SenseGpio_[i].initialize(dsa2SensePin[i]))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
       }
-
-      if (0 != setGPIO(&(dsa2SenseGpio_[i]), IN, 0))
-      {
-        DBG_print(LOG_ERR, "Unable to set GPIO %d as input", dsa2SensePin[i]);
-      }   
     }
 
     const char *i2cbus="/dev/i2c-1"; 
@@ -176,7 +162,7 @@ namespace IrvCS
   {
     bool successful=false;
 
-    gpio *senseArray=NULL;
+    Gpio *senseArray=NULL;
     if (id == DSA_1)
     {
       senseArray=dsa1SenseGpio_;
@@ -188,7 +174,7 @@ namespace IrvCS
       DBG_print(LOG_WARNING, "Uknown DSA Id:  %d", id);
       return StatInvalidInput;
     }
-    int gpioVal=readGPIO(&(senseArray[cmd]));
+    int gpioVal=senseArray[cmd].get();
     if (gpioVal < 0)
     {
       return gpioVal;
@@ -198,11 +184,11 @@ namespace IrvCS
     return gpioVal&1;
   }
 
-  int CCardI2CX::enable3VPayload(int onOrOff)
+  int CCardI2CX::enable3VPayload(uint8_t onOrOff)
   {
     int retVal=0;
     const char *opString=(onOrOff==0?"Disabled":"Enabled");
-    retVal=setGPIO(&pl3VGpio_, OUT, onOrOff);
+    retVal=pl3VGpio_.set(onOrOff);
     if (retVal != 0)
     {
       DBG_print(LOG_ERR, "Unable to set 3V power to %d - status", onOrOff, 
@@ -261,10 +247,10 @@ namespace IrvCS
   uint8_t CCardI2CX::getDsaDeployState()
   {
     uint8_t deployState=0;
-    int gpioDsa1Release=readGPIO(&(dsa1SenseGpio_[0]))&1;
-    int gpioDsa1Deploy= readGPIO(&(dsa1SenseGpio_[1]))&1;
-    int gpioDsa2Release=readGPIO(&(dsa2SenseGpio_[0]))&1;
-    int gpioDsa2Deploy= readGPIO(&(dsa2SenseGpio_[1]))&1;
+    int gpioDsa1Release=dsa1SenseGpio_[0].get();
+    int gpioDsa1Deploy= dsa1SenseGpio_[1].get();
+    int gpioDsa2Release=dsa2SenseGpio_[0].get();
+    int gpioDsa2Deploy= dsa2SenseGpio_[1].get();
     setDeployState(DSA1_RELEASE_STATUS_BIT, gpioDsa1Release, deployState);
     setDeployState(DSA1_DEPLOY_STATUS_BIT, gpioDsa1Deploy, deployState);
     setDeployState(DSA2_RELEASE_STATUS_BIT, gpioDsa2Release, deployState);
