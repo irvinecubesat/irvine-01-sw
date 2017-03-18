@@ -21,7 +21,7 @@ protected:
       int status=system("mkdir -p " GPIO_BASE);
       if (0 !=status)
       {
-        printf("Status %d creating %s:  %s (%d)\n", WEXITSTATUS(status),
+        printf("Status %d creating %s\n", WEXITSTATUS(status),
                GPIO_BASE);
       }
 
@@ -30,7 +30,7 @@ protected:
       status=system("mkdir -p " GPIO_BASE "gpio100");
       if (0 !=status)
       {
-        printf("Status %d creating %s:  %s (%d)\n", WEXITSTATUS(status),
+        printf("Status %d creating %s\n", WEXITSTATUS(status),
                GPIO_BASE "gpio100");
       }
 }
