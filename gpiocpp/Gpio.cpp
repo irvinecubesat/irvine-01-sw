@@ -90,7 +90,7 @@ namespace IrvCS
     
     if (dirOs.fail())
     {
-      syslog(LOG_ERR, "Unable to set direction for %d via %s", gpio,
+      syslog(LOG_ERR, "Unable to set direction to %d for %d via %s", dir, gpio,
              outBuf);
       return -1;
     }
