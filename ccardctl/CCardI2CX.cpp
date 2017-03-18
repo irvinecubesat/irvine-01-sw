@@ -24,12 +24,12 @@ namespace IrvCS
 {
   CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(true)
   {
-    if (0 != pl3VGpio_.initialize(102))
+    if (!pl3VGpio_.initialize(102))
     {
       DBG_print(LOG_ERR, "Unable to initialize 3V PL GPIO)");
     }
 
-    if (0 != pl5VGpio_.initialize(103))
+    if (!pl5VGpio_.initialize(103))
     {
       DBG_print(LOG_ERR, "Unable to initialize 5V PL GPIO)");
     }
@@ -54,12 +54,12 @@ namespace IrvCS
     const int dsa2SensePin[2]={60,80}; // HW gpio 2, 4
     for (int i = 0; i < 2; i++)
     {
-      if (0 != dsa1SenseGpio_[i].initialize(dsa1SensePin[i]))
+      if (!dsa1SenseGpio_[i].initialize(dsa1SensePin[i]))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
       }
 
-      if (0 != dsa2SenseGpio_[i].initialize(dsa2SensePin[i]))
+      if (!dsa2SenseGpio_[i].initialize(dsa2SensePin[i]))
       {
         DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
       }

@@ -31,7 +31,7 @@ namespace IrvCS
   {
   }
 
-  Gpio::Gpio(int16_t gpio):gpio_(gpio)
+  Gpio::Gpio(int16_t gpio)
   {
     if (!initialize(gpio))
     {
@@ -69,10 +69,11 @@ namespace IrvCS
       syslog(LOG_ERR, "Unable to write %d to %s", gpio, GPIO_EXPORT);
       goto fail;
     }
+    gpio_=gpio;
     return true;
     
     fail:
-    gpio=-1;
+    gpio_=-1;
     return false;
   }
 
@@ -86,7 +87,13 @@ namespace IrvCS
     char outBuf[MAX_GPIO_PATH]={0};
     snprintf(outBuf, MAX_GPIO_PATH-1, GPIO_DIRECTION, gpio);
     std::ofstream dirOs(outBuf, std::ofstream::out);
-    dirOs <<Out;
+    if (dir == In)
+    {
+      dirOs <<"in";
+    } else
+    {
+      dirOs << "out";
+    }
     
     if (dirOs.fail())
     {

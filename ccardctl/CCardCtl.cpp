@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
   int opt;
   int initDeployDelayTime=-1;
   struct stat statBuf;
-  bool initDeployFlag;
+  bool initDeployFlag = false;
 
   int logLevel=DBG_LEVEL_INFO;
 
