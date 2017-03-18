@@ -70,7 +70,7 @@ TEST_F(GpioEnv, TestSet)
   uint8_t value;
   std::ifstream ifs(GPIO_BASE "gpio100/value", std::ifstream::in);
   ifs>>value;
-  ASSERT_EQ(1, value);
+  ASSERT_EQ('1', value);
 }
 
 /**

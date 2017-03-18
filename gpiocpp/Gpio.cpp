@@ -109,7 +109,13 @@ namespace IrvCS
       goto fail;
     }
 
-    valOs<<val;
+    if (0 == val)
+    {
+      valOs<<"0";
+    } else
+    {
+      valOs<<"1";
+    }
     
     if (valOs.fail())
     {
@@ -124,7 +130,8 @@ namespace IrvCS
 
   int8_t Gpio::get()
   {
-    int8_t val;
+    int8_t outVal;
+    char readVal;
     char outBuf[MAX_GPIO_PATH]={0};
     snprintf(outBuf, MAX_GPIO_PATH-1, GPIO_VALUE, gpio_);
     std::ifstream valIs(outBuf, std::ios::out);
@@ -135,14 +142,21 @@ namespace IrvCS
       goto fail;
     }
 
-    valIs>>val;
-    
+    valIs>>readVal;
+
     if (valIs.fail())
     {
-      syslog(LOG_ERR, "Unable to write %d to %s", val, outBuf);
+      syslog(LOG_ERR, "Unable to read from %s", outBuf);
       goto fail;
     }
-    return val;
+    if (readVal=='0')
+    {
+      outVal=0;
+    } else
+    {
+      outVal=1;
+    }
+    return outVal;
   fail:
     return -1;
   }
