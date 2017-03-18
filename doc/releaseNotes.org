@@ -2,6 +2,7 @@
 ** 00.06.00
    - ccardctl service and ccardcmd utility for setting C-Card functions via
      I2C.  
+   - gpioCpp project with gpioCpp lib and gpioUtil
 ** 00.05.01
    - cmdd
      - robustness improvements
