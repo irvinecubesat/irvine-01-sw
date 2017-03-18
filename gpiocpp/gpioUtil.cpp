@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
     break;
   case Set:
     status=obj.set(value);
-    std::cout <<status<<std::endl;
     break;
   case Unknown:
     std::cout<<"No operation specified"<<std::endl;
