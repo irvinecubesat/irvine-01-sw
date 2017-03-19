@@ -13,9 +13,10 @@ namespace IrvCS
 #define DSA1_DEPLOY_STATUS_BIT  3
 
 /**
- * Timeout for each release operation in seconds
+ * Timeout for each release operation in seconds.
+ * NOTE:  Watchdog kills processes after 45 seconds.
  **/  
-#define TIMEOUT_RELEASE 45
+#define TIMEOUT_RELEASE 30
 
 /**
  * Timeout for Emergency Release
@@ -25,12 +26,17 @@ namespace IrvCS
 /**
  * Wait in seconds between Release retries
  **/
-#define RELEASE_WAIT 5
+#define RELEASE_WAIT 15
   
 /**
  * Timeout for Deploy operation in seconds
  **/
 #define TIMEOUT_DEPLOY 10
+
+/**
+ * Client timeout padding to wait for response from server (seconds)
+ **/
+#define TIMEOUT_PADDING 3
 
   /**
    * Operation Status Codes.  Value <0 indicates an error status

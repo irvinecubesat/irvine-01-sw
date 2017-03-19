@@ -139,7 +139,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
     outputStatus(resp.status.portStatus, resp.status.dsaDeployState);
   } else
   {
-    std::cerr<<"Status "<<(int)resp.status.status<<" executing command"<<std::endl;
+    return resp.status.status;
   }
 
   return status;
@@ -245,13 +245,13 @@ int main(int argc, char *argv[])
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Deploy;
       action=DsaCommand;
-      timeout=TIMEOUT_DEPLOY*1000;
+      timeout=(TIMEOUT_DEPLOY+TIMEOUT_PADDING)*1000;
       break;
     case 'R':
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Release;
       action=DsaCommand;
-      timeout=TIMEOUT_RELEASE*1000;
+      timeout=(TIMEOUT_RELEASE+TIMEOUT_PADDING)*1000;
       break;
     case 'T':
       dsaId=IrvCS::DSA_2; // Not significant, operation is for either
@@ -344,8 +344,14 @@ int main(int argc, char *argv[])
     int sendStatus = sendCcardMsg(host, msgData, timeout);
     if (sendStatus != 0)
     {
-      status=CMD_ERR_STATUS;
-      printf("Error %d sending C-Card Message\n", sendStatus);
+      status=sendStatus;
+      if (sendStatus == IrvCS::StatTimeOut)
+      {
+        printf("Operation did not complete within the alloted time\n");
+      } else
+      {
+        printf("Status %d sending C-Card Message\n", sendStatus);
+      }
     }
   }
   return status;

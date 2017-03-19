@@ -92,6 +92,34 @@ extern "C"
                       &status, sizeof(status), src);
   }
 
+  class DsaOpInfo
+  {
+  public:
+    DsaOpInfo(DsaId dsaId, DsaCmd dsaCmd, int dsaTimeout):id(dsaId),cmd(dsaCmd), timeout(dsaTimeout)
+      {
+        
+      }
+    DsaId id;
+    DsaCmd cmd;
+    int timeout;
+  };
+
+  static int dsaDeployReleaseExec(void *data)
+  {
+    DsaOpInfo *opInfo = (DsaOpInfo *)data;
+    DBG_print(LOG_INFO, "Executing DSA Operation");
+    int setStatus=gI2cExpander->dsaPerform(opInfo->id, opInfo->cmd, opInfo->timeout);
+    if (setStatus == 0)
+    {
+      DBG_print(LOG_INFO, "Completed DSA Operation");
+    } else if (setStatus < 0)
+    {
+      DBG_print(LOG_WARNING, "DSA Perform status %d");
+    }
+    delete opInfo;
+    return EVENT_REMOVE;
+  }
+
   /**
    * Process the CCard cmd message
    **/
@@ -117,11 +145,14 @@ extern "C"
     uint8_t msgType=0;
     uint8_t devId=0;
     uint8_t msgCmd=0;
-    int timeout=5;
     uint32_t hostData=ntohl(msg->data);
     IrvCS::CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
+    int timeout=5;
     DsaId dsaId=DSA_UNKNOWN;
     DsaCmd dsaCmd=CmdUnknown;
+    DsaOpInfo *dsaOpInfo=NULL;
+    void * dsaEvt=NULL;
+
     switch (msgType)
     {
     case IrvCS::MsgDsa:
@@ -146,14 +177,15 @@ extern "C"
       {
         timeout=TIMEOUT_DEPLOY;
       }
-      setStatus=gI2cExpander->dsaPerform(dsaId, dsaCmd, timeout);
-      if (setStatus < 0)
-      {
-        status.status=setStatus;
-      } else
-      {
-        status.portStatus=gPortState=(uint8_t)setStatus;
-      }
+      
+      DBG_print(LOG_NOTICE, "Scheduling DSA OP");
+      dsaOpInfo=new DsaOpInfo(dsaId, dsaCmd, timeout);
+      dsaEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
+                                 EVT_ms2tv(-1),dsaDeployReleaseExec,
+                                 dsaOpInfo);
+
+      status.portStatus=gPortState=(uint8_t)setStatus;
+        
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
@@ -210,7 +242,8 @@ void usage(char *argv[])
            <<" -D {file}       Set the initial deploy operation flag file."<<std::endl
            <<"                 If file exists, skip initial deployment op."<<std::endl
            <<"                 Must be in persistent location which is cleared before launch."<<std::endl
-           <<" -T {seconds}    Set the initial deploy time in seconds"<<std::endl
+           <<" -T {seconds}    Set the initial deploy delay in seconds"<<std::endl
+           <<"                 May be set with /data/deployDelay"<<std::endl
            <<" -d {log level}  set log level"<<std::endl
            <<" -s              syslog output to stderr"<<std::endl
            <<" -h              this message"<<std::endl
@@ -231,13 +264,15 @@ int main(int argc, char *argv[])
   int status=0;
   int syslogOption=0;
   int opt;
-  int initDeployDelayTime=-1;
+  // initial Deploy delay time in seconds
+  int initDeployDelayTime=45*60*60; // 45 min default
+  const char *deployDelayOverrideFile="/data/deployDelay";
   struct stat statBuf;
   bool initDeployFlag = false;
 
   int logLevel=DBG_LEVEL_INFO;
 
-  while ((opt=getopt(argc,argv,"sd:h")) != -1)
+  while ((opt=getopt(argc,argv,"sd:hT:D:")) != -1)
   {
     switch (opt)
     {
@@ -287,8 +322,15 @@ int main(int argc, char *argv[])
 
   if (initDeployFlag)
   {
-    DBG_print(LOG_NOTICE, "Scheduling Initial Deployment in %d seconds",
-              initDeployDelayTime);
+    // look for deploy delay override setting
+    if (!stat(deployDelayOverrideFile, &statBuf))
+    {
+      DBG_print(LOG_INFO, "Overriding deploy option with %s", deployDelayOverrideFile);
+      std::ifstream ifs(deployDelayOverrideFile, std::ios::in);
+      ifs >> initDeployDelayTime;
+    }
+    DBG_print(LOG_NOTICE, "Scheduling Initial Deployment in %d seconds (%d min)",
+              initDeployDelayTime, initDeployDelayTime/60);
     initDeployEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
                                 EVT_ms2tv(initDeployDelayTime*1000),
                                 executeInitialDeploymentOp,

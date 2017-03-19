@@ -299,6 +299,10 @@ namespace IrvCS
       enableTimer_=false;
       return portState_.getState();
     }
+
+    DBG_print(LOG_INFO, "Performing DSA-%d %s", 
+              id==DSA_1?1:2, cmd == Release?"Release":"Deploy");
+
     // first reset everything
     portState_.reset();
     status=portState_.setDsa(id, cmd);
@@ -311,7 +315,7 @@ namespace IrvCS
       return setStatus;
     }
 
-    if (cmd != Deploy || cmd != Release)
+    if (cmd != Deploy && cmd != Release)
     {
       return StatInvalidInput;
     }
@@ -359,7 +363,7 @@ namespace IrvCS
       } else if (timeCount++ > timeoutSec)
       {
         DBG_print(LOG_WARNING, "%s operation timed out after %d sec",
-                  dsaIdStr, timeCount);
+                  dsaIdStr[id], timeCount);
         status=StatTimeOut;
         break;
       }
