@@ -47,7 +47,7 @@ static DsaCmd cmd2DsaCmd(uint8_t cmd)
   {
     return CmdUnknown;
   }
-  
+
   return static_cast<DsaCmd>(cmd);
 }
 
@@ -61,7 +61,7 @@ extern "C"
   void ccard_status(int socket, unsigned char cmd, void *data, size_t dataLen,
                     struct sockaddr_in *src)
   {
-    
+
     CCardStatus status;
     static int counter=0;
     status.status=0;
@@ -97,7 +97,7 @@ extern "C"
   public:
     DsaOpInfo(DsaId dsaId, DsaCmd dsaCmd, int dsaTimeout):id(dsaId),cmd(dsaCmd), timeout(dsaTimeout)
       {
-        
+
       }
     DsaId id;
     DsaCmd cmd;
@@ -177,7 +177,7 @@ extern "C"
       {
         timeout=TIMEOUT_DEPLOY;
       }
-      
+
       DBG_print(LOG_NOTICE, "Scheduling DSA OP");
       dsaOpInfo=new DsaOpInfo(dsaId, dsaCmd, timeout);
       dsaEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
@@ -185,7 +185,7 @@ extern "C"
                                  dsaOpInfo);
 
       status.portStatus=gPortState=(uint8_t)setStatus;
-        
+
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
@@ -226,7 +226,7 @@ static int executeInitialDeploymentOp(void *arg)
     DBG_print(LOG_ERR, "Unable to create %s:  %s (%d)", gInitDeployFile.c_str(),
               strerror(errno), errno);
   }
-  
+
   return EVENT_REMOVE;
 }
 
@@ -255,7 +255,7 @@ static int sigint_handler(int signum, void *arg)
 {
   Process *proc=(Process *)arg;
   EVT_exit_loop(PROC_evt(proc->getProcessData()));
-  
+
   return EVENT_KEEP;
 }
 
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
   int syslogOption=0;
   int opt;
   // initial Deploy delay time in seconds
-  int initDeployDelayTime=45*60*60; // 45 min default
+  int initDeployDelayTime=45*60; // 45 min default
   const char *deployDelayOverrideFile="/data/debug/deployDelay";
   struct stat statBuf;
   bool initDeployFlag = false;
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
   }
 
   DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages",__FILENAME__);
-  
+
   events->EventLoop();
 
   //
