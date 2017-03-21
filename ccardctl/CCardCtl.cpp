@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
   int opt;
   // initial Deploy delay time in seconds
   int initDeployDelayTime=45*60*60; // 45 min default
-  const char *deployDelayOverrideFile="/data/deployDelay";
+  const char *deployDelayOverrideFile="/data/debug/deployDelay";
   struct stat statBuf;
   bool initDeployFlag = false;
 
