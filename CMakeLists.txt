@@ -84,6 +84,10 @@ else (WITH_BUILDROOT)
   # ADD_SUBDIRECTORY(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
 
 endif(WITH_BUILDROOT)
+#
+# Thread utility library
+#
+ADD_SUBDIRECTORY(thread)
 
 ADD_SUBDIRECTORY(gpiocpp)
 
