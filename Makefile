@@ -41,6 +41,12 @@ check-v:
 check:
 	(cd build; make test CTEST_OUTPUT_ON_FAILURE=1)
 
+check2:
+	(cd beacon; make test CTEST_OUTPUT_ON_FAILURE=1)
+
+hello:
+	(echo "taekyoo")
+
 build-arm: initialize
 	if [ ! -e build-arm ]; then mkdir build-arm; fi;
 	(cd build-arm; cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/arm-linux.cmake ../)
