@@ -81,6 +81,10 @@ namespace IrvCS
     OpStatus dep2 = deploy(DSA_2);
     Sleep(5);
 
+    if(dep2!=StatOk || dep1!=StatOk || rel1!=StatOk || rel2!=StatOk){
+      status = StatErr;
+    }
+
     DBG_print(LOG_INFO, "Completed Initial Deploy Operation with status %d", status);
 
     return status;
