@@ -23,10 +23,10 @@ protected:
   
   void *run()
   {
-    syslog(LOG_INFO, "%d Blocking on mutex", pthread_self());
+    syslog(LOG_INFO, "%lu Blocking on mutex", pthread_self());
     blocked_=true;
     MutexLock lock(mutex_);
-    syslog(LOG_INFO, "%d Got the mutex", pthread_self());
+    syslog(LOG_INFO, "%lu Got the mutex", pthread_self());
     blocked_=false;
     return NULL;
   }
@@ -53,8 +53,9 @@ public:
   
   ~MutexLockFixture()
     {
+      std::list<Thread *>::iterator ci;
       // kill and stop the threads when done
-      for (auto ci=threadList_.begin(); ci != threadList_.end(); ci++)
+      for (ci=threadList_.begin(); ci != threadList_.end(); ci++)
       {
         (*ci)->interrupt();
         void *arg;
