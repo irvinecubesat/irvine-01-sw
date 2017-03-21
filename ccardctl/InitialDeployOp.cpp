@@ -14,7 +14,7 @@ namespace IrvCS
   {
   }
 
-  OpStatus release(DsaId id){
+  OpStatus InitialDeployOp::release(DsaId id){
     //Release 3 times, 45 seconds timeout each, return if successful
     for (int i = 0; i < 3; i++) {
 
@@ -43,7 +43,7 @@ namespace IrvCS
     return relStat;
   }
 
-  OpStatus deploy(DsaId id){
+  OpStatus InitialDeployOp::deploy(DsaId id){
     OpStatus status = controller_->performDsaOperation(id, Deploy, DSA_TIMEOUT)
     if(status == StatOk){
       DBG_print(LOG_INFO, "Success");
