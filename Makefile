@@ -42,7 +42,7 @@ check:
 	(cd build; make test CTEST_OUTPUT_ON_FAILURE=1)
 
 check2:
-	(cd beacon; make test CTEST_OUTPUT_ON_FAILURE=1)
+	(cd build; make CTestTestfile.cmake CTEST_OUTPUT_ON_FAILURE=1)
 
 hello:
 	(echo "taekyoo")
