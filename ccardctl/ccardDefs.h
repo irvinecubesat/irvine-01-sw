@@ -13,6 +13,19 @@ namespace IrvCS
 #define DSA1_DEPLOY_STATUS_BIT  3
 
 /**
+ * Initial Deploy Delay in seconds.  How long to wait to initiate the initial deployment
+ * sequence.  45 minutes default.  May be overridden using the DEBUG_DEPLOY_DELAY_FILE
+ * for testing
+ **/
+#define INITIAL_DEPLOY_DELAY 45*60
+
+/**
+ * Deploy delay debug override flag.  For testing the following file should contain
+ * the deploy delay in seconds.  Prior to launch this will be cleaned.
+ **/
+#define DEBUG_DEPLOY_DELAY_FILE "/data/debug/deployDelay"
+  
+/**
  * Timeout for each release operation in seconds.
  * NOTE:  Watchdog kills processes after 45 seconds.
  **/  
@@ -46,8 +59,9 @@ namespace IrvCS
     StatTimeOut=-10,
     StatDeviceAccess=-3,        /* Problems accessing the device */
     StatInvalidInput=-2,        /* Invalid function parameters */
-    StatErr=-1,
-    StatOk=0
+    StatErr=-1,                 /* General error */
+    StatOk=0,                   /* Successful operation */
+    StatOpInProgress=1,         /* Operation in progress */
   };
   
   enum MsgTypes

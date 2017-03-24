@@ -9,6 +9,8 @@
 #include <linux/i2c-dev.h>
 #include <polysat/debug.h>
 
+#include "Mutex.h"
+#include "MutexLock.h"
 #include "CCardI2CX.h"
 
 /**
@@ -22,6 +24,11 @@
 
 namespace IrvCS
 {
+  /**
+   * Guard i2c calls from getting called concurrently
+   **/
+  static Mutex gI2cAccessMutex;
+  
   CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(true)
   {
     if (!pl3VGpio_.initialize(102))
@@ -202,6 +209,7 @@ namespace IrvCS
 
   int CCardI2CX::setState(uint8_t state)
   {
+    MutexLock lock(gI2cAccessMutex);
     // set the initial output states
     int result=i2c_smbus_write_byte_data(i2cdev_, REG_OUTPUT_PORT, state);
     if (result < 0)
@@ -217,6 +225,8 @@ namespace IrvCS
 
   int CCardI2CX::getState(uint8_t &state)
   {
+    MutexLock lock(gI2cAccessMutex);
+
     // get output register state
     int result=i2c_smbus_read_byte_data(i2cdev_, REG_OUTPUT_PORT);
     if (result < 0)
@@ -232,18 +242,20 @@ namespace IrvCS
 
   static void setDeployState(int bitOffset, int gpioResult, uint8_t &deployState)
   {
-    int offset=0;
+    uint8_t stateBit=1<<bitOffset;
     if (gpioResult == 0)
     {
+      deployState &= ~stateBit;
       return;
-    }
-    if (gpioResult < 0)
+    } else if (gpioResult > 0)
     {
-      offset=4;
+      deployState |= stateBit;
+    } else // set  error bit which is in the first upper 2 bits.
+    {
+      deployState |= 1<<(bitOffset+4);
     }
-    deployState |= 1<<(bitOffset+offset);
   }
-                             
+
   uint8_t CCardI2CX::getDsaDeployState()
   {
     uint8_t deployState=0;
@@ -256,6 +268,12 @@ namespace IrvCS
     setDeployState(DSA2_RELEASE_STATUS_BIT, gpioDsa2Release, deployState);
     setDeployState(DSA2_DEPLOY_STATUS_BIT, gpioDsa2Deploy, deployState);
     return deployState;
+  }
+
+  int8_t CCardI2CX::getStates(uint8_t &portState, uint8_t &deployState)
+  {
+    deployState=getDsaDeployState();
+    return getState(portState);
   }
   
   bool CCardI2CX::isOk()
