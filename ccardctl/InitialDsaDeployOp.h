@@ -4,21 +4,17 @@
 #include "DsaController.h"
 #include "ccardDefs.h"
 
-#define RELEASE_TIMEOUT 45
-#define EMERGENCY_RELEASE_TIMEOUT 60
-#define DSA_TIMEOUT 10
-
 namespace IrvCS
 {
   /**
    *
    **/
-  class InitialDeployOp
+  class InitialDsaDeployOp
   {
   public:
-    InitialDeployOp(DsaController *controller);
+    InitialDsaDeployOp(DsaController *controller);
 
-    ~InitialDeployOp();
+    ~InitialDsaDeployOp();
 
     /**
      * Execute the operation

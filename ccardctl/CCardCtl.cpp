@@ -11,21 +11,28 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <polysat/polysat.h>
+#include <Mutex.h>
+#include <MutexLock.h>
 #include "cCardMessages.h"
 #include "CCardMsgCodec.h"
 #include "ccardDefs.h"
 #include "CCardI2CX.h"
-#include "InitialDeployOp.h"
+#include "InitialDsaDeployOp.h"
+#include "InitialDeployer.h"
+#include "DsaOpContext.h"
+#include "DsaOp.h"
 
 #define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
 
 static Process *gProc=NULL;
 
-static uint8_t gPortState=0;
-static IrvCS::CCardI2CX *gI2cExpander=NULL;
-static std::string gInitDeployFile;
-
 using namespace IrvCS;
+
+static uint8_t gPortState=0;
+static CCardI2CX *gI2cExpander=NULL;
+static std::string gInitDeployFile;
+static volatile bool dsaOpInProgress=false; // Allow only one DSA Op at any given time.
+static Mutex dsaOpMutex;
 
 static DsaId id2DsaId(uint8_t id)
 {
@@ -92,34 +99,6 @@ extern "C"
                       &status, sizeof(status), src);
   }
 
-  class DsaOpInfo
-  {
-  public:
-    DsaOpInfo(DsaId dsaId, DsaCmd dsaCmd, int dsaTimeout):id(dsaId),cmd(dsaCmd), timeout(dsaTimeout)
-      {
-
-      }
-    DsaId id;
-    DsaCmd cmd;
-    int timeout;
-  };
-
-  static int dsaDeployReleaseExec(void *data)
-  {
-    DsaOpInfo *opInfo = (DsaOpInfo *)data;
-    DBG_print(LOG_INFO, "Executing DSA Operation");
-    int setStatus=gI2cExpander->dsaPerform(opInfo->id, opInfo->cmd, opInfo->timeout);
-    if (setStatus == 0)
-    {
-      DBG_print(LOG_INFO, "Completed DSA Operation");
-    } else if (setStatus < 0)
-    {
-      DBG_print(LOG_WARNING, "DSA Perform status %d");
-    }
-    delete opInfo;
-    return EVENT_REMOVE;
-  }
-
   /**
    * Process the CCard cmd message
    **/
@@ -150,7 +129,7 @@ extern "C"
     int timeout=5;
     DsaId dsaId=DSA_UNKNOWN;
     DsaCmd dsaCmd=CmdUnknown;
-    DsaOpInfo *dsaOpInfo=NULL;
+    DsaOp *dsaOp=NULL;
     void * dsaEvt=NULL;
 
     switch (msgType)
@@ -170,22 +149,33 @@ extern "C"
         status.status=-1;
         break;
       }
-      if (dsaCmd == Release)
+
+      //
+      // Release and Deploy operations run in separate thread.  All
+      // other operations can run directly
+      //
+      if (dsaCmd != Release && dsaCmd != Deploy)
       {
-        timeout=TIMEOUT_RELEASE;
-      } else if (dsaCmd == Deploy)
-      {
-        timeout=TIMEOUT_DEPLOY;
+        gI2cExpander->dsaPerform(dsaId, dsaCmd);
+      } else {
+        MutexLock lock(dsaOpMutex);
+        if (!dsaOpInProgress)
+        {
+          DsaOpContext *context=new DsaOpContext(gProc, src, gI2cExpander, dsaOpInProgress);
+          dsaOp=new DsaOp(dsaId, dsaCmd,*gI2cExpander, context);
+          dsaOp->start();
+
+          return;
+        } else
+        {
+          DBG_print(LOG_ERR, "Operation in progress");
+          status.status=StatOpInProgress;
+        }
       }
-
-      DBG_print(LOG_NOTICE, "Scheduling DSA OP");
-      dsaOpInfo=new DsaOpInfo(dsaId, dsaCmd, timeout);
-      dsaEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
-                                 EVT_ms2tv(-1),dsaDeployReleaseExec,
-                                 dsaOpInfo);
-
       status.portStatus=gPortState=(uint8_t)setStatus;
 
+      status.portStatus=gPortState=(uint8_t)setStatus;
+        
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
@@ -214,7 +204,7 @@ static int executeInitialDeploymentOp(void *arg)
   IrvCS::DsaController *dsaController=static_cast<IrvCS::DsaController *>(arg);
 
   DBG_print(LOG_NOTICE, "Performing Initial Deployment Operation");
-  IrvCS::InitialDeployOp deployOp(dsaController);
+  IrvCS::InitialDsaDeployOp deployOp(dsaController);
 
   deployOp.execute();
 
@@ -226,7 +216,7 @@ static int executeInitialDeploymentOp(void *arg)
     DBG_print(LOG_ERR, "Unable to create %s:  %s (%d)", gInitDeployFile.c_str(),
               strerror(errno), errno);
   }
-
+  
   return EVENT_REMOVE;
 }
 
@@ -265,8 +255,8 @@ int main(int argc, char *argv[])
   int syslogOption=0;
   int opt;
   // initial Deploy delay time in seconds
-  int initDeployDelayTime=45*60; // 45 min default
-  const char *deployDelayOverrideFile="/data/debug/deployDelay";
+  int initDeployDelayTime=INITIAL_DEPLOY_DELAY; // 45 min default
+  const char *deployDelayOverrideFile=DEBUG_DEPLOY_DELAY_FILE;
   struct stat statBuf;
   bool initDeployFlag = false;
 

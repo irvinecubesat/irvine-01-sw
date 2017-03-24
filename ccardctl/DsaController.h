@@ -39,7 +39,7 @@ namespace IrvCS
      * @return <0 if error
      **/
     virtual int getSensorStatus(DsaId id, DsaCmd cmd) = 0;
-    
+
   };
 }
 #endif

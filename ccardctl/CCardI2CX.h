@@ -78,7 +78,14 @@ namespace IrvCS
      * @return <0 if error
      **/
     uint8_t getDsaDeployState();
-    
+
+    /**
+     * Get the current controller states
+     * @param portState the state of the I2C register 1
+     * @param deployState the deployment states
+     **/
+    int8_t getStates(uint8_t &portState, uint8_t &deployState);
+
     /**
      * Determine if our expander is ok.
      **/

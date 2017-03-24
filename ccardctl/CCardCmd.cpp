@@ -40,8 +40,8 @@ void usage(char *argv[])
            <<" -d {log level}     set log level"<<std::endl
            <<" -h {host IP}       target host IP"<<std::endl
            <<" -s                 get C-Card status"<<std::endl
-           <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<TIMEOUT_DEPLOY<<" sec"<<std::endl
-           <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<TIMEOUT_RELEASE<<" sec"<<std::endl
+           <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<DSA_DEPLOY_TIMEOUT<<" sec"<<std::endl
+           <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<DSA_RELEASE_TIMEOUT<<" sec"<<std::endl
            <<" -T {0 or 1}        Disable or enable HW timer.  Value is sticky"<<std::endl
            <<" -M {MT id}={0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m {ZYX}|{0-7}     Set all mt values with either binary or decimal"<<std::endl
@@ -245,13 +245,13 @@ int main(int argc, char *argv[])
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Deploy;
       action=DsaCommand;
-      timeout=(TIMEOUT_DEPLOY+TIMEOUT_PADDING)*1000;
+      timeout=(DSA_DEPLOY_TIMEOUT+TIMEOUT_PADDING)*1000;
       break;
     case 'R':
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Release;
       action=DsaCommand;
-      timeout=(TIMEOUT_RELEASE+TIMEOUT_PADDING)*1000;
+      timeout=(DSA_RELEASE_TIMEOUT+TIMEOUT_PADDING)*1000;
       break;
     case 'T':
       dsaId=IrvCS::DSA_2; // Not significant, operation is for either
