@@ -90,8 +90,7 @@ namespace IrvCS
 
     if (status == StatOk)
     {
-      syslog(LOG_INFO, "Successfully Completed Initial DSA Deploy Operation",
-             status);
+      syslog(LOG_INFO, "Successfully Completed Initial DSA Deploy Operation");
     } else
     {
       syslog(LOG_WARNING, "Completed Initial DSA Deploy Operation with status %d",
