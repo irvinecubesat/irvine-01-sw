@@ -1,5 +1,6 @@
+#include <unistd.h>
+#include <syslog.h>
 #include "InitialDeployOp.h"
-#include <polysat/debug.h>
 
 namespace IrvCS
 {
@@ -16,7 +17,7 @@ namespace IrvCS
 
   OpStatus InitialDeployOp::execute()
   {
-    DBG_print(LOG_INFO, "Executing Initial Deploy Operation");
+    syslog(LOG_INFO, "Executing Initial DSA Release/Deploy Operation");
     OpStatus status=StatErr;
 
     //@TODO Implement
@@ -31,9 +32,15 @@ namespace IrvCS
     //
     // Sleep 5 seconds between each operation
     //
-    DBG_print(LOG_ERR, "IMPLEMENT ME");
-  
-    DBG_print(LOG_INFO, "Completed Initial Deploy Operation with status %d", status);
+    syslog(LOG_ERR, "IMPLEMENT ME");
+    
+    for (int i = 0; i < 10;i++)
+    {
+      syslog(LOG_INFO, "Simulated processing... count=%d", i);
+      sleep(1);
+    }
+
+    syslog(LOG_INFO, "Completed Initial Deploy Operation with status %d", status);
 
     return status;
   }

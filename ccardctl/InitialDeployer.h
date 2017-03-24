@@ -40,15 +40,21 @@ namespace IrvCS
           syslog(LOG_ERR, "DSA Release/Deploy Operation Errored with status %d", status);
         }
           
-        // create the deploy file
+        // Create the deploy file
         std::ofstream ofs(initDeployFile_.c_str(), std::ios::out);
         ofs<<"1";
         if (ofs.fail())
         {
           syslog(LOG_ERR, "Unable to create %s:  %s (%d)", initDeployFile_.c_str(),
                  strerror(errno), errno);
+        } else
+        {
+          syslog(LOG_INFO, 
+                 "Created %s to mark initial deployment completion state",
+                 initDeployFile_.c_str());
         }
 
+        // Done with execution, clean up!
         delete this;
       }
 
