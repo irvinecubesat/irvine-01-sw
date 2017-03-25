@@ -29,7 +29,7 @@ namespace IrvCS
  * Timeout for each release operation in seconds.
  * NOTE:  Watchdog kills processes after 45 seconds.
  **/  
-#define DSA_RELEASE_TIMEOUT 30
+#define DSA_RELEASE_TIMEOUT 45
 
 /**
  * Wait in seconds between Release retries
