@@ -39,7 +39,7 @@ namespace IrvCS
         }
       }
 
-    ~InitialDeployer()
+    virtual ~InitialDeployer()
       {
       }
 
