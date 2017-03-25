@@ -89,7 +89,7 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
  
   if (resp.cmd != CMD_STATUS_RESPONSE)
   {
-    std::cerr<<"response code incorrect, Got "<<resp.cmd<<" received  "<<CMD_STATUS_RESPONSE;
+    std::cerr<<"response code incorrect, Got "<<(int)resp.cmd<<" received  "<<CMD_STATUS_RESPONSE;
     return CMD_ERR_STATUS;
   }
 
@@ -129,7 +129,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
  
   if (resp.cmd != CCARD_RESPONSE)
   {
-    std::cerr<<"response code incorrect, Got "<<resp.cmd
+    std::cerr<<"response code incorrect, Got "<<(int)resp.cmd
             <<" expected "<< CCARD_RESPONSE<<std::endl;
     return CMD_ERR_STATUS;
   }
