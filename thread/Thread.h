@@ -8,13 +8,13 @@
 namespace IrvCS
 {
   /**
-   * Run a method in a thread
+   * Run a method in a thread.  Subclass this class and override the run() method.
    **/
   class Thread
   {
   public:
     /**
-     * Thread for performing DSA operations.
+     * Default constructor for a thread.
      **/
     Thread();
 
@@ -56,6 +56,12 @@ namespace IrvCS
     
   private:
 
+    /**
+     * This is the pthread function that gets run when
+     * the thread is started
+     * @param arg is the data passed to the thread, which is the
+     *        class object in this case.
+     **/
     static void *startThread(void *arg);
 
     bool interrupted_;
