@@ -141,7 +141,7 @@ namespace IrvCS
    */
   OpStatus CCardI2CX::performDsaOperation(DsaId id, DsaCmd cmd, int timeoutSec)
   {
-    if (cmd != Deploy || cmd != Release)
+    if (cmd != Deploy && cmd != Release)
     {
       return StatInvalidInput;
     }
