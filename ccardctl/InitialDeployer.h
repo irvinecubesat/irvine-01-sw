@@ -22,6 +22,7 @@ namespace IrvCS
     InitialDeployer(DsaController *controller, const std::string &initDeployFile)
       :Thread(), controller_(controller), initDeployFile_(initDeployFile)
       {
+        syslog(LOG_INFO, "Initial deployment file is %s", initDeployFile_.c_str()); 
       }
 
     ~InitialDeployer()
@@ -66,7 +67,7 @@ namespace IrvCS
 
   private:
     DsaController *controller_;
-    const std::string &initDeployFile_;
+    std::string initDeployFile_;
   };
 }
 #endif
