@@ -13,6 +13,11 @@ namespace IrvCS
   class InitialDeployer:public Thread
   {
   public:
+    /**
+     * @param controller The DSA Controller object which should never be NULL
+     * @param initDeployFile The marker file to indicate that initial deployment
+     *        has taken place.
+     **/
     InitialDeployer(DsaController *controller, const std::string &initDeployFile)
       :Thread(), controller_(controller), initDeployFile_(initDeployFile)
       {
