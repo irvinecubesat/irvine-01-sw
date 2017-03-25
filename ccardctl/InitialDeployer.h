@@ -3,6 +3,7 @@
 #include <syslog.h>
 #include "Thread.h"
 #include "DsaController.h"
+#include "InitialDsaDeployOp.h"
 namespace IrvCS
 {
   /**

@@ -17,7 +17,6 @@
 #include "CCardMsgCodec.h"
 #include "ccardDefs.h"
 #include "CCardI2CX.h"
-#include "InitialDsaDeployOp.h"
 #include "InitialDeployer.h"
 #include "DsaOpContext.h"
 #include "DsaOp.h"
@@ -203,20 +202,12 @@ static int executeInitialDeploymentOp(void *arg)
 {
   IrvCS::DsaController *dsaController=static_cast<IrvCS::DsaController *>(arg);
 
-  DBG_print(LOG_NOTICE, "Performing Initial Deployment Operation");
-  IrvCS::InitialDsaDeployOp deployOp(dsaController);
-
-  deployOp.execute();
-
-  // create the deploy file
-  std::ofstream ofs(gInitDeployFile.c_str(), std::ios::out);
-  ofs<<"1";
-  if (ofs.fail())
-  {
-    DBG_print(LOG_ERR, "Unable to create %s:  %s (%d)", gInitDeployFile.c_str(),
-              strerror(errno), errno);
-  }
+  IrvCS::InitialDeployer deployer(dsaController, gInitDeployFile);
   
+  DBG_print(LOG_NOTICE, "Launching Initial Deployer");
+  
+  deployer.start();
+
   return EVENT_REMOVE;
 }
 
