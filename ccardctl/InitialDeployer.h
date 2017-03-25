@@ -20,9 +20,23 @@ namespace IrvCS
      *        has taken place.
      **/
     InitialDeployer(DsaController *controller, const std::string &initDeployFile)
-      :Thread(), controller_(controller), initDeployFile_(initDeployFile)
+      :Thread(), controller_(controller)
       {
-        syslog(LOG_INFO, "Initial deployment file is %s", initDeployFile_.c_str()); 
+        syslog(LOG_INFO, "Initial deployment file is %s", initDeployFile.c_str());
+
+        // Create the deploy file
+        std::ofstream ofs(initDeployFile.c_str(), std::ios::out);
+        ofs<<"1";
+        if (ofs.fail())
+        {
+          syslog(LOG_ERR, "Unable to create %s:  %s (%d)", initDeployFile.c_str(),
+                 strerror(errno), errno);
+        } else
+        {
+          syslog(LOG_INFO, 
+                 "Created %s to mark initial deployment completion state",
+                 initDeployFile.c_str());
+        }
       }
 
     ~InitialDeployer()
@@ -47,27 +61,12 @@ namespace IrvCS
           syslog(LOG_ERR, "DSA Release/Deploy Operation Errored with status %d", status);
         }
           
-        // Create the deploy file
-        std::ofstream ofs(initDeployFile_.c_str(), std::ios::out);
-        ofs<<"1";
-        if (ofs.fail())
-        {
-          syslog(LOG_ERR, "Unable to create %s:  %s (%d)", initDeployFile_.c_str(),
-                 strerror(errno), errno);
-        } else
-        {
-          syslog(LOG_INFO, 
-                 "Created %s to mark initial deployment completion state",
-                 initDeployFile_.c_str());
-        }
-
         // Done with execution, clean up!
         delete this;
       }
 
   private:
     DsaController *controller_;
-    std::string initDeployFile_;
   };
 }
 #endif

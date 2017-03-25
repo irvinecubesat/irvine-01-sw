@@ -49,6 +49,11 @@ namespace IrvCS
      **/
     int8_t get();
 
+    /**
+     * Unexport a gpio
+     **/
+    int unexport();
+    
   private:
     /**
      * If < 0 this is not initialized
