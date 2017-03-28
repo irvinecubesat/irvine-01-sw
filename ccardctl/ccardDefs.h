@@ -6,31 +6,70 @@ namespace IrvCS
 #define MSG_ID_OFFSET_BITS 0
 #define MSG_CMD_OFFSET_BITS 8
 
-#define DSA1_RELEASE_STATUS_BIT 0
-#define DSA1_DEPLOY_STATUS_BIT  1
-#define DSA2_RELEASE_STATUS_BIT 2
-#define DSA2_DEPLOY_STATUS_BIT  3
+// 2 and 1 reversed intentionally to match the pin offset on expander  
+#define DSA2_RELEASE_STATUS_BIT 0
+#define DSA2_DEPLOY_STATUS_BIT  1
+#define DSA1_RELEASE_STATUS_BIT 2
+#define DSA1_DEPLOY_STATUS_BIT  3
 
 /**
- * Timeout for each release operation in seconds
- **/  
-#define TIMEOUT_RELEASE 45
-
-/**
- * Timeout for Emergency Release
+ * Initial Deploy Delay in seconds.  How long to wait to initiate the initial deployment
+ * sequence.  45 minutes default.  May be overridden using the DEBUG_DEPLOY_DELAY_FILE
+ * for testing
  **/
-#define TIMEOUT_EMERGENCY_RELEASE 15
+#define INITIAL_DEPLOY_DELAY 45*60
+
+/**
+ * Deploy delay debug override flag.  For testing the following file should contain
+ * the deploy delay in seconds.  Prior to launch this will be cleaned.
+ **/
+#define DEBUG_DEPLOY_DELAY_FILE "/data/debug/deployDelay"
+  
+/**
+ * Timeout for each release operation in seconds.
+ * NOTE:  Watchdog kills processes after 45 seconds.
+ **/  
+#define DSA_RELEASE_TIMEOUT 45
 
 /**
  * Wait in seconds between Release retries
  **/
-#define RELEASE_WAIT 5
+#define DSA_RELEASE_WAIT 5
+
+/**
+ * Wait in seconds in between operations.  
+ * This wasn't specified in Cmdr Nader's algorithm, so make this minimal
+ **/
+#define DSA_OP_WAIT 1
   
 /**
  * Timeout for Deploy operation in seconds
  **/
-#define TIMEOUT_DEPLOY 10
+#define DSA_DEPLOY_TIMEOUT 10
 
+/**
+ * Additional attempt to release
+ **/
+#define DSA_EMERGENCY_RELEASE_TIMEOUT 15
+
+/**
+ * Client timeout padding to wait for response from server (seconds)
+ **/
+#define TIMEOUT_PADDING 3
+
+  /**
+   * Operation Status Codes.  Value <0 indicates an error status
+   **/
+  enum OpStatus
+  {
+    StatTimeOut=-10,
+    StatDeviceAccess=-3,        /* Problems accessing the device */
+    StatInvalidInput=-2,        /* Invalid function parameters */
+    StatErr=-1,                 /* General error */
+    StatOk=0,                   /* Successful operation */
+    StatOpInProgress=1,         /* Operation in progress */
+  };
+  
   enum MsgTypes
   {
     MsgDsa=0,

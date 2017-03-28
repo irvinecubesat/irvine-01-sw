@@ -9,7 +9,7 @@ extern "C"
 #define CCARD_RESPONSE 0xF2
   
   /**
-   * Provide card status.  Provide the port register.
+   * Provide execution status, the port register and deployment state.
    **/
   struct CCardStatus
   {

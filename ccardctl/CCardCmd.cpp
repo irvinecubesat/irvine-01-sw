@@ -40,8 +40,8 @@ void usage(char *argv[])
            <<" -d {log level}     set log level"<<std::endl
            <<" -h {host IP}       target host IP"<<std::endl
            <<" -s                 get C-Card status"<<std::endl
-           <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<TIMEOUT_DEPLOY<<" sec"<<std::endl
-           <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<TIMEOUT_RELEASE<<" sec"<<std::endl
+           <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<DSA_DEPLOY_TIMEOUT<<" sec"<<std::endl
+           <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<DSA_RELEASE_TIMEOUT<<" sec"<<std::endl
            <<" -T {0 or 1}        Disable or enable HW timer.  Value is sticky"<<std::endl
            <<" -M {MT id}={0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m {ZYX}|{0-7}     Set all mt values with either binary or decimal"<<std::endl
@@ -89,7 +89,7 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
  
   if (resp.cmd != CMD_STATUS_RESPONSE)
   {
-    std::cerr<<"response code incorrect, Got "<<resp.cmd<<" received  "<<CMD_STATUS_RESPONSE;
+    std::cerr<<"response code incorrect, Got "<<(int)resp.cmd<<" received  "<<CMD_STATUS_RESPONSE;
     return CMD_ERR_STATUS;
   }
 
@@ -129,7 +129,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
  
   if (resp.cmd != CCARD_RESPONSE)
   {
-    std::cerr<<"response code incorrect, Got "<<resp.cmd
+    std::cerr<<"response code incorrect, Got "<<(int)resp.cmd
             <<" expected "<< CCARD_RESPONSE<<std::endl;
     return CMD_ERR_STATUS;
   }
@@ -139,7 +139,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
     outputStatus(resp.status.portStatus, resp.status.dsaDeployState);
   } else
   {
-    std::cerr<<"Status "<<(int)resp.status.status<<" executing command"<<std::endl;
+    return resp.status.status;
   }
 
   return status;
@@ -245,13 +245,13 @@ int main(int argc, char *argv[])
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Deploy;
       action=DsaCommand;
-      timeout=TIMEOUT_DEPLOY*1000;
+      timeout=(DSA_DEPLOY_TIMEOUT+TIMEOUT_PADDING)*1000;
       break;
     case 'R':
       dsaId=parseDsaId(optarg);
       dsaCmd=IrvCS::Release;
       action=DsaCommand;
-      timeout=TIMEOUT_RELEASE*1000;
+      timeout=(DSA_RELEASE_TIMEOUT+TIMEOUT_PADDING)*1000;
       break;
     case 'T':
       dsaId=IrvCS::DSA_2; // Not significant, operation is for either
@@ -274,6 +274,7 @@ int main(int argc, char *argv[])
       break;
     case 'm':
       mtMask=0x7;               // set all bits
+      action=MtCommand;
       // single digit input should be 0-7
       if (strlen(optarg) == 1)
       {
@@ -343,8 +344,14 @@ int main(int argc, char *argv[])
     int sendStatus = sendCcardMsg(host, msgData, timeout);
     if (sendStatus != 0)
     {
-      status=CMD_ERR_STATUS;
-      printf("Error %d sending C-Card Message\n", sendStatus);
+      status=sendStatus;
+      if (sendStatus == IrvCS::StatTimeOut)
+      {
+        printf("Operation did not complete within the alloted time\n");
+      } else
+      {
+        printf("Status %d sending C-Card Message\n", sendStatus);
+      }
     }
   }
   return status;

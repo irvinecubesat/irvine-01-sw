@@ -3,23 +3,35 @@
  */
 #include <getopt.h>
 #include <string>
+#include <string.h>
+#include <errno.h>
 #include <iostream>
+#include <fstream>
 #include <syslog.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include <polysat/polysat.h>
+#include <Mutex.h>
+#include <MutexLock.h>
 #include "cCardMessages.h"
 #include "CCardMsgCodec.h"
 #include "ccardDefs.h"
 #include "CCardI2CX.h"
+#include "InitialDeployer.h"
+#include "DsaOpContext.h"
+#include "DsaOp.h"
 
 #define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
 
 static Process *gProc=NULL;
 
-static uint8_t gPortState=0;
-static IrvCS::CCardI2CX *gI2cExpander=NULL;
-
 using namespace IrvCS;
+
+static uint8_t gPortState=0;
+static CCardI2CX *gI2cExpander=NULL;
+static std::string gInitDeployFile;
+static volatile bool dsaOpInProgress=false; // Allow only one DSA Op at any given time.
+static Mutex dsaOpMutex;
 
 static DsaId id2DsaId(uint8_t id)
 {
@@ -37,11 +49,11 @@ static DsaId id2DsaId(uint8_t id)
 
 static DsaCmd cmd2DsaCmd(uint8_t cmd)
 {
-  if (cmd > ResetTimer)
+  if (cmd >= CmdUnknown)
   {
     return CmdUnknown;
   }
-  
+
   return static_cast<DsaCmd>(cmd);
 }
 
@@ -55,13 +67,13 @@ extern "C"
   void ccard_status(int socket, unsigned char cmd, void *data, size_t dataLen,
                     struct sockaddr_in *src)
   {
-    
+
     CCardStatus status;
     static int counter=0;
     status.status=0;
     if (NULL == gI2cExpander)
     {
-      DBG_print(LOG_ERR, "%s gI2cExpander is NULL\n", __FILENAME__);
+      DBG_print(LOG_ERR, "%s gI2cExpander is NULL", __FILENAME__);
       status.status=-1;
     } else
     {
@@ -100,7 +112,7 @@ extern "C"
     CCardMsg *msg=(CCardMsg *)data;
     if (dataLen != sizeof(CCardMsg))
     {
-      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)\n",
+      DBG_print(DBG_LEVEL_WARN, "Incoming size is incorrect (%d != %d)",
                 dataLen, sizeof(CCardMsg));
       return;
     }
@@ -111,43 +123,58 @@ extern "C"
     uint8_t msgType=0;
     uint8_t devId=0;
     uint8_t msgCmd=0;
-    int timeout=5;
     uint32_t hostData=ntohl(msg->data);
     IrvCS::CCardMsgCodec::decodeMsgData(hostData, msgType, devId, msgCmd);
+    int timeout=5;
     DsaId dsaId=DSA_UNKNOWN;
     DsaCmd dsaCmd=CmdUnknown;
+    DsaOp *dsaOp=NULL;
+    void * dsaEvt=NULL;
+
     switch (msgType)
     {
     case IrvCS::MsgDsa:
       dsaId = id2DsaId(devId);
       if (DSA_UNKNOWN == dsaId)
       {
-        DBG_print(LOG_ERR, "Unknown DSA ID:  %d\n", devId);
+        DBG_print(LOG_ERR, "Unknown DSA ID:  %d", devId);
         status.status=-1;
         break;
       }
       dsaCmd = cmd2DsaCmd(msgCmd);
       if (CmdUnknown == dsaCmd)
       {
-        DBG_print(LOG_ERR, "Uknown DSA Cmd:  %d\n", cmd);
+        DBG_print(LOG_ERR, "Uknown DSA Cmd:  %d", cmd);
         status.status=-1;
         break;
       }
-      if (dsaCmd == Release)
+
+      //
+      // Release and Deploy operations run in separate thread.  All
+      // other operations can run directly
+      //
+      if (dsaCmd != Release && dsaCmd != Deploy)
       {
-        timeout=TIMEOUT_RELEASE;
-      } else if (dsaCmd == Deploy)
-      {
-        timeout=TIMEOUT_DEPLOY;
+        gI2cExpander->dsaPerform(dsaId, dsaCmd);
+      } else {
+        MutexLock lock(dsaOpMutex);
+        if (!dsaOpInProgress)
+        {
+          DsaOpContext *context=new DsaOpContext(gProc, src, gI2cExpander, dsaOpInProgress);
+          dsaOp=new DsaOp(dsaId, dsaCmd,*gI2cExpander, context);
+          dsaOp->start();
+
+          return;
+        } else
+        {
+          DBG_print(LOG_ERR, "Operation in progress");
+          status.status=StatOpInProgress;
+        }
       }
-      setStatus=gI2cExpander->dsaPerform(dsaId, dsaCmd, timeout);
-      if (setStatus < 0)
-      {
-        status.status=setStatus;
-      } else
-      {
-        status.portStatus=gPortState=(uint8_t)setStatus;
-      }
+      status.portStatus=gPortState=(uint8_t)setStatus;
+
+      status.portStatus=gPortState=(uint8_t)setStatus;
+        
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
@@ -160,7 +187,7 @@ extern "C"
       }
       break;
     default:
-      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d\n",
+      DBG_print(LOG_WARNING, "%s Unknown msg type:  %d",
                 __FILENAME__, msgType);
     }
 
@@ -169,6 +196,19 @@ extern "C"
     PROC_cmd_sockaddr(gProc->getProcessData(), CCARD_RESPONSE,
                       &status, sizeof(status), src);
   }
+}
+
+static int executeInitialDeploymentOp(void *arg)
+{
+  IrvCS::DsaController *dsaController=static_cast<IrvCS::DsaController *>(arg);
+
+  IrvCS::InitialDeployer deployer(dsaController, gInitDeployFile);
+  
+  DBG_print(LOG_NOTICE, "Launching Initial Deployer");
+  
+  deployer.start();
+
+  return EVENT_REMOVE;
 }
 
 /**
@@ -180,6 +220,11 @@ void usage(char *argv[])
            <<std::endl<<std::endl
            <<"        C-card controller daemon"<<std::endl<<std::endl
            <<"Options:"<<std::endl<<std::endl
+           <<" -D {file}       Set the initial deploy operation flag file."<<std::endl
+           <<"                 If file exists, skip initial deployment op."<<std::endl
+           <<"                 Must be in persistent location which is cleared before launch."<<std::endl
+           <<" -T {seconds}    Set the initial deploy delay in seconds"<<std::endl
+           <<"                 May be set with /data/deployDelay"<<std::endl
            <<" -d {log level}  set log level"<<std::endl
            <<" -s              syslog output to stderr"<<std::endl
            <<" -h              this message"<<std::endl
@@ -191,7 +236,7 @@ static int sigint_handler(int signum, void *arg)
 {
   Process *proc=(Process *)arg;
   EVT_exit_loop(PROC_evt(proc->getProcessData()));
-  
+
   return EVENT_KEEP;
 }
 
@@ -200,13 +245,34 @@ int main(int argc, char *argv[])
   int status=0;
   int syslogOption=0;
   int opt;
-  
+  // initial Deploy delay time in seconds
+  int initDeployDelayTime=INITIAL_DEPLOY_DELAY; // 45 min default
+  const char *deployDelayOverrideFile=DEBUG_DEPLOY_DELAY_FILE;
+  struct stat statBuf;
+  bool initDeployFlag = false;
+
   int logLevel=DBG_LEVEL_INFO;
 
-  while ((opt=getopt(argc,argv,"sd:h")) != -1)
+  while ((opt=getopt(argc,argv,"sd:hT:D:")) != -1)
   {
     switch (opt)
     {
+    case 'D':
+      // @TODO we could register a ppod deployment event callback
+      // which would then make this file unnecessary.
+      // Not sure how to test it to see if it works.
+      gInitDeployFile=optarg;
+      if (0 == stat(optarg, &statBuf))
+      {
+        initDeployFlag = false;
+      } else
+      {
+        initDeployFlag = true;
+      }
+      break;
+    case 'T':
+      initDeployDelayTime=strtol(optarg, NULL, 10);
+      break;
     case 's':
       syslogOption=LOG_PERROR;
       openlog("ccardctl", syslogOption, LOG_USER);
@@ -224,20 +290,49 @@ int main(int argc, char *argv[])
 
   gProc = new Process("ccardctl");
   DBG_setLevel(logLevel);
-  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl\n");
+
+  DBG_print(DBG_LEVEL_INFO, "Starting up ccardctl");
   IrvCS::CCardI2CX i2cX;
 
   gI2cExpander = &i2cX;
 
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
 
+  void *initDeployEvt=NULL;
   EventManager *events=gProc->event_manager();
 
-  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages\n",__FILENAME__);
-  
+  if (initDeployFlag)
+  {
+    // look for deploy delay override setting
+    if (!stat(deployDelayOverrideFile, &statBuf))
+    {
+      DBG_print(LOG_INFO, "Overriding deploy option with %s", deployDelayOverrideFile);
+      std::ifstream ifs(deployDelayOverrideFile, std::ios::in);
+      ifs >> initDeployDelayTime;
+    }
+    DBG_print(LOG_NOTICE, "Scheduling Initial Deployment in %d seconds (%d min)",
+              initDeployDelayTime, initDeployDelayTime/60);
+    initDeployEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
+                                EVT_ms2tv(initDeployDelayTime*1000),
+                                executeInitialDeploymentOp,
+                                &i2cX);
+
+  }
+
+  DBG_print(DBG_LEVEL_INFO, "%s Ready to process messages",__FILENAME__);
+
   events->EventLoop();
+
+  //
+  // Cleanup
+  //
+  if (initDeployEvt)
+  {
+    EVT_sched_remove(PROC_evt(gProc->getProcessData()), initDeployEvt);
+  }
 
   delete gProc;
   gI2cExpander=NULL;
+
   return status;
 }
