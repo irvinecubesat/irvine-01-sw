@@ -13,10 +13,15 @@ namespace IrvCS
   class Thread
   {
   public:
+    enum Type{
+      Joinable,
+      Detached
+    };
+
     /**
      * Default constructor for a thread.
      **/
-    Thread();
+    Thread(Type threadType=Joinable);
 
     /**
      * clean up the thread

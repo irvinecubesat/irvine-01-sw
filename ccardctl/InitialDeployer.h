@@ -20,7 +20,7 @@ namespace IrvCS
      *        has taken place.
      **/
     InitialDeployer(DsaController *controller, const std::string &initDeployFile)
-      :Thread(), controller_(controller)
+      :Thread(Thread::Detached), controller_(controller)
       {
         syslog(LOG_INFO, "Initial deployment file is %s", initDeployFile.c_str());
 

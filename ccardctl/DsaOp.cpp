@@ -5,7 +5,7 @@ namespace IrvCS
 {
   DsaOp::DsaOp(const DsaId dsaId, const DsaCmd dsaCmd,
                DsaController &controller, OpContext *context)
-    :Thread(), id_(dsaId),cmd_(dsaCmd),
+    :Thread(Detached), id_(dsaId),cmd_(dsaCmd),
      controller_(controller), context_(context)
   {
     if (cmd_ == Release)
