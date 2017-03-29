@@ -22,8 +22,6 @@ namespace IrvCS
     InitialDeployer(DsaController *controller, const std::string &initDeployFile)
       :Thread(Thread::Detached), controller_(controller)
       {
-        syslog(LOG_INFO, "Initial deployment file is %s", initDeployFile.c_str());
-
         // Create the deploy file
         std::ofstream ofs(initDeployFile.c_str(), std::ios::out);
         ofs<<"1";
