@@ -7,7 +7,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <linux/i2c-dev.h>
-#include <polysat/debug.h>
+#include <iostream>
+#include <sstream>
+#include <syslog.h>
 
 #include "Mutex.h"
 #include "MutexLock.h"
@@ -20,8 +22,6 @@
 #define REG_OUTPUT_PORT 0x01
 #define REG_CONFIG      0x03
 
-#define DBG_LEVEL_DEBUG DBG_LEVEL_ALL
-
 namespace IrvCS
 {
   /**
@@ -31,26 +31,51 @@ namespace IrvCS
   
   CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(true)
   {
-    if (!pl3VGpio_.initialize(102))
+    int gpioInitStatus=initGpios();
+
+    int powerStatus=0;
+
+    if (0 != gpioInitStatus)
     {
-      DBG_print(LOG_ERR, "Unable to initialize 3V PL GPIO)");
+      syslog(LOG_ERR, "Encountered %d errors initializing GPIO's", gpioInitStatus);
+    }
+    
+    //
+    // Power off 3V and 5V payload power for C-Card at startup
+    //
+    if (0 != setPayloadPower(pl5VGpio_, 0))
+    {
+      powerStatus++;
     }
 
-    if (!pl5VGpio_.initialize(103))
+    if (0 != setPayloadPower(pl3VGpio_,0))
     {
-      DBG_print(LOG_ERR, "Unable to initialize 5V PL GPIO)");
-    }
-    //
-    // power on 5V payload for C-Card
-    //
-    if (0 != pl5VGpio_.set(1))
-    {
-      DBG_print(LOG_ERR, "Unable to turn on 5V PL Power");
+      powerStatus++;
     }
 
-    if (0 != enable3VPayload(0))
+    if (powerStatus == 0)
     {
-      DBG_print(LOG_ERR, "Unable to power off 3V PL Power");
+      syslog(LOG_NOTICE, "%s Initialized", __FILENAME__);
+      initialized_=true;
+    } else
+    {
+      syslog(LOG_ERR, "%s:  Unable to initialize", __FILENAME__);
+    }
+  }
+
+  int CCardI2CX::initGpios()
+  {
+    int errors=0;
+    if (!pl3VGpio_.initialize(102, "PL 3V Pwr"))
+    {
+      syslog(LOG_ERR, "Unable to initialize 3V PL GPIO)");
+      errors++;
+    }
+
+    if (!pl5VGpio_.initialize(103, "PL 5V Pwr"))
+    {
+      syslog(LOG_ERR, "Unable to initialize 5V PL GPIO)");
+      errors++;
     }
 
     //
@@ -63,33 +88,71 @@ namespace IrvCS
     {
       if (!dsa1SenseGpio_[i].initialize(dsa1SensePin[i]))
       {
-        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
+        syslog(LOG_ERR, "Unable to initialize GPIO %d", dsa1SensePin[i]);
       }
 
       if (!dsa2SenseGpio_[i].initialize(dsa2SensePin[i]))
       {
-        DBG_print(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
+        syslog(LOG_ERR, "Unable to initialize GPIO %d", dsa2SensePin[i]);
       }
+    }
+  }
+
+  CCardI2CX::~CCardI2CX()
+  {
+    syslog(LOG_NOTICE, "%s Cleaning up", __FILENAME__);
+    // close any resources
+    if (i2cdev_ >= 0)
+    {
+      close(i2cdev_);
+    }
+  }
+
+  int CCardI2CX::powerOn()
+  {
+    int powerStatus=0;
+
+    pwrTimestamp_=time(NULL);
+
+    if (pl5VGpio_.get() > 0)
+    {
+      // Already on.
+      syslog(LOG_DEBUG, "5V PL Pwr Access");
+      return 0;
+    }
+    syslog(LOG_INFO, "5V PL Pwr On");
+    //
+    // power on 5V payload for C-Card
+    //
+    if (0 != setPayloadPower(pl5VGpio_, 1))
+    {
+      powerStatus--;
+    }
+
+    // PL 3V Pwr only turned on during DSA ops
+    if (0 != setPayloadPower(pl3VGpio_, 0))
+    {
+      powerStatus--;
     }
 
     const char *i2cbus="/dev/i2c-1"; 
 
     // initialize i2c bus
-    DBG_print(LOG_INFO, "Initializing %s",i2cbus);
+    syslog(LOG_INFO, "Initializing %s",i2cbus);
     i2cdev_=open(i2cbus, O_RDWR);
 
     if (i2cdev_<0)
     {
-      DBG_print(LOG_ERR, "Unable to open i2c device %s:  %s (%d)",
+      syslog(LOG_ERR, "Unable to open i2c device %s:  %s (%d)",
                 i2cbus, strerror(errno), errno);
-      return;
+      return ++powerStatus;
     }
       
     if (ioctl(i2cdev_, I2C_SLAVE, addr_) < 0)
     {
-      DBG_print(LOG_ERR, "Unable to initialize %02x on %s:  %s (%d)",
+      syslog(LOG_ERR, "Unable to initialize %02x on %s:  %s (%d)",
                 addr_, i2cbus, strerror(errno), errno);
-      return;
+      return --powerStatus;
     }
 
     // Read input register to make sure we can access valid data
@@ -97,37 +160,39 @@ namespace IrvCS
 
     if (data < 0)
     {
-      DBG_print(LOG_ERR, "Unable to read data from register %02x:  %s (%d)",
+      syslog(LOG_ERR, "Unable to read data from register %02x:  %s (%d)",
                 REG_INPUT_PORT,strerror(data*-1), data);
-      return;
+      return --powerStatus;
     }
 
     // set register 3 to 0 to set all ports to output
     __s32 result=i2c_smbus_write_byte_data(i2cdev_, REG_CONFIG, 0x00);
     if (result < 0)
     {
-      DBG_print(LOG_ERR, "Unable to write data to register %02x:  %s (%d)",
+      syslog(LOG_ERR, "Unable to write data to register %02x:  %s (%d)",
                 REG_CONFIG, strerror(result*-1), result);
-      return;
+      return --powerStatus;
     }
 
     if (reset() < 0)
     {
-      DBG_print(LOG_ERR, "Unable to initialize state");
-      return;
+      syslog(LOG_ERR, "Unable to initialize state");
+      return --powerStatus;
     }
-    
-    DBG_print(LOG_NOTICE, "%s Initialized", __FILENAME__);
-    initialized_=true;
+
+    return powerStatus;
   }
 
-  CCardI2CX::~CCardI2CX()
+  int CCardI2CX::idleCheck()
   {
-    DBG_print(LOG_NOTICE, "%s Cleaning up", __FILENAME__);
-    // close any resources
-    if (i2cdev_ >= 0)
+    if (pwrTimestamp_ < C_CARD_IDLE_THRESHOLD)
     {
-      close(i2cdev_);
+      return 0;
+    }
+    syslog(LOG_INFO, "Switching to Idle mode");
+    if (0 != setPayloadPower(pl5VGpio_, 0))
+    {
+      return -1;
     }
   }
 
@@ -178,7 +243,7 @@ namespace IrvCS
       senseArray=dsa2SenseGpio_;
     } else                      // invalid/unknown dsa value
     {
-      DBG_print(LOG_WARNING, "Uknown DSA Id:  %d", id);
+      syslog(LOG_WARNING, "Uknown DSA Id:  %d", id);
       return StatInvalidInput;
     }
     int gpioVal=senseArray[cmd].get();
@@ -191,47 +256,63 @@ namespace IrvCS
     return gpioVal&1;
   }
 
-  int CCardI2CX::enable3VPayload(uint8_t onOrOff)
+  int CCardI2CX::setPayloadPower(Gpio &pwrGpio, uint8_t onOrOff)
   {
     int retVal=0;
     const char *opString=(onOrOff==0?"Disabled":"Enabled");
-    retVal=pl3VGpio_.set(onOrOff);
+    std::stringstream stm;
+    stm<<pwrGpio;
+    retVal=pwrGpio.set(onOrOff);
     if (retVal != 0)
     {
-      DBG_print(LOG_ERR, "Unable to set 3V power to %d - status", onOrOff, 
+      syslog(LOG_ERR, "Unable to set %s to %d (%d)", stm.str().c_str(), onOrOff, 
                 retVal);
     } else
     {
-      DBG_print(LOG_INFO, "3.3V Payload --> %s", opString);
+      syslog(LOG_INFO, "%s --> %s", stm.str().c_str(), opString);
     }
     return retVal;
+  }
+
+  int CCardI2CX::setI2Cstate(uint8_t state)
+  {
+    // set the initial output states
+    int result=i2c_smbus_write_byte_data(i2cdev_, REG_OUTPUT_PORT, state);
+    if (result < 0)
+    {
+      syslog(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
+                REG_OUTPUT_PORT, state, strerror(result*-1), result);
+    } else
+    {
+      syslog(LOG_INFO, "CCardI2CX SET --> %02x", state);
+    }
   }
 
   int CCardI2CX::setState(uint8_t state)
   {
     MutexLock lock(gI2cAccessMutex);
-    // set the initial output states
-    int result=i2c_smbus_write_byte_data(i2cdev_, REG_OUTPUT_PORT, state);
-    if (result < 0)
+    int pwrStatus=powerOn();
+    if (pwrStatus < 0)
     {
-      DBG_print(LOG_ERR, "Unable to set register %02x with %02x:  %s (%d)",
-                REG_OUTPUT_PORT, state, strerror(result*-1), result);
-    } else
-    {
-      DBG_print(LOG_INFO, "CCardI2CX SET --> %02x", state);
+      return StatErr;
     }
-    return result;
+    return setI2Cstate(state);
   }
 
   int CCardI2CX::getState(uint8_t &state)
   {
     MutexLock lock(gI2cAccessMutex);
+    int pwrStatus=powerOn();
+    if (pwrStatus < 0)
+    {
+      return StatErr;
+    }
 
     // get output register state
     int result=i2c_smbus_read_byte_data(i2cdev_, REG_OUTPUT_PORT);
     if (result < 0)
     {
-      DBG_print(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)",
+      syslog(LOG_ERR, "Unable to get register %02x with %02x:  %s (%d)",
                 REG_OUTPUT_PORT, state, strerror(result*-1), result);
       return result;
     }
@@ -283,7 +364,7 @@ namespace IrvCS
 
   int CCardI2CX::reset()
   {
-    return setState(portState_.reset());
+    return setI2Cstate(portState_.reset());
   }
 
   int CCardI2CX::mtPerform(uint8_t idBits, uint8_t cmd)
@@ -293,8 +374,8 @@ namespace IrvCS
     int setStatus=setState(status);
     if (0 != setStatus)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x",
-                status);
+      syslog(LOG_WARNING, "%s Unable to set expander value to %02x",
+             __FILENAME__, status);
       return setStatus;
     }
     return status;
@@ -308,17 +389,17 @@ namespace IrvCS
 
     if (cmd == SetTimerOn)
     {
-      DBG_print(LOG_INFO, "Timer --> Enabled");
+      syslog(LOG_INFO, "Timer --> Enabled");
       enableTimer_=true;
       return portState_.getState();
     } else if (cmd == SetTimerOff)
     {
-      DBG_print(LOG_INFO, "Timer --> Disabled");
+      syslog(LOG_INFO, "Timer --> Disabled");
       enableTimer_=false;
       return portState_.getState();
     }
 
-    DBG_print(LOG_INFO, "Performing DSA-%d %s", 
+    syslog(LOG_INFO, "Performing DSA-%d %s", 
               id==DSA_1?1:2, cmd == Release?"Release":"Deploy");
 
     // first reset everything
@@ -328,8 +409,8 @@ namespace IrvCS
     int setStatus=setState(status);
     if (0 < setStatus)
     {
-      DBG_print(DBG_LEVEL_WARN, "%s Unable to set expander value to %02x",
-                status);
+      syslog(LOG_WARNING, "%s Unable to set expander value to %02x",
+             __FILENAME__, status);
       return setStatus;
     }
 
@@ -346,15 +427,15 @@ namespace IrvCS
       "DSA_Unknown"
     };
 
-    enable3VPayload(1);
+    setPayloadPower(pl3VGpio_, 1);
     if (enableTimer_)
     {
       status=portState_.setDsa(id,SetTimer);
       int setStatus=setState(status);
       if (0 > setStatus)
       {
-        DBG_print(DBG_LEVEL_WARN,
-                  "%s Unable to set timer bit (%02x)", status);
+        syslog(LOG_WARNING,
+               "%s Unable to set timer bit (%02x)", __FILENAME__, status);
         status=StatDeviceAccess;
         goto cleanup;
       }
@@ -363,7 +444,7 @@ namespace IrvCS
     //
     // Wait for DSA sense to change
     //
-    DBG_print(LOG_INFO, "Waiting %d sec for %s Sensor to change", 
+    syslog(LOG_INFO, "Waiting %d sec for %s Sensor to change", 
               timeoutSec, dsaIdStr[id]);
 
     while (true)
@@ -372,15 +453,15 @@ namespace IrvCS
 
       if (cmd == Release && sensorStatus == 1)
       {
-        DBG_print(LOG_INFO, "Released %s at %d sec", dsaIdStr[id], timeCount+1);
+        syslog(LOG_INFO, "Released %s at %d sec", dsaIdStr[id], timeCount+1);
         break;
       } else if (cmd == Deploy && sensorStatus == 1)
       {
-        DBG_print(LOG_INFO, "Deployed %s at %d sec", dsaIdStr[id], timeCount+1);
+        syslog(LOG_INFO, "Deployed %s at %d sec", dsaIdStr[id], timeCount+1);
         break;
       } else if (timeCount++ > timeoutSec)
       {
-        DBG_print(LOG_WARNING, "%s operation timed out after %d sec",
+        syslog(LOG_WARNING, "%s operation timed out after %d sec",
                   dsaIdStr[id], timeCount);
         status=StatTimeOut;
         break;
@@ -389,7 +470,7 @@ namespace IrvCS
     }
   cleanup:
     reset();
-    enable3VPayload(0);
+    setPayloadPower(pl3VGpio_, 0);
 
     return status;
   }

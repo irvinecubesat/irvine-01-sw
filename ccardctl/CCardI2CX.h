@@ -1,6 +1,7 @@
 #ifndef __CCARDI2CX_HH__
 #define __CCARDI2CX_HH__
 
+#include <time.h>
 #include <Gpio.h>
 #include "DsaController.h"
 #include "CCardI2CPortState.h"
@@ -54,7 +55,7 @@ namespace IrvCS
      * @return 0 if successful
      * @return <0 if failed
      **/
-    int enable3VPayload(uint8_t onOrOff);
+    int setPayloadPower(Gpio &pwrGpio, uint8_t onOrOff);
 
     /**
      * Set the state directly
@@ -92,11 +93,6 @@ namespace IrvCS
     bool isOk();
 
     /**
-     * Reset state to initial conditions
-     **/
-    int reset();
-
-    /**
      * Perform operation for DSA with given timeout
      * @param id the id of the DSA
      * @param cmd the command to perform
@@ -108,10 +104,39 @@ namespace IrvCS
 
     /**
      * Perform operation for MT
+     * @return OpStatus
      **/
     int mtPerform(uint8_t idBits, uint8_t cmd);
 
+    /**
+     * Check to see if there is any activity within a time interval.  
+     * Switch to lower power mode if no activity.
+     * @return 0 if not idle
+     * @return 1 if system is idle
+     * @return -1 error encountered
+     **/
+    int idleCheck();
+
   private:
+    /**
+     * Reset state to initial conditions
+     **/
+    int reset();
+
+    /**
+     * Set the state directly with no power on call
+     * @return 0 if successful,
+     * @return < 0 if error
+     **/
+    int setI2Cstate(uint8_t state);
+
+    int initGpios();
+    /**
+     * Power on if needed and reset state
+     * @return 0 if power is on
+     * @return <1 if errors encountered
+     **/
+    int powerOn();
     CCardI2CPortState portState_;
     int i2cdev_;
     int addr_;
@@ -121,6 +146,12 @@ namespace IrvCS
     Gpio dsa1SenseGpio_[2];
     Gpio dsa2SenseGpio_[2];
     bool enableTimer_;
+    
+    /**
+     * The last time power on was requested.  This allows
+     * us to power off when idle to save energy
+     **/
+    time_t pwrTimestamp_;
   };
 }
 
