@@ -9,13 +9,13 @@ namespace IrvCS
   /**
    *
    **/
-  class InitialDeployOp
+  class InitialDsaDeployOp
   {
   public:
-    InitialDeployOp(DsaController *controller);
+    InitialDsaDeployOp(DsaController *controller);
 
-    ~InitialDeployOp();
-    
+    ~InitialDsaDeployOp();
+
     /**
      * Execute the operation
      * @return OpStatus
@@ -23,6 +23,8 @@ namespace IrvCS
     OpStatus execute();
 
   private:
+    OpStatus release(DsaId id);
+    OpStatus deploy(DsaId id);
     DsaController *controller_;
   };
 }

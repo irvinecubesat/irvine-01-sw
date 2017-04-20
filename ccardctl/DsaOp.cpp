@@ -5,15 +5,15 @@ namespace IrvCS
 {
   DsaOp::DsaOp(const DsaId dsaId, const DsaCmd dsaCmd,
                DsaController &controller, OpContext *context)
-    :Thread(), id_(dsaId),cmd_(dsaCmd),
+    :Thread(Detached), id_(dsaId),cmd_(dsaCmd),
      controller_(controller), context_(context)
   {
     if (cmd_ == Release)
     {
-      timeout_=TIMEOUT_RELEASE;
+      timeout_=DSA_RELEASE_TIMEOUT;
     } else 
     {
-      timeout_=TIMEOUT_DEPLOY;
+      timeout_=DSA_DEPLOY_TIMEOUT;
     }
 
   }

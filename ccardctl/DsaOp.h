@@ -8,7 +8,9 @@
 namespace IrvCS
 {
   /**
-   * Perform DSA release/deploy operations in a thread
+   * Perform DSA release/deploy operations in a thread.  This is for manual
+   * commands only.  Initial Deploy/Release operation algorithm is a separate
+   * in InitialDsaDeployOp
    **/
   class DsaOp:public Thread
   {

@@ -35,22 +35,28 @@ namespace IrvCS
  * Timeout for each release operation in seconds.
  * NOTE:  Watchdog kills processes after 45 seconds.
  **/  
-#define TIMEOUT_RELEASE 30
-
-/**
- * Timeout for Emergency Release
- **/
-#define TIMEOUT_EMERGENCY_RELEASE 15
+#define DSA_RELEASE_TIMEOUT 45
 
 /**
  * Wait in seconds between Release retries
  **/
-#define RELEASE_WAIT 15
+#define DSA_RELEASE_WAIT 5
+
+/**
+ * Wait in seconds in between operations.  
+ * This wasn't specified in Cmdr Nader's algorithm, so make this minimal
+ **/
+#define DSA_OP_WAIT 1
   
 /**
  * Timeout for Deploy operation in seconds
  **/
-#define TIMEOUT_DEPLOY 10
+#define DSA_DEPLOY_TIMEOUT 10
+
+/**
+ * Additional attempt to release
+ **/
+#define DSA_EMERGENCY_RELEASE_TIMEOUT 15
 
 /**
  * Client timeout padding to wait for response from server (seconds)

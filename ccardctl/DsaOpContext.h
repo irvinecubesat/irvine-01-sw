@@ -33,7 +33,7 @@ namespace IrvCS
         expander_->getStates(cCardStatus.portStatus, cCardStatus.dsaDeployState);
 
         // send the response
-        PROC_cmd_sockaddr(proc_->getProcessData(), CMD_STATUS_RESPONSE,
+        PROC_cmd_sockaddr(proc_->getProcessData(), CCARD_RESPONSE,
                           &cCardStatus, sizeof(cCardStatus), &src_);
       }
    

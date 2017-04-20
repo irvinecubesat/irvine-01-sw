@@ -79,6 +79,23 @@ namespace IrvCS
     return false;
   }
 
+  int Gpio::unexport()
+  {
+    //
+    // export the gpio
+    //
+    std::ofstream os(GPIO_UNEXPORT, std::ofstream::out);
+
+    os<<gpio_;
+
+    if (os.fail())
+    {
+      syslog(LOG_ERR, "Unable to write %d to %s", gpio_, GPIO_UNEXPORT);
+      return -1;
+    }
+    return 0;
+  }
+
   /**
    * Print out the GPIO info
    **/

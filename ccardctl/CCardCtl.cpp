@@ -17,7 +17,6 @@
 #include "CCardMsgCodec.h"
 #include "ccardDefs.h"
 #include "CCardI2CX.h"
-#include "InitialDeployOp.h"
 #include "InitialDeployer.h"
 #include "DsaOpContext.h"
 #include "DsaOp.h"
@@ -174,6 +173,8 @@ extern "C"
       }
       status.portStatus=gPortState=(uint8_t)setStatus;
 
+      status.portStatus=gPortState=(uint8_t)setStatus;
+        
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
@@ -200,8 +201,12 @@ extern "C"
 static int executeInitialDeploymentOp(void *arg)
 {
   IrvCS::DsaController *dsaController=static_cast<IrvCS::DsaController *>(arg);
-  InitialDeployer *deployer= new InitialDeployer(dsaController, gInitDeployFile);
-  deployer->run();
+
+  IrvCS::InitialDeployer deployer(dsaController, gInitDeployFile);
+  
+  DBG_print(LOG_NOTICE, "Launching Initial Deployer");
+  
+  deployer.start();
 
   return EVENT_REMOVE;
 }

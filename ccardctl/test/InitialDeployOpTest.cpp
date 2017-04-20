@@ -1,4 +1,4 @@
-#include <InitialDeployOp.h>
+#include <InitialDsaDeployOp.h>
 #include <gtest/gtest.h>
 
 using namespace IrvCS;
@@ -9,7 +9,7 @@ using namespace IrvCS;
 // @TODO use fixture for test controller
 //
 
-TEST(InitialDeployOp,executeSuccess)
+TEST(InitialDsaDeployOp,executeSuccess)
 {
   class TestController:public DsaController
   {
@@ -30,12 +30,12 @@ TEST(InitialDeployOp,executeSuccess)
 
   TestController controller;
 
-  InitialDeployOp op(&controller);
+  InitialDsaDeployOp op(&controller);
 
   ASSERT_EQ(StatOk, op.execute());
 }
 
-TEST(InitialDeployOp,executeTimeout)
+TEST(InitialDsaDeployOp,executeTimeout)
 {
   class TestController:public DsaController
   {
@@ -54,7 +54,7 @@ TEST(InitialDeployOp,executeTimeout)
 
   TestController controller;
 
-  InitialDeployOp op(&controller);
+  InitialDsaDeployOp op(&controller);
 
   ASSERT_EQ(StatTimeOut, op.execute());
 }
