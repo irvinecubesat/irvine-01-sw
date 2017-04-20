@@ -173,8 +173,6 @@ extern "C"
       }
       status.portStatus=gPortState=(uint8_t)setStatus;
 
-      status.portStatus=gPortState=(uint8_t)setStatus;
-        
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
