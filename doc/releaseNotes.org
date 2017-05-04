@@ -1,4 +1,7 @@
 * Release Notes for Irvine-01 Flight Software
+** 00.07.00
+   - Add Idle Mode support - Turn off 5V PL Pwr if not being used within idle time threshold
+   - Gpio class support for label, ostream output 
 ** 00.06.00
    - ccardctl service and ccardcmd utility for setting C-Card functions via
      I2C.  

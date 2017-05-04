@@ -2,6 +2,8 @@
 #define __GPIO_CPP_HH__
 #include <stdint.h>
 
+#include <iostream>
+
 namespace IrvCS
 {
   class Gpio
@@ -13,9 +15,9 @@ namespace IrvCS
     Gpio();
 
     /**
-     * Create and initialize GPIO
+     * Create and initialize GPIO with optional label
      **/
-    Gpio(int16_t gpio);
+    Gpio(int16_t gpio, const std::string &label="");
     
     ~Gpio();
 
@@ -25,7 +27,7 @@ namespace IrvCS
      * @return true if successful
      * @return false if not
      **/
-    bool initialize(int16_t gpio);
+    bool initialize(int16_t gpio, const std::string &label="");
 
     /**
      * Indicate whether or not the GPIO was initialized successfully.
@@ -33,7 +35,9 @@ namespace IrvCS
      * @return false if there were problems initializing
      **/
     bool initialized();
-    
+
+    friend std::ostream& operator <<(std::ostream &os, const Gpio &gpio);
+
     /**
      * Set the GPIO
      * @param val The value to set the GPIO.  Should be 0 or 1.
@@ -59,6 +63,9 @@ namespace IrvCS
      * If < 0 this is not initialized
      **/
     int16_t gpio_;
+
+    std::string label_;
+
   };
 }
 #endif

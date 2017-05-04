@@ -27,11 +27,11 @@ namespace IrvCS
   };
   
 
-  Gpio::Gpio():gpio_(-1)
+  Gpio::Gpio():gpio_(-1),label_("")
   {
   }
 
-  Gpio::Gpio(int16_t gpio)
+  Gpio::Gpio(int16_t gpio, const std::string &label):label_(label)
   {
     if (!initialize(gpio))
     {
@@ -41,11 +41,24 @@ namespace IrvCS
 
   Gpio::~Gpio()
   {
+    //
+    // export the gpio
+    //
+    std::ofstream os(GPIO_UNEXPORT, std::ofstream::out);
+
+    os<<gpio_;
+
+    if (os.fail())
+    {
+      syslog(LOG_ERR, "Unable to write %d to %s", gpio_, GPIO_UNEXPORT);
+    }
   }
 
-  bool Gpio::initialize(int16_t gpio)
+  bool Gpio::initialize(int16_t gpio, const std::string &label)
   {
     bool retVal=false;
+    label_=label;
+
     //
     // export the gpio
     //
@@ -81,6 +94,14 @@ namespace IrvCS
       return -1;
     }
     return 0;
+  }
+
+  /**
+   * Print out the GPIO info
+   **/
+  std::ostream& operator<<(std::ostream &os, const Gpio &gpio)
+  {
+    return os <<gpio.label_<<"("<<gpio.gpio_<<")";
   }
 
   bool Gpio::initialized()
