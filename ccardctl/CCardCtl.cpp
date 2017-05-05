@@ -78,8 +78,8 @@ extern "C"
     } else
     {
       int getStatus=0;
-      // refresh state every 100 polls
-      if (0==(counter % 100))
+      // refresh the first time
+      if (gPortState == 0)
       {
         getStatus=gI2cExpander->getState(gPortState);
       }
@@ -173,8 +173,6 @@ extern "C"
       }
       status.portStatus=gPortState=(uint8_t)setStatus;
 
-      status.portStatus=gPortState=(uint8_t)setStatus;
-        
       break;
     case IrvCS::MsgMt:
       setStatus=gI2cExpander->mtPerform(devId, msgCmd);
@@ -209,6 +207,19 @@ static int executeInitialDeploymentOp(void *arg)
   deployer.start();
 
   return EVENT_REMOVE;
+}
+
+static int checkCCardIdle(void *arg)
+{
+  IrvCS::CCardI2CX *i2cctl=static_cast<IrvCS::CCardI2CX *>(arg);
+
+  int status=0;
+  if (0 != (status=i2cctl->idleCheck()))
+  {
+    DBG_print(LOG_DEBUG, "Status %d encountered checking idle", status);
+  }
+
+ return EVENT_KEEP;
 }
 
 /**
@@ -250,10 +261,11 @@ int main(int argc, char *argv[])
   const char *deployDelayOverrideFile=DEBUG_DEPLOY_DELAY_FILE;
   struct stat statBuf;
   bool initDeployFlag = false;
+  int idleCheckInterval=C_CARD_IDLE_CHECK_INTERVAL;
 
   int logLevel=DBG_LEVEL_INFO;
 
-  while ((opt=getopt(argc,argv,"sd:hT:D:")) != -1)
+  while ((opt=getopt(argc,argv,"sd:hT:D:i:")) != -1)
   {
     switch (opt)
     {
@@ -272,6 +284,9 @@ int main(int argc, char *argv[])
       break;
     case 'T':
       initDeployDelayTime=strtol(optarg, NULL, 10);
+      break;
+    case 'i':
+      idleCheckInterval=strtol(optarg, NULL, 10);
       break;
     case 's':
       syslogOption=LOG_PERROR;
@@ -299,7 +314,15 @@ int main(int argc, char *argv[])
   gProc->AddSignalEvent(SIGINT, &sigint_handler, gProc);
 
   void *initDeployEvt=NULL;
+  void *checkIdleEvt=NULL;
   EventManager *events=gProc->event_manager();
+
+  DBG_print(LOG_NOTICE, "Scheduling idle check - %d seconds",
+            idleCheckInterval);
+  checkIdleEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
+                             EVT_ms2tv(idleCheckInterval*1000),
+                             checkCCardIdle,
+                             &i2cX);
 
   if (initDeployFlag)
   {

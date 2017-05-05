@@ -2,6 +2,12 @@
 #define __CCARD_DEFS_H__
 namespace IrvCS
 {
+/// If no operations in 5 minutes, switch to idle mode **/
+#define C_CARD_IDLE_THRESHOLD 5*60 
+
+/// how often to check for idle
+#define C_CARD_IDLE_CHECK_INTERVAL 60
+
 #define MSG_TYPE_OFFSET_BITS 16
 #define MSG_ID_OFFSET_BITS 0
 #define MSG_CMD_OFFSET_BITS 8
