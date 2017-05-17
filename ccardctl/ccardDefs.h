@@ -20,10 +20,12 @@ namespace IrvCS
 
 /**
  * Initial Deploy Delay in seconds.  How long to wait to initiate the initial deployment
- * sequence.  45 minutes default.  May be overridden using the DEBUG_DEPLOY_DELAY_FILE
+ * sequence.  30 minutes default.  Should deploy before antennae to avoid possible 
+ * antennae obstruction.
+ * May be overridden using the DEBUG_DEPLOY_DELAY_FILE
  * for testing
  **/
-#define INITIAL_DEPLOY_DELAY 45*60
+#define INITIAL_DEPLOY_DELAY 30*60
 
 /**
  * Deploy delay debug override flag.  For testing the following file should contain
