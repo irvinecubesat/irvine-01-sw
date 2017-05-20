@@ -182,7 +182,7 @@ namespace IrvCS
 
   int CCardI2CX::idleCheck()
   {
-    if ((time(NULL)-pwrTimestamp_) < C_CARD_IDLE_THRESHOLD)
+    if (!isPoweredOn_ || ((time(NULL)-pwrTimestamp_) < C_CARD_IDLE_THRESHOLD))
     {
       return 0;
     }
