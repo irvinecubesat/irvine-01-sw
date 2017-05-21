@@ -171,7 +171,7 @@ executeScenario()
     if [ -n "$res" ]; then
         
         # shellcheck disable=SC2116
-        newResArgs=$(echo eval \$res"${res}")
+        newResArgs=$(eval echo \$res"${res}")
         # only assign resArgs if newRegArgs is valid
         if [ -n "$newResArgs" ]; then
             resArgs=$newResArgs
