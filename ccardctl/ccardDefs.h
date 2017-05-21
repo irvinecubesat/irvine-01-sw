@@ -32,6 +32,11 @@ namespace IrvCS
  * the deploy delay in seconds.  Prior to launch this will be cleaned.
  **/
 #define DEBUG_DEPLOY_DELAY_FILE "/data/debug/deployDelay"
+
+/**
+ * Idle Mode disable - create this file if you don't want idle mode
+ **/
+#define IDLE_MODE_DISABLE_FILE "/data/debug/idleDisable"
   
 /**
  * Timeout for each release operation in seconds.

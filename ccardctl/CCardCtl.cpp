@@ -259,6 +259,7 @@ int main(int argc, char *argv[])
   // initial Deploy delay time in seconds
   int initDeployDelayTime=INITIAL_DEPLOY_DELAY; // 45 min default
   const char *deployDelayOverrideFile=DEBUG_DEPLOY_DELAY_FILE;
+  const char *idleDisableFile=IDLE_MODE_DISABLE_FILE;
   struct stat statBuf;
   bool initDeployFlag = false;
   int idleCheckInterval=C_CARD_IDLE_CHECK_INTERVAL;
@@ -317,12 +318,19 @@ int main(int argc, char *argv[])
   void *checkIdleEvt=NULL;
   EventManager *events=gProc->event_manager();
 
-  DBG_print(LOG_NOTICE, "Scheduling idle check - %d seconds",
-            idleCheckInterval);
-  checkIdleEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
-                             EVT_ms2tv(idleCheckInterval*1000),
-                             checkCCardIdle,
-                             &i2cX);
+  // look for deploy delay override setting
+  if (!stat(idleDisableFile, &statBuf))
+  {
+    DBG_print(LOG_NOTICE, "Idle mode disabled with %s", idleDisableFile);
+  } else
+  {
+    DBG_print(LOG_NOTICE, "Scheduling idle check - %d seconds",
+              idleCheckInterval);
+    checkIdleEvt=EVT_sched_add(PROC_evt(gProc->getProcessData()),
+                               EVT_ms2tv(idleCheckInterval*1000),
+                               checkCCardIdle,
+                               &i2cX);
+  }
 
   if (initDeployFlag)
   {
