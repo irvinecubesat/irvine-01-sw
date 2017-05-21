@@ -41,12 +41,12 @@ positionGroup=8
 
 usage()
 {
-    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) -r {Hi|Med|Lo|Min] -c (clear init flag)"
+    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) -r {Hi|Med|Lo|Min] -d {delay} -c (clear init flag)"
 }
 
 exitStatus=0
 
-O=$(getopt -- hin:pr:c "$@") || exit 1
+O=$(getopt -- hin:pr:cd: "$@") || exit 1
 eval set -- "$O"
 
 snapExe=${snapExe-"uvccapture"}
@@ -96,12 +96,15 @@ while true ; do
             ;;
         -n)
             numPics="$2"
-            resArgs=$resHi
             shift 2
             ;;
         -p)
             scenario="position"
             shift
+            ;;
+        -d)
+            delay="$2"
+            shift 2
             ;;
         -r)
             res="$2"
@@ -178,17 +181,21 @@ executeScenario()
     fi
 
     echo "$scenario">"$origScenarioFile"
-    i=0
-      while [ $i -lt $numPics ]; do
-          # we want word splitting here
-          # shellcheck disable=SC2086
-          "$snapExe" $stdArgs $resArgs $callSelfArg
-          if [ -n "$delay" ]; then
-              sleep $delay
-          fi
-          i=$((i+1))
-      done
 
+    if [ -n "$delay" ]; then
+        delayArg="-D$delay"
+    fi
+
+    if [ -n "$numPics" ]; then
+        numArg="-n$numPics"
+    fi
+    # we want word splitting here
+    # shellcheck disable=SC2086
+    "$snapExe" $stdArgs $resArgs $delayArg $numArg $callSelfArg
+    snapStatus=$?
+    if [ $snapStatus -ne 0 ]; then
+        log "[E] Status $? executing $snapExe"
+    fi
 }
 
 setPicIndex()
