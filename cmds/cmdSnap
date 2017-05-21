@@ -1,0 +1,275 @@
+#!/bin/sh
+#
+#  Take pictures in different scenarios
+#    - initial - Take pictures during initial deployment
+#    - picture - Take a sequence of picture
+#    - position - Take a picture and feed to star tracker
+#
+instdir=$(cd "$(dirname "$0")"; pwd)
+myProgram=$0
+. "${instdir}/log.sh"
+log_init "
+$0"
+
+logFile=${logFile-/tmp/snap.log}
+storageRoot=${storageRoot-/sdcard}
+
+#
+# download priorities by scenario
+#
+
+#
+# The following variables are dynamically referred to with 
+# the scenario variable
+#
+
+# shellcheck disable=SC2034
+picturePriority=100
+
+# shellcheck disable=SC2034
+initialPriority=90
+
+# shellcheck disable=SC2034
+positionPriority=80
+
+# shellcheck disable=SC2034
+pictureGroup=10
+# shellcheck disable=SC2034
+initialGroup=9
+# shellcheck disable=SC2034
+positionGroup=8
+
+usage()
+{
+    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) -r {Hi|Med|Lo|Min] -c (clear init flag)"
+}
+
+exitStatus=0
+
+O=$(getopt -- hin:pr:c "$@") || exit 1
+eval set -- "$O"
+
+snapExe=${snapExe-"uvccapture"}
+starTracker=${starTracker-"/usr/local/bin/solve-field.sh"}
+stdArgs="-M -j -A1"
+
+resMin="-x320 -y240"
+
+# shellcheck disable=SC2034
+resLo="-x640 -y480"
+resMed="-x1024 -y768"
+resHi="-x2048 -y1536"
+
+resArgs=$resStd
+
+callSelfArg="-c$myProgram"
+
+#
+# If no command line flags, we are calling ourself with the name
+# of the image (via uvccapture).
+#
+scenario="callself"
+numPics=1
+
+#
+# store the original scenario here when calling self
+#
+origScenarioFile="/tmp/origScenario"
+
+#
+# hold the index of the current picture
+#
+pictureIndexFile="/data/picIndex.dat"
+
+# only run initial scenario at deploy time
+initialDeployFlag="/data/snapInit.flag"
+
+while true ; do
+    case $1 in 
+        -h)
+            usage
+            exit 0
+            ;;
+        -i)
+            scenario="initial"
+            shift
+            ;;
+        -n)
+            numPics="$2"
+            resArgs=$resHi
+            shift 2
+            ;;
+        -p)
+            scenario="position"
+            shift
+            ;;
+        -r)
+            res="$2"
+            shift 2
+            ;;
+        -c)
+            log "[I] Clearing $initialDeployFlag"
+            rm -f "$initialDeployFlag"
+            exit 0;
+            shift
+            ;;
+        --)
+            shift
+            break;
+            ;;
+        *)
+            log "[E] unknown arg:  $arg"
+            exit 1
+            ;;
+    esac
+done
+
+#
+# if no arguments, take a picture
+#
+if [ -z "$1" ] && [ $scenario = "callself" ]; then
+    scenario="picture"
+fi
+
+#
+# Run image capture based on the scenario
+#
+executeScenario()
+{
+    if [ "$scenario" = "picture" ] && [ -n "$numPics" ]; then
+        pictureArg=" - Taking $numPics pictures"
+    fi
+    log "[I] Snapping $scenario $pictureArg"
+
+    case $scenario in 
+        "initial")
+            # only run initial scenario once
+            if [ -e "$initialDeployFlag" ]; then
+                return
+            fi
+            # take pictures with 1 second delay between
+            numPics=15
+            delay=1
+            resArgs=$resMed
+            ;;
+        "picture")
+            resArgs=$resMed
+            ;;
+        "position")
+            resArgs=$resMin
+            ;;
+        "*")
+            log "[E] Unknown scenario $scenario"
+            exit 1
+            ;;
+    esac
+
+    # allow overridding the default resolution
+    if [ -n "$res" ]; then
+        
+        # shellcheck disable=SC2116
+        newResArgs=$(echo eval \$res"${res}")
+        # only assign resArgs if newRegArgs is valid
+        if [ -n "$newResArgs" ]; then
+            resArgs=$newResArgs
+        else
+            log "[W] Invalid res:  $res.  Using preset resolutions"
+        fi
+    fi
+
+    echo "$scenario">"$origScenarioFile"
+    i=0
+      while [ $i -lt $numPics ]; do
+          # we want word splitting here
+          # shellcheck disable=SC2086
+          "$snapExe" $stdArgs $resArgs $callSelfArg
+          if [ -n "$delay" ]; then
+              sleep $delay
+          fi
+          i=$((i+1))
+      done
+
+}
+
+setPicIndex()
+{
+    if [ -e $pictureIndexFile ]; then
+        picIndex=$(cat $pictureIndexFile)
+    else
+        picIndex=0
+    fi
+    #
+    # increment the index and store it
+    #
+    picIndex=$((picIndex+1))
+    echo "$picIndex" > $pictureIndexFile
+}
+
+#
+# Clean up temporary files we created
+#
+cleanup()
+{
+    rm -f $origScenarioFile 
+}
+
+#
+# rename picture and then perform further processing if necessary
+#
+processPicture()
+{
+    picName=$1
+    origScenario=$(cat $origScenarioFile)
+    extension=${1##*.}
+    
+    if [ -z "$origScenario" ]; then
+        log "[E] No original scenario found"
+        return 1
+    fi
+
+    setPicIndex
+
+    #
+    # Generate image name with picture index, date and scenario
+    #
+    storedPictureName=$(printf "%04d-%s-%s.%s" "$picIndex" "$(date +%Y%m%d_%H%M%S)" "${origScenario}" "$extension")
+
+    storageDir="${storageRoot}/$origScenario";
+    mkdir -p "$storageDir"
+    storagePath="${storageDir}/$storedPictureName"
+    log "[I] Saving $storagePath"
+    mv "$picName" "$storagePath"
+    
+    # register for offload
+    group=$(eval echo \$"${origScenario}"Group)
+    priority=$(eval echo \$"${origScenario}"Priority)
+    dlq-add -g "$group"  -p "$priority" "$storagePath"
+    case $origScenario in
+        "position")
+            "${starTracker}" "${storagePath}"
+            ;;
+        "initial")
+            # create initialDeployFlag to prevent initial scenario
+            # from executing again
+            touch $initialDeployFlag
+            ;;
+    esac
+
+}
+
+if [ "$scenario" = "callself" ]; then
+    processPicture "$1"
+    exitStatus=$?
+    log "[I] Done processing picture"
+else
+    executeScenario
+    exitStatus=$?
+fi
+
+if [ $exitStatus -ne 0 ]; then
+  log "[E] Snap status $exitStatus"
+else 
+  log "$0 Snap success"
+fi
+
+exit "$exitStatus"
