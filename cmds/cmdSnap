@@ -14,14 +14,39 @@ $0"
 logFile=${logFile-/tmp/snap.log}
 storageRoot=${storageRoot-/sdcard}
 
+#
+# download priorities by scenario
+#
+
+#
+# The following variables are dynamically referred to with 
+# the scenario variable
+#
+
+# shellcheck disable=SC2034
+picturePriority=100
+
+# shellcheck disable=SC2034
+initialPriority=90
+
+# shellcheck disable=SC2034
+positionPriority=80
+
+# shellcheck disable=SC2034
+pictureGroup=10
+# shellcheck disable=SC2034
+initialGroup=9
+# shellcheck disable=SC2034
+positionGroup=8
+
 usage()
 {
-    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) ]"
+    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) -r {Hi|Med|Lo|Min] -c (clear init flag)"
 }
 
 exitStatus=0
 
-O=$(getopt -- hin:p "$@") || exit 1
+O=$(getopt -- hin:pr:c "$@") || exit 1
 eval set -- "$O"
 
 snapExe=${snapExe-"uvccapture"}
@@ -29,6 +54,8 @@ starTracker=${starTracker-"/usr/local/bin/solve-field.sh"}
 stdArgs="-M -j -A1"
 
 resMin="-x320 -y240"
+
+# shellcheck disable=SC2034
 resLo="-x640 -y480"
 resMed="-x1024 -y768"
 resHi="-x2048 -y1536"
@@ -54,6 +81,9 @@ origScenarioFile="/tmp/origScenario"
 #
 pictureIndexFile="/data/picIndex.dat"
 
+# only run initial scenario at deploy time
+initialDeployFlag="/data/snapInit.flag"
+
 while true ; do
     case $1 in 
         -h)
@@ -71,6 +101,16 @@ while true ; do
             ;;
         -p)
             scenario="position"
+            shift
+            ;;
+        -r)
+            res="$2"
+            shift 2
+            ;;
+        -c)
+            log "[I] Clearing $initialDeployFlag"
+            rm -f "$initialDeployFlag"
+            exit 0;
             shift
             ;;
         --)
@@ -103,13 +143,17 @@ executeScenario()
 
     case $scenario in 
         "initial")
+            # only run initial scenario once
+            if [ -e "$initialDeployFlag" ]; then
+                return
+            fi
             # take pictures with 1 second delay between
             numPics=15
             delay=1
-            resArgs=$resHi
+            resArgs=$resMed
             ;;
         "picture")
-            resArgs=$resHi
+            resArgs=$resMed
             ;;
         "position")
             resArgs=$resMin
@@ -120,17 +164,25 @@ executeScenario()
             ;;
     esac
 
-    if [ -n "$numPics" ]; then
-        numPicsArg="-n$numPics"
+    # allow overridding the default resolution
+    if [ -n "$res" ]; then
+        
+        # shellcheck disable=SC2116
+        newResArgs=$(echo eval \$res"${res}")
+        # only assign resArgs if newRegArgs is valid
+        if [ -n "$newResArgs" ]; then
+            resArgs=$newResArgs
+        else
+            log "[W] Invalid res:  $res.  Using preset resolutions"
+        fi
     fi
 
-    if [ -n "$delay" ]; then
-        delayArg="-D$delay"
-    fi
     echo "$scenario">"$origScenarioFile"
     i=0
       while [ $i -lt $numPics ]; do
-          $snapExe $stdArgs $resArgs $callSelfArg
+          # we want word splitting here
+          # shellcheck disable=SC2086
+          "$snapExe" $stdArgs $resArgs $callSelfArg
           if [ -n "$delay" ]; then
               sleep $delay
           fi
@@ -180,21 +232,33 @@ processPicture()
     #
     # Generate image name with picture index, date and scenario
     #
-    storedPictureName=$(printf "%04d-%s-%s.%s" $picIndex $(date +%Y%m%d_%H%M%S) ${origScenario} $extension)
+    storedPictureName=$(printf "%04d-%s-%s.%s" "$picIndex" "$(date +%Y%m%d_%H%M%S)" "${origScenario}" "$extension")
 
     storageDir="${storageRoot}/$origScenario";
-    mkdir -p $storageDir
+    mkdir -p "$storageDir"
     storagePath="${storageDir}/$storedPictureName"
     log "[I] Saving $storagePath"
     mv "$picName" "$storagePath"
     
-    if [ "$origScenario" = "position" ]; then
-        ${starTracker} ${storagePath}
-    fi
+    # register for offload
+    group=$(eval echo \$"${origScenario}"Group)
+    priority=$(eval echo \$"${origScenario}"Priority)
+    dlq-add -g "$group"  -p "$priority" "$storagePath"
+    case $origScenario in
+        "position")
+            "${starTracker}" "${storagePath}"
+            ;;
+        "initial")
+            # create initialDeployFlag to prevent initial scenario
+            # from executing again
+            touch $initialDeployFlag
+            ;;
+    esac
+
 }
 
 if [ "$scenario" = "callself" ]; then
-    processPicture $1
+    processPicture "$1"
     exitStatus=$?
     log "[I] Done processing picture"
 else
