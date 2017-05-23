@@ -153,10 +153,10 @@ executeScenario()
             # take pictures with 1 second delay between
             numPics=15
             delay=1
-            resArgs=$resMed
+            resArgs=$resLo
             ;;
         "picture")
-            resArgs=$resMed
+            resArgs=$resLo
             ;;
         "position")
             resArgs=$resMin
