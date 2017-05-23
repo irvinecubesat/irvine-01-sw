@@ -18,6 +18,7 @@ ENDIF (PROJECT_COMPILE)
 INSTALL(TARGETS adcs-sensors DESTINATION bin COMPONENT binaries)
 INSTALL(TARGETS adcs-sensors-util DESTINATION bin COMPONENT binaries)
 INSTALL(FILES adcs-sensors.cmd.cfg DESTINATION /etc/ COMPONENT config)
+INSTALL(FILES adcs-sensors-telemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
 #
 # Create symlinks for adcs-sensors-* utilities and install them
 #
