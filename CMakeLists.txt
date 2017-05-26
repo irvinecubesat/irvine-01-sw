@@ -61,7 +61,7 @@ else (WITH_BUILDROOT)
 
                  # i2ctest package
   ExternalProject_Add(i2c-tools
-                   GIT_REPOSITORY https://github.com/groeck/i2c-tools.git
+                   GIT_REPOSITORY https://github.com/Distrotech/i2c-tools
                    GIT_TAG V3-1-0
                    PREFIX ${CMAKE_BINARY_DIR}
                    CONFIGURE_COMMAND ""
