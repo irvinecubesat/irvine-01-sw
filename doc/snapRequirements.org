@@ -1,0 +1,20 @@
+* Capture an image
+  - Run uvccapture to acquire an image
+    uvccapture -x640 -y480 -M -j -A1 -n3 -D1
+* Storage
+  - Persistent storage
+    - sequence number
+    - timestamp 
+    - Scenario
+* Scenarios
+  - initial deploy
+    - take a sequence of images right after deployment
+    - detect initial deploy condition
+  - periodic pictures
+    - take a picture 
+  - star tracker (positioning)
+* Transfer/Storage/Archiving
+  - arsftp - queue files for transfer
+  - Ground station transfer & manage image files
+
+
