@@ -173,6 +173,12 @@ fi
 #
 executeScenario()
 {
+    # allow for manual disabling of particular scenarios
+    if [ -e "$storageRoot/snap.disable.${scenario}" ]; then
+        log "[I] $scenaro Disabled"
+        return
+    fi
+
     if [ "$scenario" = "picture" ] && [ -n "$numPics" ]; then
         pictureArg=" - Taking $numPics pictures"
     fi
