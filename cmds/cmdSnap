@@ -128,14 +128,19 @@ setPicIndex()
     echo "$picIndex" > $pictureIndexFile
 }
 
+origScenarioFile="/tmp/origScenario"
+updateScenarioFile()
+{
+    echo "$scenario">"$origScenarioFile"
+}
 #
 # store the original scenario here when calling self
 #
-getPicIndex
-origScenarioFile="/tmp/origScenario-$picIndex"
 
 # only run initial scenario at deploy time
 initialDeployFlag="/data/snapInit.flag"
+
+dsaDeployFlag="/critical_state/ccardctl_initialDeploy"
 
 while true ; do
     case $1 in 
@@ -200,7 +205,7 @@ executeScenario()
 {
     # allow for manual disabling of particular scenarios
     if [ -e "$storageRoot/snap.disable.${scenario}" ]; then
-        log "[I] $scenaro Disabled"
+        log "[I] $scenario Disabled"
         return
     fi
 
@@ -226,8 +231,8 @@ executeScenario()
         "position")
             # wait for ccard to be deployed before computing position
             # to save battery.
-            if [ ! -e "$initialDeployFlag" ]; then
-                log "[I] Waiting for deployment"
+            if [ ! -e "$dsaDeployFlag" ]; then
+                log "[I] Waiting for DSA initial deployment"
                 exit 0
             fi
             resArgs=$resMin
@@ -251,8 +256,6 @@ executeScenario()
         fi
     fi
 
-    echo "$scenario">"$origScenarioFile"
-
     if [ -n "$delay" ]; then
         delayArg="-D$delay"
     fi
@@ -268,6 +271,9 @@ executeScenario()
         if [ $retryCount -gt $maxRetries ]; then
             break;
         fi
+
+        updateScenarioFile
+
         # we want word splitting here
         # shellcheck disable=SC2086
         "$snapExe" $stdArgs $resArgs $delayArg $numArg $callSelfArg
