@@ -224,6 +224,12 @@ executeScenario()
             resArgs=$resLo
             ;;
         "position")
+            # wait for ccard to be deployed before computing position
+            # to save battery.
+            if [ ! -e "$initialDeployFlag" ]; then
+                log "[I] Waiting for deployment"
+                exit 0
+            fi
             resArgs=$resMin
             ;;
         "*")
@@ -317,7 +323,7 @@ computeCoordinates()
     if kill -0 "$killerPid"; then kill "$killerPid"; fi
 
     if [ $starTrackerStatus -ne 0 ]; then
-        log "[E] Non-zero status executing solve-field"
+        log "[E] Status $starTrackerStatus executing solve-field"
     fi
     if [ -e "${rootName}.solved" ]; then
         if [ ! -e "$adcsCoordinateDb" ]; then
@@ -346,7 +352,7 @@ processPicture()
     extension=${1##*.}
     
     if [ -z "$origScenario" ]; then
-        log "[E] No original scenario found"
+        log "[E] No original scenario found in $origScenarioFile"
         return 1
     fi
 
@@ -399,8 +405,6 @@ fi
 
 if [ $exitStatus -ne 0 ]; then
   log "[E] Snap status $exitStatus"
-else 
-  log "$0 Snap success"
 fi
 
 exit "$exitStatus"
