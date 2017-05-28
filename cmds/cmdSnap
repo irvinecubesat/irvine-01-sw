@@ -358,8 +358,9 @@ processPicture()
     extension=${1##*.}
     
     if [ -z "$origScenario" ]; then
-        log "[E] No original scenario found in $origScenarioFile"
-        return 1
+        log "[W] No original scenario found in $origScenarioFile"
+        # assume picture
+        origScenario="picture"
     fi
 
     setPicIndex
