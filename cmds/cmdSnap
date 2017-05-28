@@ -105,14 +105,34 @@ scenario="callself"
 numPics=1
 
 #
-# store the original scenario here when calling self
-#
-origScenarioFile="/tmp/origScenario"
-
-#
 # hold the index of the current picture
 #
 pictureIndexFile="/data/picIndex.dat"
+
+getPicIndex()
+{
+    if [ -e $pictureIndexFile ]; then
+        picIndex=$(cat $pictureIndexFile)
+    else
+        picIndex=0
+    fi
+}
+
+setPicIndex()
+{
+    getPicIndex
+    #
+    # increment the index and store it
+    #
+    picIndex=$((picIndex+1))
+    echo "$picIndex" > $pictureIndexFile
+}
+
+#
+# store the original scenario here when calling self
+#
+getPicIndex
+origScenarioFile="/tmp/origScenario-$picIndex"
 
 # only run initial scenario at deploy time
 initialDeployFlag="/data/snapInit.flag"
@@ -256,20 +276,6 @@ executeScenario()
         sleepTime=$((sleepTime*2))
         retryCount=$((retryCount+1))
     done
-}
-
-setPicIndex()
-{
-    if [ -e $pictureIndexFile ]; then
-        picIndex=$(cat $pictureIndexFile)
-    else
-        picIndex=0
-    fi
-    #
-    # increment the index and store it
-    #
-    picIndex=$((picIndex+1))
-    echo "$picIndex" > $pictureIndexFile
 }
 
 #
