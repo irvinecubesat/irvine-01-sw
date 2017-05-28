@@ -16,6 +16,7 @@
 ** 00.07.05
    - Day in the Life (DITL) testing from reset_satellite.sh to DSA Deploy to 
      Antennae release testing passed!
+   - Add wcsinfo to process star tracker results
 ** 00.07.00
    - Add Idle Mode support - Turn off 5V PL Pwr if not being used within idle time threshold
    - Gpio class support for label, ostream output 
