@@ -7,12 +7,25 @@
 #
 instdir=$(cd "$(dirname "$0")"; pwd)
 myProgram=$0
+
+#
+# Suppress stdout
+#
+export logNoStdOut=1
 . "${instdir}/log.sh"
-log_init "
-$0"
+log_init "$0"
+    
 
 logFile=${logFile-/tmp/snap.log}
 storageRoot=${storageRoot-/sdcard}
+backupRoot=${backupRoot-/data}
+
+if [ ! -w "$storageRoot" ]; then
+    log "[I] Using backup storage at $backupRoot"
+    storageRoot="$backupRoot"
+fi
+
+adcsCoordinateDb=/data/adcs.dat
 
 #
 # download priorities by scenario
@@ -23,15 +36,21 @@ storageRoot=${storageRoot-/sdcard}
 # the scenario variable
 #
 
+adcsCoordinatePriority=1
+
+#
+# Set the priority of each scenario smaller is higher
+#
 # shellcheck disable=SC2034
 picturePriority=100
-
 # shellcheck disable=SC2034
 initialPriority=90
-
 # shellcheck disable=SC2034
 positionPriority=80
 
+#
+# Set the Group for each scenario
+#
 # shellcheck disable=SC2034
 pictureGroup=10
 # shellcheck disable=SC2034
@@ -39,25 +58,39 @@ initialGroup=9
 # shellcheck disable=SC2034
 positionGroup=8
 
+#
+# Indicate whether or not to automatically queue the image
+# for each scenario
+#
+# shellcheck disable=SC2034
+positionQueueImage="no"
+# shellcheck disable=SC2034
+initialQueueImage="yes"
+# shellcheck disable=SC2034
+pictureQueueImage="yes"
+
+
 usage()
 {
-    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) -r {Hi|Med|Lo|Min] -d {delay} -c (clear init flag)"
+    echo "Snap [-i (initial) | -n {n} (n pics)| -p (position) -r {Hi|Med|Lo|Min] -d {delay} -c (clear init flag) -C {starImg}"
 }
 
 exitStatus=0
 
-O=$(getopt -- hin:pr:cd: "$@") || exit 1
+O=$(getopt -- hin:pr:cd:C: "$@") || exit 1
 eval set -- "$O"
 
 snapExe=${snapExe-"uvccapture"}
-starTracker=${starTracker-"/usr/local/bin/solve-field.sh"}
+starTracker=${starTracker-"/usr/local/bin/solve-field --config /usr/local/astrometry/etc/astrometry.cfg --no-fits2fits --no-verify --no-plots"}
 stdArgs="-M -j -A1"
 
 resMin="-x320 -y240"
 
 # shellcheck disable=SC2034
 resLo="-x640 -y480"
+# shellcheck disable=SC2034
 resMed="-x1024 -y768"
+# shellcheck disable=SC2034
 resHi="-x2048 -y1536"
 
 resArgs=$resStd
@@ -72,17 +105,42 @@ scenario="callself"
 numPics=1
 
 #
-# store the original scenario here when calling self
-#
-origScenarioFile="/tmp/origScenario"
-
-#
 # hold the index of the current picture
 #
 pictureIndexFile="/data/picIndex.dat"
 
+getPicIndex()
+{
+    if [ -e $pictureIndexFile ]; then
+        picIndex=$(cat $pictureIndexFile)
+    else
+        picIndex=0
+    fi
+}
+
+setPicIndex()
+{
+    getPicIndex
+    #
+    # increment the index and store it
+    #
+    picIndex=$((picIndex+1))
+    echo "$picIndex" > $pictureIndexFile
+}
+
+origScenarioFile="/tmp/origScenario"
+updateScenarioFile()
+{
+    echo "$scenario">"$origScenarioFile"
+}
+#
+# store the original scenario here when calling self
+#
+
 # only run initial scenario at deploy time
 initialDeployFlag="/data/snapInit.flag"
+
+dsaDeployFlag="/critical_state/ccardctl_initialDeploy"
 
 while true ; do
     case $1 in 
@@ -116,6 +174,12 @@ while true ; do
             exit 0;
             shift
             ;;
+        -C)
+            # compute coordinates with the image file provided on command line
+            scenario="computeCoordinates"
+            starImg=$2
+            shift 2
+            ;;
         --)
             shift
             break;
@@ -139,6 +203,12 @@ fi
 #
 executeScenario()
 {
+    # allow for manual disabling of particular scenarios
+    if [ -e "$storageRoot/snap.disable.${scenario}" ]; then
+        log "[I] $scenario Disabled"
+        return
+    fi
+
     if [ "$scenario" = "picture" ] && [ -n "$numPics" ]; then
         pictureArg=" - Taking $numPics pictures"
     fi
@@ -153,12 +223,18 @@ executeScenario()
             # take pictures with 1 second delay between
             numPics=15
             delay=1
-            resArgs=$resMed
+            resArgs=$resLo
             ;;
         "picture")
-            resArgs=$resMed
+            resArgs=$resLo
             ;;
         "position")
+            # wait for ccard to be deployed before computing position
+            # to save battery.
+            if [ ! -e "$dsaDeployFlag" ]; then
+                log "[I] Waiting for DSA initial deployment"
+                exit 0
+            fi
             resArgs=$resMin
             ;;
         "*")
@@ -180,8 +256,6 @@ executeScenario()
         fi
     fi
 
-    echo "$scenario">"$origScenarioFile"
-
     if [ -n "$delay" ]; then
         delayArg="-D$delay"
     fi
@@ -189,27 +263,31 @@ executeScenario()
     if [ -n "$numPics" ]; then
         numArg="-n$numPics"
     fi
-    # we want word splitting here
-    # shellcheck disable=SC2086
-    "$snapExe" $stdArgs $resArgs $delayArg $numArg $callSelfArg
-    snapStatus=$?
-    if [ $snapStatus -ne 0 ]; then
-        log "[E] Status $? executing $snapExe"
-    fi
-}
 
-setPicIndex()
-{
-    if [ -e $pictureIndexFile ]; then
-        picIndex=$(cat $pictureIndexFile)
-    else
-        picIndex=0
-    fi
-    #
-    # increment the index and store it
-    #
-    picIndex=$((picIndex+1))
-    echo "$picIndex" > $pictureIndexFile
+    maxRetries=7;
+    sleepTime=1;
+    retryCount=0
+    while true; do
+        if [ $retryCount -gt $maxRetries ]; then
+            break;
+        fi
+
+        updateScenarioFile
+
+        # we want word splitting here
+        # shellcheck disable=SC2086
+        "$snapExe" $stdArgs $resArgs $delayArg $numArg $callSelfArg
+        snapStatus=$?
+        if [ $snapStatus -eq 0 ]; then
+            break;
+        else
+            log "[E] Status $? executing $snapExe"
+        fi
+        sleep $sleepTime;
+        # exponential backoff
+        sleepTime=$((sleepTime*2))
+        retryCount=$((retryCount+1))
+    done
 }
 
 #
@@ -221,6 +299,56 @@ cleanup()
 }
 
 #
+# Determine the celestial coordinates where we are
+#
+computeCoordinates()
+{
+    imagePath="$1"
+    #
+    # Run star tracker.
+    #
+    imageName=$(basename "$imagePath")
+    rootName="${imagePath%.*}"
+    baseName=$(basename "$rootName")
+
+    # Ensure that we can execute python and other utilities
+    export PATH="$PATH:/usr/local/bin"
+    #
+    # cpulimit doesn't work in astrometry, so use shell job management commands
+    # instead.
+    #
+    ${starTracker} "$imagePath" &
+    starTrackerPid=$!
+
+    ( sleep 180; if kill -0 "${starTrackerPid}"; then kill "$starTrackerPid"; killall astrometry-engine; fi)&
+    killerPid=$!
+    
+    wait "$starTrackerPid"
+    starTrackerStatus=$?
+
+    if kill -0 "$killerPid"; then kill "$killerPid"; fi
+
+    if [ $starTrackerStatus -ne 0 ]; then
+        log "[E] Status $starTrackerStatus executing solve-field"
+    fi
+    if [ -e "${rootName}.solved" ]; then
+        if [ ! -e "$adcsCoordinateDb" ]; then
+            echo "#timestamp imgFile ra dec orientation fieldw fieldh">$adcsCoordinateDb
+            dlq-add -g "$positionGroup"  -p "$adcsCoordinatePriority" "$adcsCoordinateDb"
+        fi
+        # extract coordinates and save the image, otherwise discard
+        dlq-add -g "$positionGroup"  -p "$positionPriority" "$imagePath"
+        wcsFile="${rootName}.wcs"
+        # shellcheck disable=SC2046
+        eval $(wcsinfo "$wcsFile"|awk '/ra_center |dec_center |orientation |fieldw |fieldh /{printf "%s=%f ",$1,$2}') 
+        echo "$timestamp $imageName $ra_center $dec_center $orientation $fieldw $fieldh" >> $adcsCoordinateDb
+        # shellcheck disable=SC2046
+        find $(dirname "$imagePath") -name "${baseName}*" ! -name "$imageName" -type f -exec rm -f {} +  
+    elif [ -n "$rootName" ]; then
+        rm "${rootName}"*
+    fi
+}
+#
 # rename picture and then perform further processing if necessary
 #
 processPicture()
@@ -230,8 +358,9 @@ processPicture()
     extension=${1##*.}
     
     if [ -z "$origScenario" ]; then
-        log "[E] No original scenario found"
-        return 1
+        log "[W] No original scenario found in $origScenarioFile"
+        # assume picture
+        origScenario="picture"
     fi
 
     setPicIndex
@@ -239,7 +368,8 @@ processPicture()
     #
     # Generate image name with picture index, date and scenario
     #
-    storedPictureName=$(printf "%04d-%s-%s.%s" "$picIndex" "$(date +%Y%m%d_%H%M%S)" "${origScenario}" "$extension")
+    timestamp="$(date +%Y%m%d_%H%M%S)"
+    storedPictureName=$(printf "%04d-%s-%s.%s" "$picIndex" "$timestamp" "${origScenario}" "$extension")
 
     storageDir="${storageRoot}/$origScenario";
     mkdir -p "$storageDir"
@@ -250,10 +380,13 @@ processPicture()
     # register for offload
     group=$(eval echo \$"${origScenario}"Group)
     priority=$(eval echo \$"${origScenario}"Priority)
-    dlq-add -g "$group"  -p "$priority" "$storagePath"
+    queueImage=$(eval echo \$"${origScenario}"QueueImage)
+    if [ "$queueImage" = "yes" ]; then
+        dlq-add -g "$group"  -p "$priority" "$storagePath"
+    fi
     case $origScenario in
         "position")
-            "${starTracker}" "${storagePath}"
+            computeCoordinates "$storagePath"
             ;;
         "initial")
             # create initialDeployFlag to prevent initial scenario
@@ -268,6 +401,10 @@ if [ "$scenario" = "callself" ]; then
     processPicture "$1"
     exitStatus=$?
     log "[I] Done processing picture"
+elif [ "$scenario" = "computeCoordinates" ]; then
+    timestamp="$(date +%Y%m%d_%H%M%S -r "$starImg")"
+    computeCoordinates "$starImg"
+    exitStatus=$?
 else
     executeScenario
     exitStatus=$?
@@ -275,8 +412,6 @@ fi
 
 if [ $exitStatus -ne 0 ]; then
   log "[E] Snap status $exitStatus"
-else 
-  log "$0 Snap success"
 fi
 
 exit "$exitStatus"

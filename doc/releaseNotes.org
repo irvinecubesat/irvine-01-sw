@@ -1,4 +1,22 @@
 * Release Notes for Irvine-01 Flight Software
+** 00.07.06
+   - Automated image capture support
+     - cmdSnap script for image capture
+     - Periodic and remote star tracker execution (position scenario)
+     - Run position computation every 11 min with min res images
+     - Capture low resolution pictures every 15 min
+     - Capture 15 consecutive images each delayed one second at initial startup.
+     - Use /data if /sdcard does not exist
+     - Run the star tracker on any existing image
+     - Ability to disable scenarios using /sdcard/snap.disable.{scenario}
+   - /var/log/cmds.log is now log rotated
+   - Telemetry collection
+     - adcs-sensor telemetry
+     - DSA deployment status telemetry
+** 00.07.05
+   - Day in the Life (DITL) testing from reset_satellite.sh to DSA Deploy to 
+     Antennae release testing passed!
+   - Add wcsinfo to process star tracker results
 ** 00.07.00
    - Add Idle Mode support - Turn off 5V PL Pwr if not being used within idle time threshold
    - Gpio class support for label, ostream output 

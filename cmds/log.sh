@@ -35,7 +35,7 @@ log()
 {
     if [ "${1%%]*}" = "[E" ]; then
         ( >&2 echo $* )      # echo to stderr
-    else
+    elif [ -z "$logNoStdOut" ]; then
         echo $*              # echo anything else to stdout
     fi
     # add a date stamp to the output going to log file

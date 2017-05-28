@@ -152,6 +152,11 @@ namespace IrvCS
      * us to power off when idle to save energy
      **/
     time_t pwrTimestamp_;
+    
+    /**
+     * If C-Card is powered on.
+     **/
+    bool isPoweredOn_;
   };
 }
 

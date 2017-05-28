@@ -29,7 +29,8 @@ namespace IrvCS
    **/
   static Mutex gI2cAccessMutex;
   
-  CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(true)
+  CCardI2CX::CCardI2CX():addr_(0x38), initialized_(false), enableTimer_(false),
+                         isPoweredOn_(false)
   {
     int gpioInitStatus=initGpios();
 
@@ -114,26 +115,22 @@ namespace IrvCS
 
     pwrTimestamp_=time(NULL);
 
-    if (pl5VGpio_.get() > 0)
+    if (isPoweredOn_)
     {
       // Already on.
       syslog(LOG_DEBUG, "5V PL Pwr Access");
       return 0;
     }
-    syslog(LOG_INFO, "5V PL Pwr On");
+
+    syslog(LOG_INFO, "Powering on C-Card");
     //
     // power on 5V payload for C-Card
     //
     if (0 != setPayloadPower(pl5VGpio_, 1))
     {
-      powerStatus--;
+      return --powerStatus;
     }
-
-    // PL 3V Pwr only turned on during DSA ops
-    if (0 != setPayloadPower(pl3VGpio_, 0))
-    {
-      powerStatus--;
-    }
+    isPoweredOn_=true;
 
     const char *i2cbus="/dev/i2c-1"; 
 
@@ -145,7 +142,7 @@ namespace IrvCS
     {
       syslog(LOG_ERR, "Unable to open i2c device %s:  %s (%d)",
                 i2cbus, strerror(errno), errno);
-      return ++powerStatus;
+      return --powerStatus;
     }
       
     if (ioctl(i2cdev_, I2C_SLAVE, addr_) < 0)
@@ -185,7 +182,7 @@ namespace IrvCS
 
   int CCardI2CX::idleCheck()
   {
-    if (pwrTimestamp_ < C_CARD_IDLE_THRESHOLD)
+    if (!isPoweredOn_ || ((time(NULL)-pwrTimestamp_) < C_CARD_IDLE_THRESHOLD))
     {
       return 0;
     }
@@ -194,6 +191,9 @@ namespace IrvCS
     {
       return -1;
     }
+    isPoweredOn_=false;
+
+    return 0;
   }
 
   /**
