@@ -14,7 +14,7 @@ outputState()
     echo "$1=$(getGpio "$2")"
 }
 
-outputState "D1-R" 58
-outputState "D1-D" 59
-outputState "D2-R" 60
-outputState "D2-D" 80
+outputState "dsa1_release" 58
+outputState "dsa1_deploy" 59
+outputState "dsa2_release" 60
+outputState "dsa2_deploy" 80
