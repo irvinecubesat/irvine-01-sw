@@ -7,6 +7,11 @@
 #
 instdir=$(cd "$(dirname "$0")"; pwd)
 myProgram=$0
+
+#
+# Suppress stdout
+#
+export logNoStdOut=1
 . "${instdir}/log.sh"
 log_init "$0"
     
@@ -288,6 +293,8 @@ computeCoordinates()
     rootName="${imagePath%.*}"
     baseName=$(basename "$rootName")
 
+    # Ensure that we can execute python and other utilities
+    export PATH="$PATH:/usr/local/bin"
     #
     # cpulimit doesn't work in astrometry, so use shell job management commands
     # instead.
@@ -299,10 +306,11 @@ computeCoordinates()
     killerPid=$!
     
     wait "$starTrackerPid"
+    starTrackerStatus=$?
 
     if kill -0 "$killerPid"; then kill "$killerPid"; fi
 
-    if [ $? -ne 0 ]; then
+    if [ $starTrackerStatus -ne 0 ]; then
         log "[E] Non-zero status executing solve-field"
     fi
     if [ -e "${rootName}.solved" ]; then
