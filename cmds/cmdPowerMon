@@ -1,0 +1,125 @@
+#!/bin/sh
+#
+# Power Monitor.  Check and control the power mode
+#
+export logNoStdOut=1
+instdir=$(cd "$(dirname "$0")"; pwd)
+. "${instdir}/log.sh"
+log_init "$0"
+    
+lowPowerModeFlag="/data/lowPowerMode.flag"
+powerCfg="/data/power.cfg"
+
+logFile=${logFile-/tmp/snap.log}
+
+usage()
+{
+    echo "PowerMon [ -m {mode (low|normal|check)} -L {low power threshold} -N {resume normal threshold} -R (reset power config to defaults)] No arg provides telemetry data"
+}
+
+O=$(getopt -- hm:L:N:R "$@") || exit 1
+eval set -- "$O"
+
+setConfig()
+{
+    variable=$1
+    value=$2
+ 
+    log "[I] Setting $variable to $value"
+    echo "${variable}=${value}">>"$powerCfg"
+}
+
+while true ; do
+    case $1 in 
+        -h)
+            usage
+            exit 0
+            ;;
+        -m)
+            mode="$2"
+            shift 2
+            ;;
+        -L)
+            setConfig lowPowerThreshold "$2"
+            exit 0
+            shift 2
+            ;;
+        -N)
+            setConfig resumeNormalThreshold "$2"
+            shift 2
+            exit 0
+            ;;
+        -R)
+            log "[I] Resetting power config to defaults"
+            rm -f "$powerCfg"
+            exit 0
+            ;;
+        --)
+            shift
+            break;
+            ;;
+        *)
+            log "[E] unknown arg:  $arg"
+            exit 1
+            ;;
+    esac
+done
+
+if [ -z "$mode" ] && [ -z "$1" ]; then
+   if [ -e "$lowPowerModeFlag" ]; then
+       powerMode="1"
+   else
+       powerMode="0"
+   fi
+   echo "pwr_mode=$powerMode"
+   exit 0
+fi
+
+resumeNormal()
+{
+    log "[I] Resuming normal power level operations"
+    rm -f "$lowPowerModeFlag"
+}
+
+lowPowerMode()
+{
+    log "[I] Switching into Low Power Mode"
+    touch "$lowPowerModeFlag"
+}
+#
+# Check power status
+#
+checkPowerStatus()
+{
+    if [ -e "$powerCfg" ]; then
+        . $powerCfg
+    fi
+    # value in sensor measurement units (conversion is 2^16)
+    #3.814V
+    lowPowerThreshold=${lowPowerThreshold-249954}
+    #3.914V
+    resumeNormalThreshold=${resumeNormalThreshold-256507}
+
+    systemVoltage=$(telemetry|awk -F= '/atmelPwr_volt/ {print $2}'  ) >/dev/null 2>&1
+
+    if [ -e "$lowPowerModeFlag" ]; then
+        if [ "$systemVoltage" -ge "$resumeNormalThreshold" ]; then
+            resumeNormal
+        fi
+    elif [ "$systemVoltage" -lt "$lowPowerThreshold" ]; then
+        lowPowerMode
+    fi
+}
+
+case $mode in
+    low)
+        lowPowerMode
+        ;;
+    normal)
+        resumeNormal
+        ;;
+    check)
+        checkPowerStatus
+esac
+
+exit 0

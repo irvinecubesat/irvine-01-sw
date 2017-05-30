@@ -111,8 +111,8 @@ namespace IrvCS
     /**
      * Check to see if there is any activity within a time interval.  
      * Switch to lower power mode if no activity.
-     * @return 0 if not idle
-     * @return 1 if system is idle
+     * @return 0 if no change in state
+     * @return 1 if system has switched to idle mode
      * @return -1 error encountered
      **/
     int idleCheck();

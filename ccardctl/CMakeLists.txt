@@ -14,6 +14,7 @@ INSTALL(TARGETS ccardctl DESTINATION bin COMPONENT binaries)
 INSTALL(TARGETS ccardcmd DESTINATION bin COMPONENT binaries)
 INSTALL(FILES ccardctl.cmd.cfg DESTINATION /etc/ COMPONENT config) 
 INSTALL(FILES ccardTelemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
+INSTALL(FILES powerMonTelemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
 
 IF (PROJECT_COMPILE)
 add_subdirectory(test)
