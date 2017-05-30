@@ -8,6 +8,9 @@
 instdir=$(cd "$(dirname "$0")"; pwd)
 myProgram=$0
 
+# Ensure that we can execute python and other utilities
+export PATH="$PATH:/usr/local/bin"
+
 #
 # Suppress stdout
 #
@@ -15,6 +18,7 @@ export logNoStdOut=1
 . "${instdir}/log.sh"
 log_init "$0"
     
+lowPowerModeFlag="/data/lowPowerMode.flag"
 
 logFile=${logFile-/tmp/snap.log}
 storageRoot=${storageRoot-/sdcard}
@@ -83,6 +87,8 @@ eval set -- "$O"
 snapExe=${snapExe-"uvccapture"}
 starTracker=${starTracker-"/usr/local/bin/solve-field --config /usr/local/astrometry/etc/astrometry.cfg --no-fits2fits --no-verify --no-plots"}
 stdArgs="-M -j -A1"
+
+thumbnailSize=80
 
 resMin="-x320 -y240"
 
@@ -208,6 +214,10 @@ executeScenario()
         log "[I] $scenario Disabled"
         return
     fi
+    if [ -e "$lowPowerModeFlag" ]; then
+        log "[I] Low Power Mode.  Doing nothing"
+        return
+    fi
 
     if [ "$scenario" = "picture" ] && [ -n "$numPics" ]; then
         pictureArg=" - Taking $numPics pictures"
@@ -311,8 +321,6 @@ computeCoordinates()
     rootName="${imagePath%.*}"
     baseName=$(basename "$rootName")
 
-    # Ensure that we can execute python and other utilities
-    export PATH="$PATH:/usr/local/bin"
     #
     # cpulimit doesn't work in astrometry, so use shell job management commands
     # instead.
@@ -374,15 +382,16 @@ processPicture()
     storageDir="${storageRoot}/$origScenario";
     mkdir -p "$storageDir"
     storagePath="${storageDir}/$storedPictureName"
+    thumbnailPath="${storageDir}/thumbnail.${storedPictureName}"
     log "[I] Saving $storagePath"
     mv "$picName" "$storagePath"
-    
+    convert "$storagePath" -thumbnail "$thumbnailSize" "$thumbnailPath"
     # register for offload
     group=$(eval echo \$"${origScenario}"Group)
     priority=$(eval echo \$"${origScenario}"Priority)
     queueImage=$(eval echo \$"${origScenario}"QueueImage)
     if [ "$queueImage" = "yes" ]; then
-        dlq-add -g "$group"  -p "$priority" "$storagePath"
+        dlq-add -g "$group"  -p "$priority" "$thumbnailPath"
     fi
     case $origScenario in
         "position")
