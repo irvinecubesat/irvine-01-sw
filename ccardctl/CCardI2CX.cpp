@@ -193,7 +193,7 @@ namespace IrvCS
     }
     isPoweredOn_=false;
 
-    return 0;
+    return 1;
   }
 
   /**

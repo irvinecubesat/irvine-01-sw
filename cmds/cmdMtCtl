@@ -1,0 +1,159 @@
+#!/bin/sh
+#
+# Control the Magnetorquers
+#
+# In irvine-01, we are familiarizing ourselves with the effect of 
+# Magnetorquers on the spacecraft.  For detumbling, we will try to get the
+# Z axis of the spacecraft to be aligned with the magnetic field by turning
+# on MT3 for 1/2 hour
+#
+# After initial deployment, experiment by turning on each of the magnetorquers
+# once a day for 1/2 hour to observe the effect of the specified magnetorquer.
+#
+# telemetry is collected throughout the mission including the MT state, so we can
+# correlate the gyro, accelerometer, and magnetometer measurements.
+#
+instdir=$(cd "$(dirname "$0")"; pwd)
+
+export logNoStdOut=1
+. "${instdir}/log.sh"
+log_init "$0"
+
+usage()
+{
+    echo "MtCtl [-i (initial) | -m {XYZ} (X/Y/Z=0|1) -c (clear init flag)"
+}
+
+initialDeployFlag="/data/mtCtlInit.flag"
+lowPowerModeFlag="/data/lowPowerMode.flag"
+mtTimePeriodFile="/data/mtCtlTime"
+detumbleDelayOverrideFile="/data/debug/detumbleDelay"
+
+#
+# detumble at 50 min, overridable for testing via /data/debug/detumbleDelay
+#
+detumbleDelay=3000
+
+#
+# Length of time in seconds to turn on MT, overridable via /data/mtCtltime
+#
+mtTimePeriod=1800
+if [ -e "$mtTimePeriodFile" ]; then
+    mtTimePeriod=$(cat $mtTimePeriodFile)
+fi
+
+O=$(getopt -- him:c "$@") || exit 1
+eval set -- "$O"
+
+ccardcmdExe=${ccardcmdExe-"ccardcmd"}
+
+while true; do
+    case $1 in 
+        -h)
+            usage
+            exit 0
+            ;;
+        -i)
+            scenario="detumbling"
+            shift
+            ;;
+        -m)
+            scenario="setMtState"
+            mtState="$2"
+            shift 2
+            ;;
+        -c)
+            echo "[I] Clearing $initialDeployFlag"
+            rm -f "$initialDeployFlag"
+            exit 0
+            ;;
+        --)
+            shift
+            break;
+            ;;
+        *)
+            log "[E] unknown arg:  $arg"
+            exit 1
+            ;;
+    esac
+done
+
+turnMtOff()
+{
+    log "[I] Turning MT's off"
+    "$ccardcmdExe" -m "000"
+    ccardStatus=$?
+    if [ $ccardStatus -ne 0 ]; then
+        log "[E] Status $cardStatus calling $ccardcmdExe"
+        return 1
+    fi
+    return 0
+}
+
+isLowPowerMode()
+{
+    [ -e "$lowPowerModeFlag" ]
+}
+
+setMtState()
+{
+    isLowPowerMode
+    if [ $? -eq 0 ] ; then
+        log "[I] In Low Power Mode.  Doing nothing"
+        return 0
+    fi
+    if [ "$1" = "000" ]; then
+        turnMtOff
+        return $?
+    fi
+    mtState=$1
+    
+    log "[I] Setting $mtState for $mtTimePeriod seconds"
+    
+    # set every 5 minutes to keep the system from going into idle mode
+    elapsedTime=0
+    keepAliveWait=300
+
+    while [ $elapsedTime -lt "$mtTimePeriod" ];  do
+        "$ccardcmdExe" -m "$1"
+        sleep $keepAliveWait
+        elapsedTime=$((elapsedTime+keepAliveWait))
+        isLowPowerMode
+        if [ $? -eq 0 ]; then
+            log "[N] In Low Power Mode exiting MtCtl"
+            break;
+        fi
+    done
+    
+    turnMtOff
+    log "[I] Done"
+}
+
+detumblingOperation()
+{
+    if [ -e "$initialDeployFlag" ]; then
+        return 0
+    fi
+    if [ -e "$detumbleDelayOverrideFile" ]; then
+        detumbleDelay=$(cat $detumbleDelayOverrideFile)
+    fi
+    
+    log "[I] Waiting $detumbleDelay sec to detumble"
+    sleep "$detumbleDelay"
+    
+    log "[I] Executing Detumbling Operation"
+    touch "$initialDeployFlag"
+
+    setMtState 100
+}
+
+case $scenario in
+    "detumbling")
+        detumblingOperation
+        ;;
+    "setMtState")
+        setMtState "$mtState"
+        ;;
+esac
+
+exit 0

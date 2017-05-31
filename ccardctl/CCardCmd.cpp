@@ -37,9 +37,10 @@ void usage(char *argv[])
            << "Options:"
            <<std::endl
            <<std::endl
-           <<" -d {log level}     set log level"<<std::endl
-           <<" -h {host IP}       target host IP"<<std::endl
-           <<" -s                 get C-Card status"<<std::endl
+           <<" -d {log level}     Set log level"<<std::endl
+           <<" -h {host IP}       Target host IP"<<std::endl
+           <<" -s                 Get C-Card status"<<std::endl
+           <<" -c                 Collect telemetry data"<<std::endl
            <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<DSA_DEPLOY_TIMEOUT<<" sec"<<std::endl
            <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<DSA_RELEASE_TIMEOUT<<" sec"<<std::endl
            <<" -T {0 or 1}        Disable or enable HW timer.  Value is sticky"<<std::endl
@@ -55,14 +56,28 @@ void usage(char *argv[])
 /**
  * Print out the status
  **/
-static void outputStatus(uint8_t status, uint8_t dsaDeployState)
+static void outputStatus(CCardStatus &status)
 {
-  std::cout<<"0x"<<std::setfill('0')<<std::setw(2)<<std::hex<<(int)status<<" -> "
-           <<IrvCS::CCardI2CPortState::stateToString(status, dsaDeployState)
+  std::cout<<"0x"<<std::setfill('0')<<std::setw(2)<<std::hex<<(int)status.portStatus
+           <<" -> "
+           <<IrvCS::CCardI2CPortState::stateToString(status.portStatus, status.dsaDeployState)
            <<std::endl;
 }
 
-static int getCCardStatus(const std::string &host, uint32_t timeout)
+/**
+ * Output telemetry we want to collect: 
+ *  - DSA 1/2 release/deploy status
+ *  - MT X, Y, Z on/off
+ * To save space and processing, just output the bit fields.  
+ * We can decode it later in post processing.
+ **/
+static void outputTelemetry(CCardStatus &status)
+{
+  std::cout<<"dsa_deploy_state="<<(int)status.dsaDeployState<<std::endl
+           <<"mt_state="<<((status.portStatus&MT_MASK)>>MT_OFFSET)<<std::endl;
+}
+
+static int getCCardStatus(const std::string &host, uint32_t timeout, CCardStatus &status)
 {
   struct
   {
@@ -93,7 +108,7 @@ static int getCCardStatus(const std::string &host, uint32_t timeout)
     return CMD_ERR_STATUS;
   }
 
-  outputStatus(resp.status.portStatus, resp.status.dsaDeployState);
+  status=resp.status;
 
   return 0;
 }
@@ -136,7 +151,7 @@ static int sendCcardMsg(const std::string &host, uint32_t data, uint32_t timeout
 
   if (resp.status.status==0)
   {
-    outputStatus(resp.status.portStatus, resp.status.dsaDeployState);
+    outputStatus(resp.status);
   } else
   {
     return resp.status.status;
@@ -223,18 +238,19 @@ int main(int argc, char *argv[])
 
   enum Action
   {
+    GetTelemetry,
     GetStatus,
     DsaCommand,
     MtCommand
   };
-  Action action=GetStatus;
+  Action action=GetTelemetry;
 
   IrvCS::DsaId dsaId=IrvCS::DSA_UNKNOWN;
   IrvCS::DsaCmd dsaCmd;
   uint8_t mtBits=0;
   uint8_t mtMask=0;
 
-  while ((opt=getopt(argc,argv,"d:h:sD:R:T:M:m:t:H")) != -1)
+  while ((opt=getopt(argc,argv,"d:h:scD:R:T:M:m:t:H")) != -1)
   {
     switch (opt)
     {
@@ -304,6 +320,9 @@ int main(int argc, char *argv[])
     case 's':
       action=GetStatus;
       break;
+    case 'c':
+      action=GetTelemetry;
+      break;
     case 'H':
       usage(argv);
       break;
@@ -322,10 +341,16 @@ int main(int argc, char *argv[])
   DBG_setLevel(logLevel);
 
   uint32_t msgData=0;
+  CCardStatus cCardStatus;
   switch(action)
   {
+  case GetTelemetry:
+    status=getCCardStatus(host, timeout, cCardStatus);
+    outputTelemetry(cCardStatus);
+    break;
   case GetStatus:
-    status=getCCardStatus(host, timeout);
+    status=getCCardStatus(host, timeout, cCardStatus);
+    outputStatus(cCardStatus);
     break;
   case DsaCommand:
     IrvCS::CCardMsgCodec::encodeMsgData((uint8_t)IrvCS::MsgDsa, 
@@ -339,7 +364,7 @@ int main(int argc, char *argv[])
                                         msgData);
     break;
   }
-  if (action != GetStatus)
+  if (action != GetStatus && action != GetTelemetry)
   {
     int sendStatus = sendCcardMsg(host, msgData, timeout);
     if (sendStatus != 0)

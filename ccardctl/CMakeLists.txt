@@ -13,9 +13,8 @@ target_link_libraries(ccardcmd ccardCodec proc pthread)
 INSTALL(TARGETS ccardctl DESTINATION bin COMPONENT binaries)
 INSTALL(TARGETS ccardcmd DESTINATION bin COMPONENT binaries)
 INSTALL(FILES ccardctl.cmd.cfg DESTINATION /etc/ COMPONENT config) 
-INSTALL(FILES dsaStatus-telemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
-INSTALL(FILES dsaStatus-telemetry.sh DESTINATION /usr/local/bin/ COMPONENT binaries PERMISSIONS OWNER_READ OWNER_EXECUTE)
-
+INSTALL(FILES ccardTelemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
+INSTALL(FILES powerMonTelemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
 
 IF (PROJECT_COMPILE)
 add_subdirectory(test)

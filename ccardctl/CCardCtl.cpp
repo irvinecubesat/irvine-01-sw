@@ -214,9 +214,13 @@ static int checkCCardIdle(void *arg)
   IrvCS::CCardI2CX *i2cctl=static_cast<IrvCS::CCardI2CX *>(arg);
 
   int status=0;
-  if (0 != (status=i2cctl->idleCheck()))
+  if (0 > (status=i2cctl->idleCheck()))
   {
     DBG_print(LOG_DEBUG, "Status %d encountered checking idle", status);
+  } else if (status == 1)
+  {
+    // switched to idle mode.  Report initial state, since power is off
+    gPortState=0x8F;
   }
 
  return EVENT_KEEP;

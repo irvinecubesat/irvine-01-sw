@@ -1,4 +1,8 @@
 * Release Notes for Irvine-01 Flight Software
+** 00.07.07
+   - generate thumbnails and queue those for offload instead of the full sized images
+   - cmdPowerMon - Low Power Mode support to conserve energy until batteries get charged
+   - cmdMtCtl Magnetorquer utility with detumbling and daily execution experiment
 ** 00.07.06
    - Automated image capture support
      - cmdSnap script for image capture
