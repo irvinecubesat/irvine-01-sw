@@ -34,15 +34,15 @@ TEST(BeaconDecode, DecodeGyro)
 {
   BeaconData beaconData;
 
-  beaconData.gyro[0]=1284505;
-  beaconData.gyro[1]=-238550;
-  beaconData.gyro[2]=578027;
+  beaconData.gyro[0]=3956343040
+  beaconData.gyro[1]=512033280
+  beaconData.gyro[2]=2576942336
 
   BeaconStatus bStatus(&beaconData);
 
-  ASSERT_EQ(bStatus.gyro_[0], 0.857499);
-  ASSERT_EQ(bStatus.gyro_[1], -0.096249);
-  ASSERT_EQ(bStatus.gyro_[2], 0.096250);
+  ASSERT_EQ(bStatus.gyro_[0], 0.11375);
+  ASSERT_EQ(bStatus.gyro_[1], 0.157499);
+  ASSERT_EQ(bStatus.gyro_[2], 0.349999);
 }
 
 /**
