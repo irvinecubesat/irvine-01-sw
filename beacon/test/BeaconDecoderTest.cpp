@@ -34,9 +34,9 @@ TEST(BeaconDecode, DecodeGyro)
 {
   BeaconData beaconData;
 
-  beaconData.gyro[0]=3956343040
-  beaconData.gyro[1]=512033280
-  beaconData.gyro[2]=2576942336
+  beaconData.gyro[0]=3956343040;
+  beaconData.gyro[1]=512033280;
+  beaconData.gyro[2]=2576942336;
 
   BeaconStatus bStatus(&beaconData);
 
