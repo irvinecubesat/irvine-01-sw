@@ -37,8 +37,8 @@ namespace IrvCS
  **/
   std::ostream& operator<<(std::ostream &os, const BeaconStatus &beaconStatus)
   {
-    return os<<"ID = "<<beaconStatus.id_<<std::endl
-             <<"LDC = "<<beaconStatus.ldc_<<std::endl
+    return os<<"ID="<<beaconStatus.id_<<std::endl
+             <<"LDC="<<beaconStatus.ldc_<<std::endl
              <<"Gyro_X="<<beaconStatus.gyro_[0]<<std::endl
              <<"Gyro_Y="<<beaconStatus.gyro_[1]<<std::endl
 	     <<"Gyro_Z="<<beaconStatus.gyro_[2]<<std::endl 
