@@ -38,20 +38,13 @@ You can type `make all ` to build x86 binaries under the `build` directory.
 The first time you run the all or all-arm build, it will download and install
 the toolchain.
 
-You can do all your programming in the irvine-01-sw project without
-building the buildroot project, which builds the image to upload to the cubesat.
-The buildroot project should be available on the computer connected
-directly to the board.
-
-Before proceeding to the next step to build the buildroot project, generate
-keys for buildroot.
-
-Inside the irvine-01-sw project, type:
+Now, generate encryption keys for yourself.  Inside the irvine-01-sw project, type:
 ```
 make genKeys
 ```
 This should generate keys in `~/.ssh/`  Send the `.cert` file to the system admin.
-Do not send the .key file which you should keep secure.
+* Do not send the .key file which you should keep secure. *
+
 Once he has updated the configuration with your certificate, type the following
 in the irvine-01-sw project:
 ```
@@ -59,7 +52,11 @@ git pull
 make authfile
 ```
 
-If this succeeds, go to the next step to setup your buildroot environment.
+* Note:  You can do all your programming in the irvine-01-sw project without
+building the buildroot project, which builds the image to upload to the cubesat.*
+
+If you would like to build the buildroot environment, go to the next step to
+setup the buildroot environment.
 
 # The irvine-01-cfg Project
 The irvine-01-cfg github project has files that replace or modifies the
