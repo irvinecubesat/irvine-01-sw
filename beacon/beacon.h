@@ -7,14 +7,14 @@
 extern "C" {
 #endif
 
-#define BEACON_ID "IRV-01"
+#define BEACON_ID "IRV-02"
 #define ID_LEN 7
 
 /**
  * Packet needs to fit in 227 bytes
  **/
 typedef struct {
-  char id[ID_LEN]; /* "IRV-01" To make it easy recognize           */
+  char id[ID_LEN]; /* "IRV-02" To make it easy recognize           */
 
   uint16_t ldc;    /* Long Duration Timer (about 4min 15 sec/tick) */
 

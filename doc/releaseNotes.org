@@ -1,4 +1,6 @@
-* Release Notes for Irvine-01 Flight Software
+* Release Notes for Irvine-01/02 Flight Software
+** 00.08.00
+   - Irvine-02 build
 ** 00.07.07
    - generate thumbnails and queue those for offload instead of the full sized images
    - cmdPowerMon - Low Power Mode support to conserve energy until batteries get charged
