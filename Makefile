@@ -15,6 +15,7 @@ TOOLCHAIN_VER=01.01.01
 TOOLCHAIN_ROOT=/opt/toolchain/toolchain-arm-linux
 TOOLCHAIN_DIR=$(TOOLCHAIN_ROOT)-$(TOOLCHAIN_VER)
 IRVINE_SW_INSTALL_DIR=$(HOME)/.irvine-01-sw
+KEYTOOL=scripts/opensslKeyTool.sh
 
 all: build installDir
 	$(MAKE) -C build
@@ -63,17 +64,22 @@ distclean: clean clean-auth
 $(TOOLCHAIN_DIR):  $(KEYINFO_FILE)
 	sudo scripts/toolchainSetup.sh -v $(TOOLCHAIN_VER)
 
-KEYINFO_FILE=$(HOME)/.irvine-01.keyInfo
+KEYINFO_FILE=$(shell if [ -e $(HOME)/.irvine-01.keyInfo ]; then echo $(HOME)/.irvine-01.keyInfo;  else echo $(HOME)/.irvinecubesat.keyInfo; fi)
 AUTH_FILE=$(HOME)/.polysat_fsw.auth
+HOST_NAME=$(shell hostname)
+
+printKeyInfoFile:
+	echo $(KEYINFO_FILE)
 
 genKeys: 
 	$(MAKE) $(KEYINFO_FILE)
+	scripts/cubeSatNetSetupRequest.sh
 
 authfile: clean-auth
 	$(MAKE) $(AUTH_FILE)
 
 $(KEYINFO_FILE):
-	@scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -g $$USER-irvine-01-sw
+	@$(KEYTOOL) -f $(KEYINFO_FILE) -g $$USER-$(HOST_NAME)-irvinecubesat
 
 $(AUTH_FILE):
 	@cp auth/access.enc $(AUTH_FILE).enc

@@ -51,11 +51,15 @@ Now, generate encryption keys for yourself.  Inside the irvine-01-sw project, ty
 ```
 make genKeys
 ```
-This should generate keys in `~/.ssh/`  Send the `.cert` file to the system admin.
-* Do not send the .key file which you should keep secure. *
 
-Once he has updated the configuration with your certificate, type the following
-in the irvine-01-sw project:
+This will prompt you for a password which you will use for CubeSatNet VPN access.
+After entering your password and confirmation password, email the resulting xxx-cubesatSetupRequest.txt.enc file to the CubeSatNet Administrator.
+
+Once your account is set up, you will be able to connect to CubeSatNet using
+the vpnConnect.sh script.
+
+When the admin has updated the configuration with your certificate, type the following
+in the irvine-01-sw project to allow you to successfuly build the buildroot project:
 ```
 git pull
 make authfile

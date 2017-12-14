@@ -4,7 +4,8 @@
 #
 keyDir=~/.ssh
 sshConfig=$keyDir/config
-cfgFile=~/.irvine-01.keyInfo
+oldCfgFile=~/.irvine-01.keyInfo
+cfgFile=~/.irvinecubesat.keyInfo
 instdir=$(cd "$(dirname "$0")"; pwd)
 ovpnCfg=$(mktemp --tmpdir="${HOME}"/.ssh/)
 ovpnx=$(find ~/.ssh/ -name "*.ovpnx"|head -1)
@@ -23,6 +24,13 @@ log()
     echo "$*"
 }
 
+if [ -e "$oldCfgFile" ]; then
+    log "[I] Converting $oldCfgFile to $cfgFile"
+    mv "$oldCfgFile" "$cfgFile"
+    if [ $? -ne 0 ]; then
+	log "[E] Unable to ove $oldCfgFile to  $cfgFile"
+    fi
+fi
 usage()
 {
     cat <<EOF
