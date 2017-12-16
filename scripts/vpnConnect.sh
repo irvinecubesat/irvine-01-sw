@@ -31,7 +31,7 @@ Usage:  $0 [options]
         Tool to connect to openvpn
 
 Options
-    -c {ovpnx file} Connect to VPN using the ovpnx file (default $ovpnx)
+    -c {ovpn/x file} Connect to VPN using the ovpnx or ovpn file (default $ovpnx)
     -f {cfgFile}    File to store cert params/initialze params (default $cfgFile)
     -u              Update the config file with the latest settings (existing will be renamed config.bak)
     -h              this message
@@ -47,7 +47,7 @@ connectMessage()
 
 In a different terminal window type:
 
-"ssh irvine-01"       to connect to irvine-01
+"ssh irvine-02"       to connect to irvine-02
 "ssh cubesatgateway"  to connect to cubesat gateway
 
 If ssh fails, contact your adminstrator with the error messages you see.
@@ -114,10 +114,13 @@ Host cubesatgateway
      User vpnuser
      IdentityFile ${privKey}
 
-Host irvine-01
-  User root
-  ProxyCommand ssh -q cubesatgateway nc 192.168.0.100 22
+Host irvine-02
+     User root
+     ProxyCommand ssh -q cubesatgateway nc 192.168.0.101 22
   
+Host irvine-ops
+     User irvine-ops
+     IdentityFile ${privKey}
 EOF
     chmod 600 "$sshConfig"
     log "[I] Updated $sshConfig: "
