@@ -23,7 +23,7 @@ target_link_libraries(beacon proc pthread)
 
 IF (PROJECT_COMPILE)
   # temporarily omit Beacon tests until comms implements them
-  #  add_subdirectory(test)
+   add_subdirectory(test)
   # Include directories to search in
   target_include_directories(beacon PUBLIC /opt/toolchain/toolchain-arm-linux/include)
   target_include_directories(beaconDecoder PUBLIC /opt/toolchain/toolchain-arm-linux/include)

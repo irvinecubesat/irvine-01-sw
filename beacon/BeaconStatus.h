@@ -52,7 +52,7 @@ namespace IrvCS
     float volt3V_;              /* 3V sensor Voltage */
     float curr3V_;              /* 3V sensor Current */
     float volt5Vpl_;            /* 5V payload Voltage */
-    float curr5Vpl;             /* 5V payload Current */
+    float curr5Vpl_;             /* 5V payload Current */
   };
 }
 #endif 
