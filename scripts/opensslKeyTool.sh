@@ -5,6 +5,11 @@
 keyDir=~/.ssh
 commonName=$(whoami)
 
+keyInfoFile=~/.irvinecubesat.keyInfo
+if [ -e "$keyInfoFile" ]; then
+    . "$keyInfoFile"
+fi
+
 log()
 {
     echo "$*"
@@ -22,7 +27,7 @@ Options
     -g {keyName} Generate a new self-signed cert with public/private keys
     -e {file}    Encrypt the input file with public certifcates  
     -d {file}    decrypt the input file with private key 
-    -o {file}    specify the output file (Default output file:  {input}.enc
+    -o {file}    specify the output file (Default stdout)
     -k {dir}     Keystore directory (Default: $keyDir)
     -c {CN}      The common name (CN) for cert generation(Default:  ${commonName}))
     -n {keyName} Use keyname (Default:  $keyName)
@@ -32,6 +37,8 @@ EOF
     exit 1
 }
 
+
+unset outputFile
 
 while getopts "g:e:d:k:n:c:g:o:i:f:ph" arg; do
     case $arg in
@@ -78,6 +85,10 @@ while getopts "g:e:d:k:n:c:g:o:i:f:ph" arg; do
 done
 shift "$((OPTIND-1))"
 
+if [ -n "$outputFile" ]; then
+    outputArg="-out $outputFile"
+fi
+
 case $cmd in
     gen)
         if [ -n "$cfgFile" ] && [ -n "${keyName}" ] && [ -n "$keyDir" ]; then
@@ -97,9 +108,8 @@ case $cmd in
         else
             keys="${keyDir}/${keyName}.cert"
         fi
-        outputFile=${outputFile-${inputFile}.enc}
         # shellcheck disable=SC2086
-        openssl smime -encrypt -aes256 -in "$inputFile" -out "$outputFile" -outform PEM $keys
+        openssl smime -encrypt -aes256 -in "$inputFile" $outputArg -outform PEM $keys
         exitStatus=$?
         ;;
     dec)
@@ -108,14 +118,15 @@ case $cmd in
         else
             key=${keyDir}/${keyName}.key
         fi
-        outputFile=${outputFile-${inputFile%.*}}
 
-        openssl smime -decrypt -in "$inputFile" -inform PEM -inkey "$key" > "$outputFile"
+        openssl smime -decrypt -in "$inputFile" -inform PEM -inkey "$key" $outputArg
         exitStatus=$?
         if [ $exitStatus -ne 0 ]; then
             log "[E] Unable to decrypt $inputFile with $key"
             # cleanup output file
-            rm "$outputFile"
+            if [ -n "$outputFile" ]; then
+                rm "$outputFile"
+            fi
         fi
         ;;
     pubkey)

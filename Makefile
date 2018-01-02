@@ -66,6 +66,8 @@ $(TOOLCHAIN_DIR):  $(KEYINFO_FILE)
 
 KEYINFO_FILE=$(shell if [ -e $(HOME)/.irvine-01.keyInfo ]; then echo $(HOME)/.irvine-01.keyInfo;  else echo $(HOME)/.irvinecubesat.keyInfo; fi)
 AUTH_FILE=$(HOME)/.polysat_fsw.auth
+IRVINE-02-ACCESS=auth/irv-02-access.enc
+
 HOST_NAME=$(shell hostname)
 
 printKeyInfoFile:
@@ -83,7 +85,10 @@ $(KEYINFO_FILE):
 
 $(AUTH_FILE):
 	@cp auth/access.enc $(AUTH_FILE).enc
-	scripts/opensslKeyTool.sh -f $(KEYINFO_FILE) -d $(AUTH_FILE).enc
+	@$(KEYTOOL) -f $(KEYINFO_FILE) -d $(AUTH_FILE).enc -o $(AUTH_FILE)
+
+irv-02-access:
+	@$(KEYTOOL) -f $(KEYINFO_FILE) -d $(IRVINE-02-ACCESS)
 
 clean-auth:
 	rm -f $(AUTH_FILE)
