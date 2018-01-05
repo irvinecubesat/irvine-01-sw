@@ -107,7 +107,6 @@ sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install libz1:i386 libncurses5:i386 libbz2-1.0:i386
 
-```
 Clone the irvinecubesat buildroot project from github:
 
 ```
