@@ -68,7 +68,8 @@ KEYINFO_FILE=$(shell if [ -e $(HOME)/.irvine-01.keyInfo ]; then echo $(HOME)/.ir
 AUTH_FILE=$(HOME)/.polysat_fsw.auth
 IRVINE-02-ACCESS=auth/irv-02-access.enc
 
-HOST_NAME=$(shell hostname)
+# short host name
+HOST_NAME=$(shell hostname -s)
 
 printKeyInfoFile:
 	echo $(KEYINFO_FILE)

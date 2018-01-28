@@ -55,13 +55,19 @@ while [ ! "ok" = "$ok" ]; do
     fi
 done
 
-tmpPw=$(mktemp);
-echo "$password">$tmpPw
-. ${KEYINFO_FILE};
-setupRequestFile=~/$keyName-${CUBESATNET_SETUP_REQUEST}
-cat "${tmpPw}" ~/.ssh/"${keyName}.cert">$setupRequestFile
-${KEYTOOL} -e $setupRequestFile ${CUBESAT_ADMIN_CERT}
-rm -f "${tmpPw}" $setupRequestFile 
-echo "Please email ${setupRequestFile}.enc to your cubesat admin."
+tmpFile=$(mktemp)
+if [ ! -e "$KEYINFO_FILE" ]; then
+    log "[E] Unable to find $KEYINFO_FILE.  Did you run make genKeys?"
+fi
+. "${KEYINFO_FILE}";
+
+echo "$password">$tmpFile
+setupRequestFile=$keyName-${CUBESATNET_SETUP_REQUEST}
+encryptedFile=${setupRequestFile}.enc
+cat "$tmpFile" ~/.ssh/"${keyName}.cert" >"$setupRequestFile"
+
+${KEYTOOL} -e "$setupRequestFile" -o "$encryptedFile" "${CUBESAT_ADMIN_CERT}"
+rm -f "$tmpFile" "$setupRequestFile"
+echo "Please email $encryptedFile to your cubesat admin."
 echo
 echo "Note:  Changing your password in your openvpn config is a future feature :-)"

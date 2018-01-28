@@ -28,26 +28,21 @@ sudo apt-get update
 sudo apt-get install libc6:i386 libstdc++6:i386
 ```
 
-# irvine-01-sw project and toolchain install
+# Getting the irvine-01-sw project
 
-The irvine-01-sw utilizes CMake to build the software.  You can build the
-software for your host machine to test it, then cross compile it for the arm architecture in order to run it on the board.
 
 To get started, retrieve the main software project and install the arm toolchain.
 ```
 git clone https://github.com/irvinecubesat/irvine-01-sw
 cd irvine-01-sw
-make all-arm
 ```
 
-This will build the arm binaries and put them under the `build-arm` directory.
+# Setup access to CubeSatNet
+CubeSatNet is a virtual private network that will give you access to Irvine
+CubeSat boards remotely so that you can familiarize yourself with the embedded
+hardware and test your software.
 
-You can type `make all ` to build x86 binaries under the `build` directory.
-
-The first time you run the all or all-arm build, it will download and install
-the toolchain.
-
-Now, generate encryption keys for yourself.  Inside the irvine-01-sw project, type:
+Inside the irvine-01-sw project, type:
 ```
 make genKeys
 ```
@@ -58,18 +53,21 @@ After entering your password and confirmation password, email the resulting xxx-
 Once your account is set up, you will be able to connect to CubeSatNet using
 the vpnConnect.sh script.
 
-When the admin has updated the configuration with your certificate, type the following
-in the irvine-01-sw project to allow you to successfuly build the buildroot project:
+# Building irvine-01-sw
+
+The irvine-01-sw utilizes CMake to build the software.  You can build the
+software for your host machine to test it, then cross compile it for the arm architecture in order to run it on the board.
+
 ```
-git pull
-make authfile
+make all-arm
 ```
 
-*Note:  You can do all your programming in the irvine-01-sw project without
-building the buildroot project, which builds the image to upload to the cubesat.*
+This will build the arm binaries and put them under the `build-arm` directory.
 
-If you would like to build the buildroot environment, go to the next step to
-setup the buildroot environment.
+You can type `make all ` to build x86 binaries under the `build` directory.
+
+The first time you run the all or all-arm build, it will download and install
+the toolchain.
 
 # The irvine-01-cfg Project
 The irvine-01-cfg github project has files that replace or modifies the
@@ -87,8 +85,19 @@ The BuildRoot environment builds the image to upload to the
 cubesat board.  The buildroot environment is set up to build the irvine-01-sw
 sources and install the irvine-01-cfg files into the fsw_image.
 
-Be sure to follow the key generation procedure as described at the end of
-irvine-01-sw project setup section.  
+If you haven't already, setup access to CubeSatNet first as described above.
+
+Once the admin has updated the configuration with your certificate, type
+the following the irvine-01-sw project to allow you to successfuly build the
+buildroot project:
+
+```
+git pull
+make authfile
+```
+
+*Note:  You can do all your programming in the irvine-01-sw project without
+building the buildroot project, which builds the image to upload to the cubesat.*
 
 Make sure you have the necessary packages installed on your system:
 
