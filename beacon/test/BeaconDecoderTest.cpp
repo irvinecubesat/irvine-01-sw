@@ -22,7 +22,7 @@ TEST(BeaconDecode, DecodeIDandLDC)
 
   BeaconStatus bStatus(&beaconData);
 
-  ASSERT_EQ(bStatus.id_, "IRV-01");
+  ASSERT_EQ(bStatus.id_, "IRV-02");
   ASSERT_EQ(bStatus.ldc_, 100);
 }
 
@@ -40,9 +40,9 @@ TEST(BeaconDecode, DecodeGyro)
 
   BeaconStatus bStatus(&beaconData);
 
-  ASSERT_EQ(bStatus.gyro_[0], 0.11375);
-  ASSERT_EQ(bStatus.gyro_[1], 0.157499);
-  ASSERT_EQ(bStatus.gyro_[2], 0.349999);
+  ASSERT_NEAR(bStatus.gyro_[0], 0.11375, 00001);
+  ASSERT_NEAR(bStatus.gyro_[1], 0.157499, 00001);
+  ASSERT_NEAR(bStatus.gyro_[2], 0.349999, 00001);
 }
 
 /**

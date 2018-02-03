@@ -14,14 +14,20 @@ int main(int argc, char *argv[])
 {
   int status=0;
   std::stringstream stm;
-  unsigned char buf[512]={0};
+  const int MAX_BEACON=227;
+  unsigned char buf[MAX_BEACON]={0};
   int numChars=0;
 
+  if (MAX_BEACON < sizeof(BeaconData))
+  {
+    std::cerr<<"Beacon Data must not exceed "<<MAX_BEACON<<" bytes"<<std::endl;
+    exit(-1);
+  }
   
   FILE *fp=freopen(NULL, "rb", stdin);
 
   numChars=read(0, buf, sizeof(buf));
-  if (numChars == sizeof(buf) || numChars > 227 )
+  if (numChars > sizeof(BeaconData) )
   {
     std::cout << "Error:  Incoming stream is larger than expected ("
               <<numChars<<")"<<std::endl;

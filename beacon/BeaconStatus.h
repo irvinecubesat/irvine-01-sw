@@ -34,7 +34,7 @@ namespace IrvCS
      */
 
     /**
-     * Status ID.  This should be "IRV-01" as defined by BEACON_ID
+     * Status ID. This is the value specified by BEACON_ID (e.g. IRV-02)
      **/
     std::string id_;
 
