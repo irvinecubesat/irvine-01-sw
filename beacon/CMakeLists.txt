@@ -1,13 +1,14 @@
 include(${CMAKE_SOURCE_DIR}/cmake/nativeCompile.cmake)
 
 #
-# The beacon executable is build using the beacon.c source file
+# The beacon executable is built using the beacon.c source file
 #
 add_library(beaconUtil BeaconStatus.cpp BeaconStatus.h)
 target_include_directories(beaconUtil PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(beacon beacon.c beacon.cmd.cfg)
 add_executable(beaconDecoder beaconDecoder.cpp)
 target_link_libraries(beaconDecoder beaconUtil)
+add_executable(beaconSim beaconSim.cpp)
 
 #
 # Install the beacon binary to the bin directory when the "install" target is
@@ -28,4 +29,5 @@ IF (PROJECT_COMPILE)
   target_include_directories(beacon PUBLIC /opt/toolchain/toolchain-arm-linux/include)
   target_include_directories(beaconDecoder PUBLIC /opt/toolchain/toolchain-arm-linux/include)
   target_include_directories(beaconUtil PUBLIC /opt/toolchain/toolchain-arm-linux/include)
+  target_include_directories(beaconSim PUBLIC /opt/toolchain/toolchain-arm-linux/include)
 ENDIF (PROJECT_COMPILE)
