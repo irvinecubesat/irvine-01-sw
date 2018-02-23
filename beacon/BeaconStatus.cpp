@@ -7,13 +7,19 @@ namespace IrvCS
   {
     id_=data->id;
     ldc_=ntohs(data->ldc);
-    
-    for(int i = 0; i < 3; i++) {
-	gyro_[i] = ((int32_t)ntohl(data->gyro[i]))/(1024.0*1024.0);
+
+    for(int i = 0; i < 3; i++)
+    {
+      gyro_[i] = ((int32_t)ntohl(data->gyro[i]))/(1024.0*1024.0);
     }
-    for(int i = 0; i < 3; i++) {
-	mag_[i] = ((int32_t)ntohl(data->mag[i]));
+    for(int i = 0; i < 3; i++)
+    {
+      mag_[i] = ((int32_t)ntohl(data->mag[i]))/(1024.0*1024.0);
     }
+    //
+    // @TODO convert the rest of the members to host byte order and appropriate
+    //       units.  See adc-sensors-util for example of int/uint->float
+    //       conversion.
     tempDaughterA_ = (int32_t)ntohl(data->daughter_aTmpSensor); 
     tempThreeVpl_ = (int32_t)ntohl(data->threeV_plTmpSensor);
     tempNz_ = (int32_t)ntohl(data->tempNz); 
@@ -21,11 +27,6 @@ namespace IrvCS
     curr3V_ = (int32_t)ntohl(data->threeVPwrSensor.current);
     volt5Vpl_ = (int32_t)ntohl(data->fiveV_plPwrSensor.volt);
     curr5Vpl_ = (int32_t)ntohl(data->fiveV_plPwrSensor.current);
-    //
-    // @TODO convert the rest of the members to host byte order and appropriate
-    //       units.  See adc-sensors-util for example of int/uint->float
-    //       conversion.
-    //
   }
 
   BeaconStatus::~BeaconStatus()
