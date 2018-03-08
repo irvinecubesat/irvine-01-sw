@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <arpa/inet.h>
 #include "BeaconStatus.h"
 
 using namespace IrvCS;
@@ -22,16 +23,17 @@ int main(int argc, char *argv[])
   data.gyro[1]=512033280;
   data.gyro[2]=2576942336;
 
-  // TODO:  Populate with actual telemetry data
-  data.mag[0]=12344333;
-  data.mag[1]=8827373;
-  data.mag[2]=1823838;;
+  data.mag[0]=htonl(4294943596);
+  data.mag[1]=htonl(4294959196);
+  data.mag[2]=htonl(42600);
 
-  data.daughter_aTmpSensor=828;
-  data.threeV_plTmpSensor=12323;
-  data.threeV_plTmpSensor=34322;
-  data.fiveV_plPwrSensor.volt=8273;
-  data.fiveV_plPwrSensor.current=746;
+  data.daughter_aTmpSensor=htonl(18828);
+  data.threeV_plTmpSensor=htonl(18820);
+  data.tempNz=htonl(12676);
+  data.threeVPwrSensor.volt=htonl(217088);
+  data.threeVPwrSensor.current=htonl(1312);
+  data.fiveV_plPwrSensor.volt=htonl(331776);
+  data.fiveV_plPwrSensor.current=htonl(1536);
 
   unsigned char buf[sizeof(BeaconData)];
   memcpy(buf, &data, sizeof(BeaconData));
