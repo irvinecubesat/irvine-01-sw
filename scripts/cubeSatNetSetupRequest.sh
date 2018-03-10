@@ -68,6 +68,6 @@ cat "$tmpFile" ~/.ssh/"${keyName}.cert" >"$setupRequestFile"
 
 ${KEYTOOL} -e "$setupRequestFile" -o "$encryptedFile" "${CUBESAT_ADMIN_CERT}"
 rm -f "$tmpFile" "$setupRequestFile"
-echo "Please email $encryptedFile to your cubesat admin."
+echo "Please create a Jira issue at jira.irvinecubesat.com in the ICS project and attach $encryptedFile to the issue."
 echo
 echo "Note:  Changing your password in your openvpn config is a future feature :-)"

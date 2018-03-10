@@ -7,6 +7,7 @@ commonName=$(whoami)
 
 keyInfoFile=~/.irvinecubesat.keyInfo
 if [ -e "$keyInfoFile" ]; then
+    # shellcheck disable=SC1090
     . "$keyInfoFile"
 fi
 
@@ -69,6 +70,7 @@ while getopts "g:e:d:k:n:c:g:o:i:f:ph" arg; do
         f)
             cfgFile=$OPTARG
             if [ -n "$cfgFile" ] && [ -f "$cfgFile" ]; then
+                # shellcheck disable=SC1090
                 . "$cfgFile"
             fi
             ;;
@@ -99,8 +101,12 @@ case $cmd in
         fi
         mkdir -p "${keyDir}"
         chmod 700 "${keyDir}"
-        openssl req -x509 -newkey rsa:4096 -days 3650 -nodes -subj "/C=US/ST=*/L=*/O=*/OU=*/CN=${commonName}/" -keyout "${keyDir}/${keyName}.key" -out "${keyDir}/${keyName}.cert"
+        keyPath="${keyDir}/${keyName}.key"
+        openssl req -x509 -newkey rsa:4096 -days 3650 -nodes -subj "/C=US/ST=*/L=*/O=*/OU=*/CN=${commonName}/" -keyout "$keyPath" -out "${keyDir}/${keyName}.cert"
         exitStatus=$?
+        if ! chmod 600 "$keyPath"; then
+            log "[E] Unable to set permissions on $keyPath"
+        fi
     ;;
     enc)
         if [ -n "$*" ]; then
@@ -119,6 +125,7 @@ case $cmd in
             key=${keyDir}/${keyName}.key
         fi
 
+        # shellcheck disable=SC2086
         openssl smime -decrypt -in "$inputFile" -inform PEM -inkey "$key" $outputArg
         exitStatus=$?
         if [ $exitStatus -ne 0 ]; then
