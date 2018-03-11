@@ -37,6 +37,12 @@ git clone https://github.com/irvinecubesat/irvine-01-sw
 cd irvine-01-sw
 ```
 
+For the latest development code use the dev branch:
+
+```
+git checkout dev
+```
+
 # Setup access to CubeSatNet
 CubeSatNet is a virtual private network that will give you access to Irvine
 CubeSat boards remotely so that you can familiarize yourself with the embedded
@@ -48,7 +54,7 @@ make genKeys
 ```
 
 This will prompt you for a password which you will use for CubeSatNet VPN access.
-After entering your password and confirmation password, email the resulting xxx-cubesatSetupRequest.txt.enc file to the CubeSatNet Administrator.
+After entering your password and confirmation password, create a Jira issue in teh ICS project and attach the xxx-cubesatSetupRequest.txt.enc file to the issue.
 
 Once your account is set up, you will be able to connect to CubeSatNet using
 the vpnConnect.sh script.

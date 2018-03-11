@@ -2,11 +2,41 @@
 #
 # Connect to cubesat gateway via vpn
 #
+
+#
+# 
+#
+connectMessage()
+{
+    cat <<EOF 
+#########################################################################
+           You are connected to Irvine Cubesat Net!
+
+In a different terminal window type:
+
+"ssh irvine-02"       to connect to irvine-02
+"ssh cubesatgateway"  to connect to cubesat gateway
+"ssh irvine-ops"      to connect to the irvine cubesat groundstation @ Cal Poly
+
+Please refer to http://doc.irvinecubesat.com/display/HD/Troubleshooting+ssh+Connection+Issues 
+if you have problems with ssh.
+#########################################################################
+EOF
+}
+
+#
+# Print the connect message without having to initialize other variables below.
+#
+if [ "$1" = "-m" ]; then
+    connectMessage
+    exit 0
+fi
+
 keyDir=~/.ssh
 sshConfig=$keyDir/config
 oldCfgFile=~/.irvine-01.keyInfo
 cfgFile=~/.irvinecubesat.keyInfo
-instdir=$(cd "$(dirname "$0")"; pwd)
+instdir=$(cd "$(dirname "$0")"&&pwd)
 ovpnCfg=$(mktemp --tmpdir="${HOME}"/.ssh/)
 ovpnx=$(find ~/.ssh/ -name "*.ovpnx"|head -1)
 cmd="connect"
@@ -26,8 +56,8 @@ log()
 
 if [ -e "$oldCfgFile" ]; then
     log "[I] Converting $oldCfgFile to $cfgFile"
-    mv "$oldCfgFile" "$cfgFile"
-    if [ $? -ne 0 ]; then
+    
+    if ! mv "$oldCfgFile" "$cfgFile"; then
 	log "[E] Unable to ove $oldCfgFile to  $cfgFile"
     fi
 fi
@@ -45,24 +75,6 @@ Options
     -h              this message
 EOF
     exit 1
-}
-
-connectMessage()
-{
-    cat <<EOF 
-#########################################################################
-           You are connected to Irvine Cubesat Net!
-
-In a different terminal window type:
-
-"ssh irvine-02"       to connect to irvine-02
-"ssh cubesatgateway"  to connect to cubesat gateway
-
-If ssh fails, contact your adminstrator with the error messages you see.
-*note:  prefix the ssh command with SSH_AUTH_SOCK=0 
-        or disable SSH Key Agent from startup applications
-#########################################################################
-EOF
 }
 
 while getopts "c:uf:mh" arg; do
@@ -92,6 +104,7 @@ done
 shift "$((OPTIND-1))"
 
 if [ -n "$cfgFile" ] && [ -f "$cfgFile" ]; then
+    # shellcheck disable=SC1090
     . "$cfgFile"
 else
     log "[E] $cfgFile not found.  Generate your key info with opensslKeyTool.sh"
@@ -127,6 +140,7 @@ Host irvine-02
      ProxyCommand ssh -q cubesatgateway nc 192.168.0.101 22
   
 Host irvine-ops
+     HostName cslvm229.csc.calpoly.edu
      User irvine-ops
      IdentityFile ${privKey}
 EOF
@@ -141,8 +155,8 @@ case $cmd in
             setupSshConfig
         fi
         if [ ! -f "${pubKey}" ]; then
-            $keytool -p -f "$cfgFile"
-            if [ $? -ne 0 ]; then
+            
+            if ! $keytool -p -f "$cfgFile"; then
                 log "[E] Unable to generate public key from $cert"
                 exit 1
             fi
@@ -165,7 +179,9 @@ case $cmd in
             else
                 $keytool -d "$ovpnx" -o /dev/stdout -f "$cfgFile" |$NOBODY_SED>"$ovpnCfg"
             fi
-            if [ $? -ne 0 ]; then
+            keytoolStatus=$?
+
+            if [ $keytoolStatus -ne 0 ]; then
                 log "[E] Unable to decode openvpn configuration"
                 exit 1
             fi
