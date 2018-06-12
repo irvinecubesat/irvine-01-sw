@@ -91,6 +91,8 @@ ADD_SUBDIRECTORY(thread)
 
 ADD_SUBDIRECTORY(gpiocpp)
 
+ADD_SUBDIRECTORY(spidev-test)
+
 #
 # ADCS Sensor service
 #
