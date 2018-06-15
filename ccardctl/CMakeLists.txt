@@ -16,9 +16,12 @@ INSTALL(FILES ccardctl.cmd.cfg DESTINATION /etc/ COMPONENT config)
 INSTALL(FILES ccardTelemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
 INSTALL(FILES powerMonTelemetry.cfg DESTINATION /usr/local/etc/dl_config COMPONENT config)
 
+target_include_directories(ccardctl PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
+target_include_directories(ccardcmd PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
+
 IF (PROJECT_COMPILE)
 add_subdirectory(test)
 # Include directories to search in
-target_include_directories(ccardctl PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
-target_include_directories(ccardcmd PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
+#target_include_directories(ccardctl PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
+#target_include_directories(ccardcmd PUBLIC ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0/usr/local/include /opt/toolchain/toolchain-arm-linux/include)
 ENDIF (PROJECT_COMPILE)
