@@ -40,7 +40,8 @@ namespace IrvCS
     {
       syslog(LOG_ERR, "Encountered %d errors initializing GPIO's", gpioInitStatus);
     }
-    
+
+#ifdef POWER_SAVING_MODE
     //
     // Power off 3V and 5V payload power for C-Card at startup
     //
@@ -53,6 +54,17 @@ namespace IrvCS
     {
       powerStatus++;
     }
+#else
+    if (0 != setPayloadPower(pl5VGpio_, 1))
+    {
+      powerStatus++;
+    }
+
+    if (0 != setPayloadPower(pl3VGpio_,1))
+    {
+      powerStatus++;
+    }
+#endif
 
     if (powerStatus == 0)
     {
@@ -182,6 +194,7 @@ namespace IrvCS
 
   int CCardI2CX::idleCheck()
   {
+#ifdef POWER_SAVING_MODE
     if (!isPoweredOn_ || ((time(NULL)-pwrTimestamp_) < C_CARD_IDLE_THRESHOLD))
     {
       return 0;
@@ -194,6 +207,10 @@ namespace IrvCS
     isPoweredOn_=false;
 
     return 1;
+#else
+    return 0;
+#endif
+
   }
 
   /**
@@ -470,7 +487,9 @@ namespace IrvCS
     }
   cleanup:
     reset();
+#ifdef POWER_SAVING_MODE
     setPayloadPower(pl3VGpio_, 0);
+#endif
 
     return status;
   }

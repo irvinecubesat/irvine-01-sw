@@ -45,6 +45,14 @@ endif(VERBOSE)
 # build root environment or not.  
 option(WITH_BUILDROOT "with(out) buildroot compile" OFF)
 if (WITH_BUILDROOT)
+  ExternalProject_Add(i2c-tools
+                   GIT_REPOSITORY https://github.com/Distrotech/i2c-tools
+                   GIT_TAG V3-1-0
+                   PREFIX ${CMAKE_BINARY_DIR}
+                   CONFIGURE_COMMAND ""
+                   SOURCE_DIR ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0
+                   BUILD_COMMAND make -C ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0
+                   INSTALL_COMMAND make -C ${CMAKE_BINARY_DIR}/i2c-tools-3.1.0 install DESTDIR=${CMAKE_BINARY_DIR}/i2c-tools-3.1.0 )
 else (WITH_BUILDROOT)
   SET(PROJECT_COMPILE ON)
   #
