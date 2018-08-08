@@ -1,6 +1,15 @@
 * Release Notes for Irvine-01/02 Flight Software
+** 00.08.04
+   - Build candidate for irvine-02 launch
+   - Satcomm configuration update
+     - Satcomm enabled
+     - Updated Satcomm Callsign
+     - New irvine-02 encryption key
+   - DSA Sensing read from i2c expander ports
+   - DSA Release timing reduced to 10 seconds timeout
+   - polysat fsw 1.0.4.2 with updated axsem kernel module
 ** 00.08.00
-   - Irvine-02 build
+   - Irvine-02 Initial build
 ** 00.07.07
    - generate thumbnails and queue those for offload instead of the full sized images
    - cmdPowerMon - Low Power Mode support to conserve energy until batteries get charged
