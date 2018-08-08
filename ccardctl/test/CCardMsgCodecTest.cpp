@@ -13,8 +13,8 @@ using namespace IrvCS;
 TEST(EncodeMsg, ReleaseDsa1)
 {
   uint32_t data;
-  // expect 0x0 for upper cmd bits and 0x02 for lower bits (DSA_1 is now 02
-  const uint8_t expected=2;//0x0000100<<4 = 0;
+  // expect 0x0000 for upper cmd bits and 0x0000 for lower bits (DSA_1 is 0)
+  const uint8_t expected=0x00;
   ASSERT_EQ(0, CCardMsgCodec::encodeMsgData(MsgDsa, DSA_1, Release, data));
   ASSERT_EQ(expected, data);
 }
@@ -37,6 +37,9 @@ TEST(EncodeAndDecodeMsg, DeployDsa2)
   ASSERT_EQ(decodedId, DSA_2);
 }
 
+//
+// TODO:  Re-do  MT control to support off/+/- for MT's 1, 2, and 3
+//
 TEST(EncodeMsg, MT1On)
 {
   uint32_t data;
@@ -75,28 +78,11 @@ TEST(EncodeAndDecodeMsg, DsaResetDSA1)
   uint8_t decodedCmd=0;
   uint8_t decodedId=0;
   
-  ASSERT_EQ(0, CCardMsgCodec::encodeMsgData(MsgDsa, DSA_1, ResetTimer, data));
+  ASSERT_EQ(0, CCardMsgCodec::encodeMsgData(MsgDsa, DSA_1, Reset, data));
   ASSERT_EQ(0, CCardMsgCodec::decodeMsgData(data,
                                             decodedType, decodedId, decodedCmd));
   ASSERT_EQ(decodedType, MsgDsa);
-  ASSERT_EQ(decodedCmd, ResetTimer);
+  ASSERT_EQ(decodedCmd, Reset);
   ASSERT_EQ(decodedId, DSA_1);
 }
 
-/**
- * Test Encode and decode MT command
- **/
-TEST(EncodeAndDecodeMsg, DsaSetTimerDSA2)
-{
-  uint32_t data;
-  uint8_t decodedType=0;
-  uint8_t decodedCmd=0;
-  uint8_t decodedId=0;
-  
-  ASSERT_EQ(0, CCardMsgCodec::encodeMsgData(MsgDsa, DSA_2, SetTimer, data));
-  ASSERT_EQ(0, CCardMsgCodec::decodeMsgData(data,
-                                            decodedType, decodedId, decodedCmd));
-  ASSERT_EQ(decodedType, MsgDsa);
-  ASSERT_EQ(decodedCmd, SetTimer);
-  ASSERT_EQ(decodedId, DSA_2);
-}

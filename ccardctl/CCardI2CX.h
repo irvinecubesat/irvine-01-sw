@@ -4,10 +4,17 @@
 #include <time.h>
 #include <Gpio.h>
 #include "DsaController.h"
-#include "CCardI2CPortState.h"
+#include "DsaI2CPortState.h"
 
 namespace IrvCS
 {
+  typedef enum {
+    RegInput=0x00,
+    RegOutput=0x01,
+    RegPolarity=0x02,
+    RegConfig=0x03
+  } RegisterType;
+  
   /**
    * Manage I2C expander state.  @see https://www.kernel.org/doc/Documentation/i2c/dev-interface
    **/
@@ -34,7 +41,7 @@ namespace IrvCS
      */
     OpStatus performDsaOperation(DsaId id, DsaCmd cmd, int timeoutSec);
 
-    /**
+        /**
      * Get the sensor status for the given DSA/Cmd
      *
      * @param id the id of the DSA
@@ -43,7 +50,7 @@ namespace IrvCS
      * @return 1 if on
      * @return <0 if error
      **/
-    virtual int getSensorStatus(DsaId id, DsaCmd cmd);
+    int getSensorStatus(DsaId id, DsaCmd cmd);
 
     //
     // lower level methods not for CCardCtl use only
@@ -64,6 +71,13 @@ namespace IrvCS
      **/
     int setState(uint8_t state);
 
+    /**
+     * Get the specified register
+     * @return register value or -1 for error
+     *
+     **/
+    int getRegister(const RegisterType regType);
+    
     /**
      * Get the state
      * @return 0 if successful,
@@ -118,6 +132,15 @@ namespace IrvCS
     int idleCheck();
 
   private:
+
+    /**
+     * Get the sensor status the DSA sensors
+     *
+     * @return status bits
+     * @return <0 if error
+     **/
+    int getSensorStatusBits();
+
     /**
      * Reset state to initial conditions
      **/
@@ -137,26 +160,17 @@ namespace IrvCS
      * @return <1 if errors encountered
      **/
     int powerOn();
-    CCardI2CPortState portState_;
+
+    bool isPoweredOn_;
+    time_t pwrTimestamp_;
+    
+    DsaI2CPortState portState_;
     int i2cdev_;
     int addr_;
     bool initialized_;
     Gpio pl3VGpio_;
     Gpio pl5VGpio_;
-    Gpio dsa1SenseGpio_[2];
-    Gpio dsa2SenseGpio_[2];
-    bool enableTimer_;
-    
-    /**
-     * The last time power on was requested.  This allows
-     * us to power off when idle to save energy
-     **/
-    time_t pwrTimestamp_;
-    
-    /**
-     * If C-Card is powered on.
-     **/
-    bool isPoweredOn_;
+    uint8_t dsaSenseBits_;
   };
 }
 

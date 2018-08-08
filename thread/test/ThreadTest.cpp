@@ -8,7 +8,7 @@ using namespace IrvCS;
  **/
 TEST(Threads, StartInterruptJoinThread)
 {
-  //openlog("Thread", LOG_PERROR, LOG_USER);
+  openlog("Thread", LOG_PERROR, LOG_USER);
   class MyThread:public Thread
   {
   public:
@@ -85,6 +85,7 @@ TEST(Threads, StartThenJoinThread)
           counter_++;
           usleep(100);
         }
+        return NULL;
       }
   private:
     int counter_;
@@ -133,6 +134,7 @@ TEST(Threads, StartMultiThenJoinThread)
           counter_++;
           usleep(100);
         }
+        return NULL;
       }
   private:
     int counter_;

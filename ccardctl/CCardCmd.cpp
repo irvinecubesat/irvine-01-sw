@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 
 #include "CCardMsgCodec.h"
-#include "CCardI2CPortState.h"
+#include "DsaI2CPortState.h"
 #include "cCardMessages.h"
 #include "ccardDefs.h"
 
@@ -43,7 +43,6 @@ void usage(char *argv[])
            <<" -c                 Collect telemetry data"<<std::endl
            <<" -D {DSA id}        Execute DSA Deploy for {DSA id} with timeout "<<DSA_DEPLOY_TIMEOUT<<" sec"<<std::endl
            <<" -R {DSA id}        Execute DSA Release for {DSA id} with timeout "<<DSA_RELEASE_TIMEOUT<<" sec"<<std::endl
-           <<" -T {0 or 1}        Disable or enable HW timer.  Value is sticky"<<std::endl
            <<" -M {MT id}={0|1}   Set MT state of 0 or 1 for {MT id}"<<std::endl
            <<" -m {ZYX}|{0-7}     Set all mt values with either binary or decimal"<<std::endl
            <<"                    e.g. -m 111 to turn all MT's on"<<std::endl
@@ -60,7 +59,7 @@ static void outputStatus(CCardStatus &status)
 {
   std::cout<<"0x"<<std::setfill('0')<<std::setw(2)<<std::hex<<(int)status.portStatus
            <<" -> "
-           <<IrvCS::CCardI2CPortState::stateToString(status.portStatus, status.dsaDeployState)
+           <<IrvCS::DsaI2CPortState::stateToString(status.portStatus, status.dsaDeployState)
            <<std::endl;
 }
 
@@ -73,8 +72,8 @@ static void outputStatus(CCardStatus &status)
  **/
 static void outputTelemetry(CCardStatus &status)
 {
-  std::cout<<"dsa_deploy_state="<<(int)status.dsaDeployState<<std::endl
-           <<"mt_state="<<((status.portStatus&MT_MASK)>>MT_OFFSET)<<std::endl;
+  std::cout<<"dsa_deploy_state="<<(int)status.dsaDeployState<<std::endl;
+// TODO:  update mt_state using mt i2c expander
 }
 
 static int getCCardStatus(const std::string &host, uint32_t timeout, CCardStatus &status)
@@ -250,7 +249,7 @@ int main(int argc, char *argv[])
   uint8_t mtBits=0;
   uint8_t mtMask=0;
 
-  while ((opt=getopt(argc,argv,"d:h:scD:R:T:M:m:t:H")) != -1)
+  while ((opt=getopt(argc,argv,"d:h:scD:R:M:m:t:H")) != -1)
   {
     switch (opt)
     {
@@ -268,17 +267,6 @@ int main(int argc, char *argv[])
       dsaCmd=IrvCS::Release;
       action=DsaCommand;
       timeout=(DSA_RELEASE_TIMEOUT+TIMEOUT_PADDING)*1000;
-      break;
-    case 'T':
-      dsaId=IrvCS::DSA_2; // Not significant, operation is for either
-      if (!strcmp(optarg, "0"))
-      {
-        dsaCmd=IrvCS::SetTimerOff;
-      } else
-      {
-        dsaCmd=IrvCS::SetTimerOn;      // turn on HW timer
-      }
-      action=DsaCommand;
       break;
     case 'M':
       status=addMtBits(optarg, mtMask, mtBits);

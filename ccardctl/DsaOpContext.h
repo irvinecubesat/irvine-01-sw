@@ -35,6 +35,7 @@ namespace IrvCS
         // send the response
         PROC_cmd_sockaddr(proc_->getProcessData(), CCARD_RESPONSE,
                           &cCardStatus, sizeof(cCardStatus), &src_);
+        return StatOk;
       }
    
   private:

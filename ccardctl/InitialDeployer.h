@@ -61,6 +61,7 @@ namespace IrvCS
           
         // Done with execution, clean up!
         delete this;
+        return NULL;
       }
 
   private:

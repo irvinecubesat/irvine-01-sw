@@ -12,11 +12,10 @@ namespace IrvCS
 #define MSG_ID_OFFSET_BITS 0
 #define MSG_CMD_OFFSET_BITS 8
 
-// 2 and 1 reversed intentionally to match the pin offset on expander  
-#define DSA2_RELEASE_STATUS_BIT 0
-#define DSA2_DEPLOY_STATUS_BIT  1
-#define DSA1_RELEASE_STATUS_BIT 2
-#define DSA1_DEPLOY_STATUS_BIT  3
+#define DSA1_RELEASE_STATUS_BIT 0
+#define DSA1_DEPLOY_STATUS_BIT  1
+#define DSA2_RELEASE_STATUS_BIT 2
+#define DSA2_DEPLOY_STATUS_BIT  3
 
 /**
  * Initial Deploy Delay in seconds.  How long to wait to initiate the initial deployment
@@ -97,10 +96,7 @@ namespace IrvCS
   {
     Release=0,     
     Deploy=1,
-    SetTimer=2,      // set timer bit
-    SetTimerOn=3,    // enable timer use
-    SetTimerOff=4,   // disable timer use
-    ResetTimer=5,  // reset timer and DSA to initial value (1)
+    Reset=2,  // reset DSA to initial value (1)
     CmdUnknown
   };
 
@@ -110,13 +106,11 @@ namespace IrvCS
    * time
    * 
    * Used as the shift offset.
-   *
-   * Note:  Original slide documentation had DSA1 and DSA2 reversed.
    */
   enum DsaId
   {
-    DSA_2=0,
-    DSA_1=2,
+    DSA_1=0,
+    DSA_2=2,
     DSA_UNKNOWN
   };
 
