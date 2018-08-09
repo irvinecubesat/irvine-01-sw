@@ -138,3 +138,7 @@ ADD_SUBDIRECTORY(datalogger)
 # the image gets built.
 #
 ADD_SUBDIRECTORY(version)
+#
+# Test Utilities for Ground/Flight 
+#
+ADD_SUBDIRECTORY(utilities)

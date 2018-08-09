@@ -10,10 +10,6 @@ target_link_libraries(ccardctl ccardCodec gpioCpp proc irvThreadUtil pthread)
 add_executable(ccardcmd CCardCmd.cpp)
 target_link_libraries(ccardcmd ccardCodec proc pthread)
 
-add_executable(thrusterctl ThrusterThrottle.cpp)
-target_link_libraries(thrusterctl m)
-
-add_executable(magctl MagCtl.cpp)
 
 INSTALL(TARGETS ccardctl DESTINATION bin COMPONENT binaries)
 INSTALL(TARGETS ccardcmd DESTINATION bin COMPONENT binaries)
