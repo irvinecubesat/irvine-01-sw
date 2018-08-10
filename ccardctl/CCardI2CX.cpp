@@ -48,6 +48,8 @@ namespace IrvCS
       powerStatus++;
     }
 
+    powerStatus+=powerOn();
+    
     if (powerStatus == 0)
     {
       syslog(LOG_NOTICE, "%s Initialized", __FILENAME__);
