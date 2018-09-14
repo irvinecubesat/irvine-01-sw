@@ -4,9 +4,6 @@
 
 namespace IrvCS
 {
-  //
-  // @TODO Add implementation and unit tests
-  //
   InitialDsaDeployOp::InitialDsaDeployOp(DsaController *controller):controller_(controller)
   {
   }
