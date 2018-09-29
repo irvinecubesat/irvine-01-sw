@@ -1,11 +1,12 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 #include <fcntl.h>
 #include <stdlib.h>
 
 int bus;
-char *busAdr = "/dev/i2c-1";
+const char *busAdr = "/dev/i2c-1";
 char device = 0x39;
 char buffer[2] = {0}; 
 char enable = 0x10; //only MT01 FWD
