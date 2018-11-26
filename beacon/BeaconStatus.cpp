@@ -1,5 +1,18 @@
 #include <arpa/inet.h>
 #include "BeaconStatus.h"
+#include <iostream>
+
+// angular rate 12/20
+#define GYRO_RAW_TO_DEGSEC(raw) ((int32_t)ntohl(raw))/(float(1<<20));
+
+// Temperature 10/6
+#define TEMP_RAW_TO_KELVIN(raw) ((int32_t)ntohs(raw))/(float)(1<<6)
+
+// Voltage 16/16
+#define V_RAW_TO_VOLTS(raw) ((int32_t)ntohl(raw))/(float(1<<16))
+
+// Amps 15/16
+#define A_RAW_TO_AMPS(raw) ((int32_t)ntohl(raw))/(float(1<<16))
 
 namespace IrvCS
 {
@@ -10,23 +23,20 @@ namespace IrvCS
 
     for(int i = 0; i < 3; i++)
     {
-      gyro_[i] = ((int32_t)ntohl(data->gyro[i]))/(1024.0*1024.0);
+      gyro_[i] = GYRO_RAW_TO_DEGSEC(data->gyro[i]);
     }
     for(int i = 0; i < 3; i++)
     {
-      mag_[i] = ((int32_t)ntohl(data->mag[i]))/(1024.0*1024.0);
+      mag_[i] = ((int32_t)ntohl(data->mag[i]));
     }
-    //
-    // @TODO convert the rest of the members to host byte order and appropriate
-    //       units.  See adc-sensors-util for example of int/uint->float
-    //       conversion.
-    tempDaughterA_ = (int32_t)ntohl(data->daughter_aTmpSensor); 
-    tempThreeVpl_ = (int32_t)ntohl(data->threeV_plTmpSensor);
-    tempNz_ = (int32_t)ntohl(data->tempNz); 
-    volt3V_ = (int32_t)ntohl(data->threeVPwrSensor.volt);
-    curr3V_ = (int32_t)ntohl(data->threeVPwrSensor.current);
-    volt5Vpl_ = (int32_t)ntohl(data->fiveV_plPwrSensor.volt);
-    curr5Vpl_ = (int32_t)ntohl(data->fiveV_plPwrSensor.current);
+
+    tempDaughterA_ = TEMP_RAW_TO_KELVIN(data->daughter_aTmpSensor);    
+    tempThreeVpl_ = TEMP_RAW_TO_KELVIN(data->threeV_plTmpSensor);
+    tempNz_ = TEMP_RAW_TO_KELVIN(data->tempNz); 
+    volt3V_ = V_RAW_TO_VOLTS(data->threeVPwrSensor.volt);
+    curr3V_ = A_RAW_TO_AMPS(data->threeVPwrSensor.current);
+    volt5Vpl_ = V_RAW_TO_VOLTS(data->fiveV_plPwrSensor.volt);
+    curr5Vpl_ = A_RAW_TO_AMPS(data->fiveV_plPwrSensor.current);
   }
 
   BeaconStatus::~BeaconStatus()
@@ -46,7 +56,7 @@ namespace IrvCS
              <<"Mag_X="<<beaconStatus.mag_[0]<<std::endl 
              <<"Mag_Y="<<beaconStatus.mag_[1]<<std::endl 
              <<"Mag_Z="<<beaconStatus.mag_[2]<<std::endl 
-	     <<"Temp_C="<<beaconStatus.tempDaughterA_<<std::endl
+	     <<"Temp_K="<<beaconStatus.tempDaughterA_<<std::endl
 	     <<"3V_Payload_Temp_C="<<beaconStatus.tempThreeVpl_<<std::endl
 	     <<"External_Temp_C="<<beaconStatus.tempNz_<<std::endl
 	     <<"3V_Sensor_Voltage="<<beaconStatus.volt3V_<<std::endl
