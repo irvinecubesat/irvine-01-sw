@@ -57,8 +57,8 @@ namespace IrvCS
              <<"Mag_Y="<<beaconStatus.mag_[1]<<std::endl 
              <<"Mag_Z="<<beaconStatus.mag_[2]<<std::endl 
 	     <<"Temp_K="<<beaconStatus.tempDaughterA_<<std::endl
-	     <<"3V_Payload_Temp_C="<<beaconStatus.tempThreeVpl_<<std::endl
-	     <<"External_Temp_C="<<beaconStatus.tempNz_<<std::endl
+	     <<"3V_Payload_Temp_K="<<beaconStatus.tempThreeVpl_<<std::endl
+	     <<"External_Temp_K="<<beaconStatus.tempNz_<<std::endl
 	     <<"3V_Sensor_Voltage="<<beaconStatus.volt3V_<<std::endl
 	     <<"3V_Sensor_Current="<<beaconStatus.curr3V_<<std::endl
 	     <<"5V_Payload_Voltage="<<beaconStatus.volt5Vpl_<<std::endl 

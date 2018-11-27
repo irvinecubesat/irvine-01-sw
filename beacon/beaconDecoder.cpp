@@ -11,8 +11,7 @@ void usage()
 {
   std::cout <<"Usage:  beaconDecoder [options]\n\n"<<
     "Options:\n"<<
-    " -x  Read input in hex \n"<<
-    " -i  Parse IP packet data \n"<<std::endl;
+    " -x  Read input in hex \n"<<std::endl;
 }
 
 #define MAX_BEACON 227
@@ -99,16 +98,12 @@ int main(int argc, char *argv[])
   int status=0;
   int opt=0;
   bool hexInput=false;
-  bool parseIpPacket=false;
   
   while ((opt = getopt(argc, argv, "xih")) != -1) {
     switch (opt)
     {
     case 'x':
       hexInput=true;
-      break;
-    case 'i':
-      parseIpPacket=true;
       break;
     case 'h':
       usage();
